@@ -1,7 +1,7 @@
 {
   "scripts": {
     "clean": "rm -rf build/; rm -rf src/language/compiled",
-    "compile:grammar": "rm -rf src/language/compiled/ && antlr4ts -visitor -o src/language/compiled/ src/language/Scheme.g4",
+    "compile:grammar": "rm -rf src/language/compiled/ && antlr4ts -visitor -o src/language/compiled/ src/language/SchemeLexer.g4 src/language/SchemeParser.g4",
     "compile:ts": "tsc",
     "scheme": "node build/src/cli"
   },

@@ -1,10 +1,10 @@
 import { AbstractParseTreeVisitor, TerminalNode } from 'antlr4ts/tree';
 import { InputContext } from './language/compiled/SchemeParser';
-import { SchemeVisitor } from './language/compiled/SchemeVisitor';
+import { SchemeParserVisitor } from './language/compiled/SchemeParserVisitor';
 
 export type InterpretedResult = string;
 
-class Interpreter extends AbstractParseTreeVisitor<InterpretedResult> implements SchemeVisitor<InterpretedResult> {
+class Interpreter extends AbstractParseTreeVisitor<InterpretedResult> implements SchemeParserVisitor<InterpretedResult> {
   defaultResult() {
     return '';
   }
