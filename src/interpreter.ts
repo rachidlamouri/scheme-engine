@@ -1,5 +1,5 @@
 import { AbstractParseTreeVisitor, TerminalNode } from 'antlr4ts/tree';
-import { InputContext } from './language/compiled/SchemeParser';
+import { AtomContext, InputContext } from './language/compiled/SchemeParser';
 import { SchemeParserVisitor } from './language/compiled/SchemeParserVisitor';
 
 export type InterpretedResult = string;
@@ -10,11 +10,18 @@ class Interpreter extends AbstractParseTreeVisitor<InterpretedResult> implements
   }
 
   visitInput(context: InputContext) {
-    return this.visitString(context.STRING());
+    return this.visitAtom(context.atom());
   }
 
-  visitString (node: TerminalNode) {
-    return node.text;
+  visitAtom(context: AtomContext) {
+    const number = context.NUMBER();
+    const string = context.STRING();
+
+    if (number) {
+      return number.text;
+    }
+
+    return string!.text;
   }
 }
 

@@ -31,6 +31,7 @@ echo "'turkey" | npm run scheme -- -i # 'turkey
 ### Supported Features
 
 - echo string literals
+- echo integer literals
 
 ## Development
 

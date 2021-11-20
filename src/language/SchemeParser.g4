@@ -2,4 +2,9 @@ parser grammar SchemeParser;
 
 options { tokenVocab=SchemeLexer; }
 
-input: STRING EOF;
+atom:
+  STRING
+  | NUMBER
+  ;
+
+input: atom EOF;
