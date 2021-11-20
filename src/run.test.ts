@@ -16,7 +16,7 @@ describe('run', () => {
   ];
 
   tests.forEach(([code, expectedOutput]) => {
-    it(`runs: ${code}`, () => {
+    it(`runs: ${code} -> ${expectedOutput}`, () => {
       expect(run(code)).toEqual(expectedOutput);
     });
   });
