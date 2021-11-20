@@ -3,12 +3,17 @@
     "clean": "rm -rf build/; rm -rf src/language/compiled",
     "compile:grammar": "rm -rf src/language/compiled/ && antlr4ts -visitor -o src/language/compiled/ src/language/SchemeLexer.g4 src/language/SchemeParser.g4",
     "compile:ts": "tsc",
-    "scheme": "node build/src/cli"
+    "scheme": "node build/src/cli",
+    "test": "mocha"
   },
   "devDependencies": {
     "@tsconfig/node14": "^1.0.1",
+    "@types/mocha": "^9.0.0",
     "@types/node": "^16.11.9",
     "antlr4ts-cli": "^0.5.0-alpha.4",
+    "earljs": "^0.1.10",
+    "mocha": "^9.1.3",
+    "ts-node": "^10.4.0",
     "typescript": "^4.5.2"
   },
   "dependencies": {

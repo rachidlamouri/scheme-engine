@@ -33,7 +33,8 @@ if (args.length === 0 || (!useStdin && isInputFilepath && !filepath)) {
 
 const onInput = (input: string) => {
   const code = isInputFilepath ? readFile(input) : input;
-  run(code);
+  const result = run(code);
+  process.stdout.write(result);
 }
 
 if (useStdin) {

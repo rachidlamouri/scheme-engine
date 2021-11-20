@@ -44,5 +44,5 @@ npm run compile:grammar
 ### Interpreter
 
 ```bash
-npm run compile:ts -- --watch
+npm test -- --watch
 ```
