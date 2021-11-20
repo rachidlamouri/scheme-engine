@@ -5,11 +5,11 @@ type RunConfig = [code: string, expectedOutput: string];
 
 describe('run', () => {
   const tests: RunConfig[] = [
-    ["'atom", "'atom"],
-    ["'turkey", "'turkey"],
+    ["'atom", 'atom'],
+    ["'turkey", 'turkey'],
     ['1492', '1492'],
-    ["'u", "'u"],
-    ["'*abc$", "'*abc$"],
+    ["'u", 'u'],
+    ["'*abc$", '*abc$'],
   ];
 
   tests.forEach(([code, expectedOutput]) => {

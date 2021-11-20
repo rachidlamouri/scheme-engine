@@ -21,7 +21,8 @@ class Interpreter extends AbstractParseTreeVisitor<InterpretedResult> implements
       return number.text;
     }
 
-    return string!.text;
+    // remove leading quote "'"
+    return string!.text.slice(1);
   }
 }
 
