@@ -1,0 +1,5 @@
+.antlr/
+
+/build/
+/node_modules/
+/src/language/compiled/
