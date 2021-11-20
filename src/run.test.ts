@@ -8,8 +8,11 @@ describe('run', () => {
     ["'atom", 'atom'],
     ["'turkey", 'turkey'],
     ['1492', '1492'],
+    ["'1492", '1492'],
     ["'u", 'u'],
     ["'*abc$", '*abc$'],
+    ["'(atom)", "(atom)"],
+    ["'(atom turkey or)", "(atom turkey or)"],
   ];
 
   tests.forEach(([code, expectedOutput]) => {
