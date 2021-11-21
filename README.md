@@ -30,7 +30,7 @@ echo "'turkey" | npm run scheme -- -i # 'turkey
 
 ### Supported Features
 
-- echo string, integer and list literals
+- echo literal symbolic expressions
 
 ## Development
 
