@@ -4,7 +4,7 @@ options { tokenVocab=SchemeLexer; }
 
 input: literal EOF;
 
-literal: QUOTE (atom | list);
+literal: QUOTE symbolicExpression;
 
 symbolicExpression: list | atom;
 
@@ -15,7 +15,6 @@ list:
 
 group:
   symbolicExpression group
-  | symbolicExpression symbolicExpression
   | symbolicExpression
   ;
 

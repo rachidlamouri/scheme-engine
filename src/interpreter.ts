@@ -14,23 +14,19 @@ const listToString = (list: ListContext): string => {
 
 const groupToString = (group: GroupContext): string => {
   const subGroup = group.group();
-  const [firstExpression, secondExpression] = group.symbolicExpression();
-  const firstExpressionText = expressionToString(firstExpression);
+  const firstSExpression = group.symbolicExpression();
+  const firstSExpressionText = symbolicExpressionToString(firstSExpression);
 
   if (subGroup) {
-    return `${firstExpressionText} ${groupToString(subGroup)}`;
+    return `${firstSExpressionText} ${groupToString(subGroup)}`;
   }
 
-  if (secondExpression) {
-    return `${firstExpressionText} ${expressionToString(secondExpression)}`;
-  }
-
-  return firstExpressionText;
+  return firstSExpressionText;
 }
 
-const expressionToString = (expression: SymbolicExpressionContext): string => {
-  const atom = expression.atom();
-  const list = expression.list();
+const symbolicExpressionToString = (sExpression: SymbolicExpressionContext): string => {
+  const atom = sExpression.atom();
+  const list = sExpression.list();
 
   if (atom) {
     return atomToString(atom);
@@ -49,14 +45,7 @@ class Interpreter extends AbstractParseTreeVisitor<InterpretedResult> implements
   }
 
   visitLiteral(literal: LiteralContext) {
-    const atom = literal.atom();
-    const list = literal.list();
-
-    if (atom) {
-      return atomToString(atom);
-    }
-
-    return listToString(list!);
+    return symbolicExpressionToString(literal.symbolicExpression());
   }
 }
 
