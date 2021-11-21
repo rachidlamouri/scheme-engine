@@ -1,7 +1,7 @@
 import { InputContext } from './language/compiled/SchemeParser';
 import { interpreter, InterpretedResult } from './interpreter';
 
-export const interpret = (rootTreeNode: InputContext): InterpretedResult => {
-  const result = interpreter.visit(rootTreeNode);
+export const interpret = (rootAstNode: InputContext): InterpretedResult => {
+  const result = interpreter.visit(rootAstNode);
   return result;
 };
