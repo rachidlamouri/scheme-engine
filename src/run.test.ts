@@ -7,7 +7,6 @@ describe('run', () => {
   const tests: RunConfig[] = [
     ["'atom", 'atom'],
     ["'turkey", 'turkey'],
-    ['1492', '1492'],
     ["'1492", '1492'],
     ["'u", 'u'],
     ["'*abc$", '*abc$'],

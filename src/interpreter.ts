@@ -1,5 +1,5 @@
-import { AbstractParseTreeVisitor, TerminalNode } from 'antlr4ts/tree';
-import { InputContext } from './language/compiled/SchemeParser';
+import { AbstractParseTreeVisitor } from 'antlr4ts/tree';
+import { InputContext, LiteralContext } from './language/compiled/SchemeParser';
 import { SchemeParserVisitor } from './language/compiled/SchemeParserVisitor';
 
 export type InterpretedResult = string;
@@ -10,10 +10,10 @@ class Interpreter extends AbstractParseTreeVisitor<InterpretedResult> implements
   }
 
   visitInput(context: InputContext) {
-    return this.visitLiteral(context.LITERAL());
+    return this.visitLiteral(context.literal());
   }
 
-  visitLiteral(literal: TerminalNode) {
+  visitLiteral(literal: LiteralContext) {
     const value = literal.text;
 
     if (value.startsWith('\'')) {

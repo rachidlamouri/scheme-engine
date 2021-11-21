@@ -1,20 +1,20 @@
 lexer grammar SchemeLexer;
 
-fragment QUOTE: '\'';
-
-fragment NUMBER: '1'..'9'+ '0'..'9'*;
-
-fragment STRING: ('a'..'z' | '*' | '$')+;
-
-fragment ATOM:
-  NUMBER
+ATOM:
+  INTEGER
   | STRING
   ;
 
-fragment LIST: '(' ATOM (' ' ATOM)* ')';
+ATOM_GROUP: ATOM (' ' ATOM)+;
 
-fragment QUOTED_LITERAL: QUOTE (ATOM | LIST);
+fragment INTEGER: '1'..'9'+ '0'..'9'*;
 
-LITERAL: QUOTED_LITERAL | NUMBER;
+fragment STRING: ('a'..'z' | '*' | '$')+;
+
+LEFT_SEPARATOR: '(';
+
+RIGHT_SEPARATOR: ')';
+
+QUOTE: '\'';
 
 WS: [\n] -> skip;
