@@ -34,15 +34,7 @@ echo "'turkey" | npm run scheme -- -i # 'turkey
 
 ## Development
 
-### Grammar
-
 ```bash
-# Run any time src/language/Scheme.g4 changes
-npm run compile:grammar
-```
-
-### Interpreter
-
-```bash
-npm test -- --watch
+# watches grammar and typescript files, and rebuilds and runs tests on changes
+npm run dev
 ```
