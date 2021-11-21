@@ -1,7 +1,13 @@
 import { expect } from 'earljs';
 import { run } from './run';
 
-type RunConfig = [code: string, expectedOutput: string];
+type MochaConfig = {
+  isOnly: boolean;
+}
+
+type RunConfig =
+  [code: string, expectedOutput: string]
+  | [code: string, expectedOutput: string, config: MochaConfig];
 
 describe('run', () => {
   const tests: RunConfig[] = [
@@ -20,8 +26,9 @@ describe('run', () => {
     ["'(() () () ())", "(() () () ())"],
   ];
 
-  tests.forEach(([code, expectedOutput]) => {
-    it(`${code} -> ${expectedOutput}`, () => {
+  tests.forEach(([code, expectedOutput, config = { isOnly: false }]) => {
+    const method = config.isOnly ? it.only : it;
+    method(`${code} -> ${expectedOutput}`, () => {
       expect(run(code)).toEqual(expectedOutput);
     });
   });
