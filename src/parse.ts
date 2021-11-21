@@ -27,7 +27,19 @@ export const parse = (tokenStream: CommonTokenStream): InputContext => {
   const rootAstNode = parser.input();
   const errors = errorLogSuppressor.enableLogs();
   if (errors.length > 0) {
-    throw Error(`Unable to parse input\n` + errors.map((args: any[]) => args.join('')).join('\n'));
+    // Token enum reference: ./language/compiled/SchemeLexer.tokens
+    const tokens = tokenStream
+      .getTokens()
+      .map((t) => [t.type, t.text])
+      .map(([tokenName, text]) => `[${tokenName}|${text}]`)
+      .join('')
+
+    const message = [
+      `Unable to parse input`,
+      `Tokens: ${tokens}`,
+      errors.map((args: any[]) => args.join('')).join('\n'),
+    ].join('\n')
+    throw Error(message);
   }
 
   return rootAstNode;
