@@ -31,6 +31,7 @@ echo "'turkey" | npm run scheme -- -i # 'turkey
 ### Supported Features
 
 - echo literal symbolic expressions
+- car
 
 ## Development
 

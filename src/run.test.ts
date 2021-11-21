@@ -24,6 +24,9 @@ describe('run', () => {
     ["'(or (atom turkey))", "(or (atom turkey))"],
     ["'()", "()"],
     ["'(() () () ())", "(() () () ())"],
+    ['(car (a))', 'a'],
+    ['(car (a b))', 'a'],
+    ['(car (a b c))', 'a'],
   ];
 
   tests.forEach(([code, expectedOutput, config = { isOnly: false }]) => {

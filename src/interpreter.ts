@@ -1,5 +1,5 @@
 import { AbstractParseTreeVisitor } from 'antlr4ts/tree';
-import { AtomContext, GroupContext, InputContext, ListContext, LiteralContext, SymbolicExpressionContext } from './language/compiled/SchemeParser';
+import { AtomContext, AtomGroupContext, ExpressionContext, GroupContext, InputContext, ListContext, LiteralContext, SymbolicExpressionContext } from './language/compiled/SchemeParser';
 import { SchemeParserVisitor } from './language/compiled/SchemeParserVisitor';
 
 export type InterpretedResult = string;
@@ -35,17 +35,40 @@ const symbolicExpressionToString = (sExpression: SymbolicExpressionContext): str
   return listToString(list!);
 };
 
+const atomGroupToArray = (group: AtomGroupContext): AtomContext[] => {
+  const subGroup = group.atomGroup();
+  const firstAtom = group.atom();
+
+  if (subGroup) {
+    return [firstAtom, ...atomGroupToArray(subGroup)];
+  }
+
+  return [firstAtom];
+};
+
 class Interpreter extends AbstractParseTreeVisitor<InterpretedResult> implements SchemeParserVisitor<InterpretedResult> {
   defaultResult() {
     return '';
   }
 
-  visitInput(input: InputContext) {
-    return this.visitLiteral(input.literal());
+  visitInput(input: InputContext): string {
+    const literal = input.literal();
+    const expression = input.expression();
+
+    if (literal) {
+      return this.visitLiteral(literal);
+    }
+
+    return this.evaluateExpression(expression!);
   }
 
   visitLiteral(literal: LiteralContext) {
     return symbolicExpressionToString(literal.symbolicExpression());
+  }
+
+  evaluateExpression(expression: ExpressionContext): string {
+    const atoms = atomGroupToArray(expression.atomGroup());
+    return atomToString(atoms[0]);
   }
 }
 

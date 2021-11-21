@@ -2,6 +2,8 @@ lexer grammar SchemeLexer;
 
 QUOTE: '\'';
 
+CAR: 'car';
+
 STRING: ('a'..'z' | '*' | '$')+;
 
 INTEGER: '1'..'9'+ '0'..'9'*;
