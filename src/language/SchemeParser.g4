@@ -4,6 +4,22 @@ options { tokenVocab=SchemeLexer; }
 
 input: literal EOF;
 
-literal: QUOTE symbolicExpression;
+literal: QUOTE (atom | list);
 
-symbolicExpression: LIST | ATOM;
+symbolicExpression: list | atom;
+
+list:
+  LEFT_SEPARATOR group RIGHT_SEPARATOR
+  | LEFT_SEPARATOR RIGHT_SEPARATOR
+  ;
+
+group:
+  symbolicExpression group
+  | symbolicExpression symbolicExpression
+  | symbolicExpression
+  ;
+
+atom:
+  STRING
+  | INTEGER
+  ;
