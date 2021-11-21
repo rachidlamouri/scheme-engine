@@ -1,5 +1,6 @@
 import { CommonTokenStream } from 'antlr4ts';
 import { InputContext, SchemeParser } from './language/compiled/SchemeParser';
+import { tokenNamesByType } from './language/tokenNamesByType';
 
 type LogSuppressor = {
   originalLogger: typeof console.error;
@@ -27,10 +28,9 @@ export const parse = (tokenStream: CommonTokenStream): InputContext => {
   const rootAstNode = parser.input();
   const errors = errorLogSuppressor.enableLogs();
   if (errors.length > 0) {
-    // Token enum reference: ./language/compiled/SchemeLexer.tokens
     const tokens = tokenStream
       .getTokens()
-      .map((t) => [t.type, t.text])
+      .map((t) => [tokenNamesByType[t.type] ?? '?', t.text])
       .map(([tokenName, text]) => `[${tokenName}|${text}]`)
       .join('')
 
