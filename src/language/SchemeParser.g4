@@ -4,7 +4,7 @@ options { tokenVocab=SchemeLexer; }
 
 input: (literal | expression) EOF;
 
-literal: QUOTE symbolicExpression;
+literal: (QUOTE symbolicExpression) | integerAtom ;
 
 symbolicExpression: list | atom;
 
@@ -22,5 +22,7 @@ symbolicExpressionGroup:
 
 atom:
   STRING
-  | INTEGER
+  | integerAtom
   ;
+
+integerAtom: INTEGER;

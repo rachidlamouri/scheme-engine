@@ -15,6 +15,7 @@ describe('run', () => {
     ['string', "'atom", 'atom'],
     ['string', "'turkey", 'turkey'],
     ['integer', "'1492", '1492'],
+    ['unquoted integer', "1492", '1492'],
     ['single character', "'u", 'u'],
     ['special characters', "'*abc$", '*abc$'],
     ['list', "'(atom)", "(atom)"],

@@ -1,17 +1,14 @@
 import { LiteralContext } from '../language/compiled/SchemeParser';
 import { parseSymbolicExpressionParentContext, SymbolicExpression } from './symbolicExpression';
-import { buildParseParentContext, InterpretedResult } from './utils';
+import { IntegerAtom } from './integerAtom';
 
-export class Literal {
-  static parseParentContext = buildParseParentContext<Literal, LiteralContext, 'literal'>(Literal, 'literal');
+export type Literal = SymbolicExpression | IntegerAtom;
 
-  private symbolicExpression: SymbolicExpression;
-
-  constructor(literalContext: LiteralContext) {
-    this.symbolicExpression = parseSymbolicExpressionParentContext(literalContext);
+export const parseLiteralParentContext = (parentContext: Record<'literal', () => LiteralContext | undefined>): Literal | null => {
+  const literalContext = parentContext.literal();
+  if (!literalContext) {
+    return null;
   }
 
-  toResult(): InterpretedResult {
-    return this.symbolicExpression.toResult();
-  }
-}
+  return parseSymbolicExpressionParentContext(literalContext) ?? IntegerAtom.parseParentContext(literalContext)!;
+};
