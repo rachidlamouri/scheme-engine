@@ -1,1 +1,2 @@
-export { interpreter, InterpretedResult } from './interpreter';
+export { interpreter } from './interpreter';
+export { InterpretedResult } from './utils';
