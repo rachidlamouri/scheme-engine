@@ -11,12 +11,12 @@ symbolicExpression: list | atom;
 expression: LEFT_SEPARATOR CAR LEFT_SEPARATOR atomGroup RIGHT_SEPARATOR RIGHT_SEPARATOR;
 
 list:
-  LEFT_SEPARATOR group RIGHT_SEPARATOR
+  LEFT_SEPARATOR symbolicExpressionGroup RIGHT_SEPARATOR
   | LEFT_SEPARATOR RIGHT_SEPARATOR
   ;
 
-group:
-  symbolicExpression group
+symbolicExpressionGroup:
+  symbolicExpression symbolicExpressionGroup
   | symbolicExpression
   ;
 

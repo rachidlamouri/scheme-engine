@@ -1,5 +1,5 @@
 import { AbstractParseTreeVisitor } from 'antlr4ts/tree';
-import { AtomContext, AtomGroupContext, ExpressionContext, GroupContext, InputContext, ListContext, LiteralContext, SymbolicExpressionContext } from '../language/compiled/SchemeParser';
+import { AtomContext, AtomGroupContext, ExpressionContext, SymbolicExpressionGroupContext, InputContext, ListContext, LiteralContext, SymbolicExpressionContext } from '../language/compiled/SchemeParser';
 import { SchemeParserVisitor } from '../language/compiled/SchemeParserVisitor';
 
 export type InterpretedResult = string;
@@ -7,26 +7,26 @@ export type InterpretedResult = string;
 const atomToString = (atom: AtomContext): string => atom.text;
 
 const listToString = (list: ListContext): string => {
-  const group = list.group();
-  const groupText = group ? groupToString(group) : '';
+  const group = list.symbolicExpressionGroup();
+  const groupText = group ? symbolicExpressionGroupToString(group) : '';
   return `(${groupText})`;
 }
 
-const groupToString = (group: GroupContext): string => {
-  const subGroup = group.group();
-  const firstSExpression = group.symbolicExpression();
-  const firstSExpressionText = symbolicExpressionToString(firstSExpression);
+const symbolicExpressionGroupToString = (group: SymbolicExpressionGroupContext): string => {
+  const subGroup = group.symbolicExpressionGroup();
+  const firstSymbolicExpression = group.symbolicExpression();
+  const firstSymbolicExpressionText = symbolicExpressionToString(firstSymbolicExpression);
 
   if (subGroup) {
-    return `${firstSExpressionText} ${groupToString(subGroup)}`;
+    return `${firstSymbolicExpressionText} ${symbolicExpressionGroupToString(subGroup)}`;
   }
 
-  return firstSExpressionText;
+  return firstSymbolicExpressionText;
 }
 
-const symbolicExpressionToString = (sExpression: SymbolicExpressionContext): string => {
-  const atom = sExpression.atom();
-  const list = sExpression.list();
+const symbolicExpressionToString = (symbolicExpression: SymbolicExpressionContext): string => {
+  const atom = symbolicExpression.atom();
+  const list = symbolicExpression.list();
 
   if (atom) {
     return atomToString(atom);
