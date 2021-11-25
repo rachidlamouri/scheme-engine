@@ -1,6 +1,6 @@
 import { AbstractParseTreeVisitor } from 'antlr4ts/tree';
-import { AtomContext, AtomGroupContext, ExpressionContext, GroupContext, InputContext, ListContext, LiteralContext, SymbolicExpressionContext } from './language/compiled/SchemeParser';
-import { SchemeParserVisitor } from './language/compiled/SchemeParserVisitor';
+import { AtomContext, AtomGroupContext, ExpressionContext, GroupContext, InputContext, ListContext, LiteralContext, SymbolicExpressionContext } from '../language/compiled/SchemeParser';
+import { SchemeParserVisitor } from '../language/compiled/SchemeParserVisitor';
 
 export type InterpretedResult = string;
 
