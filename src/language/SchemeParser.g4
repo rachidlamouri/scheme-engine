@@ -8,7 +8,7 @@ literal: QUOTE symbolicExpression;
 
 symbolicExpression: list | atom;
 
-expression: LEFT_SEPARATOR CAR LEFT_SEPARATOR atomGroup RIGHT_SEPARATOR RIGHT_SEPARATOR;
+expression: LEFT_SEPARATOR CAR LEFT_SEPARATOR symbolicExpressionGroup RIGHT_SEPARATOR RIGHT_SEPARATOR;
 
 list:
   LEFT_SEPARATOR symbolicExpressionGroup RIGHT_SEPARATOR
@@ -18,11 +18,6 @@ list:
 symbolicExpressionGroup:
   symbolicExpression symbolicExpressionGroup
   | symbolicExpression
-  ;
-
-atomGroup:
-  atom atomGroup
-  | atom
   ;
 
 atom:

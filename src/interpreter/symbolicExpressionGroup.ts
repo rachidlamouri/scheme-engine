@@ -17,6 +17,10 @@ export class SymbolicExpressionGroup {
     this.symbolicExpressionGroup = SymbolicExpressionGroup.parseParentContext(symbolicExpressionGroupContext);
   }
 
+  first(): SymbolicExpression {
+    return this.symbolicExpression;
+  }
+
   toResult(): InterpretedResult {
     const symbolicExpressionResult = this.symbolicExpression.toResult();
 

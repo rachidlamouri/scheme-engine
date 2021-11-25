@@ -1,17 +1,17 @@
 import { ExpressionContext } from '../language/compiled/SchemeParser';
-import { AtomGroup } from './atomGroup';
+import { SymbolicExpressionGroup } from './symbolicExpressionGroup';
 import { buildParseParentContext, InterpretedResult } from './utils';
 
 export class Expression {
   static parseParentContext = buildParseParentContext<Expression, ExpressionContext, 'expression'>(Expression, 'expression');
 
-  private atomGroup: AtomGroup;
+  private symbolicExpressionGroup: SymbolicExpressionGroup;
 
   constructor(expresssionContext: ExpressionContext) {
-    this.atomGroup = AtomGroup.parseParentContext(expresssionContext);
+    this.symbolicExpressionGroup = SymbolicExpressionGroup.parseParentContext(expresssionContext);
   }
 
   evaluate(): InterpretedResult {
-    return this.atomGroup.firstAtom().toResult();
+    return this.symbolicExpressionGroup.first().toResult();
   }
 }

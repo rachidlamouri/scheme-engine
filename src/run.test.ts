@@ -27,6 +27,8 @@ describe('run', () => {
     ['(car (a))', 'a'],
     ['(car (a b))', 'a'],
     ['(car (a b c))', 'a'],
+    ['(car ((a b c) x y z))', '(a b c)'],
+    ['(car (((hotdogs)) (and) (pickle) relish))', '((hotdogs))'],
   ];
 
   tests.forEach(([code, expectedOutput, config = { isOnly: false }]) => {
