@@ -4,7 +4,7 @@
     "compile:grammar": "antlr4ts -visitor -o src/language/compiled/ src/language/SchemeLexer.g4 src/language/SchemeParser.g4",
     "compile:grammar:watch": "nodemon -e g4 --exec \"npm run compile:grammar\"",
     "compile:ts": "tsc",
-    "dev": "concurrently \"npm run compile:grammar:watch\" \"npm run test -- --watch\"",
+    "dev": "concurrently -n grammar,tests -c blue,green \"npm run compile:grammar:watch\" \"npm run test -- --watch\"",
     "scheme": "node build/src/cli",
     "test": "mocha"
   },
