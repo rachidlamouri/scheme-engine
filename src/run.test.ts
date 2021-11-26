@@ -6,9 +6,11 @@ type MochaConfig = {
   isOnly: boolean;
 }
 
+type OutputConfig = string | { error: string };
+
 type RunConfig =
-  [description: string, code: string, expectedOutput: string]
-  | [description: string, code: string, expectedOutput: string, config: MochaConfig];
+  [description: string, code: string, expectedOutput: OutputConfig]
+  | [description: string, code: string, expectedOutput: OutputConfig, config: MochaConfig];
 
 describe('run', () => {
   const tests: RunConfig[] = [
@@ -37,8 +39,17 @@ describe('run', () => {
 
   tests.forEach(([description, code, expectedOutput, config = { isOnly: false }]) => {
     const method = config.isOnly ? it.only : it;
-    method(`${chalk.cyan(description)}: ${chalk.blue(code)} -> ${chalk.yellow(expectedOutput)}`, () => {
+    const isErrorTest = typeof expectedOutput === 'object';
+    const outputDescription = isErrorTest
+      ? chalk.red(expectedOutput.error)
+      : chalk.yellow(expectedOutput)
+
+    method(`${chalk.cyan(description)}: ${chalk.blue(code)} -> ${outputDescription}`, () => {
+      if (isErrorTest) {
+        expect(() => run(code)).toThrow(expectedOutput.error);
+      } else {
       expect(run(code)).toEqual(expectedOutput);
+      }
     });
   });
 });
