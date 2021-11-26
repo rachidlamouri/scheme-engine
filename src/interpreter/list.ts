@@ -1,6 +1,6 @@
 import { ListContext } from '../language/compiled/SchemeParser';
 import { SymbolicExpressionGroup } from './symbolicExpressionGroup';
-import { buildParseParentContext, InterpretedResult } from './utils';
+import { buildParseParentContext } from './utils';
 
 export class List {
   static parseParentContext = buildParseParentContext<List, ListContext, 'list'>(List, 'list');
@@ -15,7 +15,7 @@ export class List {
     return this.symbolicExpressionGroup?.first() ?? null;
   }
 
-  toResult(): InterpretedResult {
+  toResult(): string {
     const groupText = this.symbolicExpressionGroup?.toResult() ?? '';
     return `(${groupText})`;
   }

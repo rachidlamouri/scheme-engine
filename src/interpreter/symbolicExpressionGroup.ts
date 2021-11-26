@@ -1,5 +1,5 @@
 import { SymbolicExpressionGroupContext } from '../language/compiled/SchemeParser';
-import { buildParseParentContext, InterpretedResult } from './utils';
+import { buildParseParentContext } from './utils';
 import { parseSymbolicExpressionParentContext, SymbolicExpression } from './symbolicExpression';
 
 export class SymbolicExpressionGroup {
@@ -29,7 +29,7 @@ export class SymbolicExpressionGroup {
     return [this.symbolicExpression];
   }
 
-  toResult(): InterpretedResult {
+  toResult(): string {
     const symbolicExpressionResult = this.symbolicExpression.toResult();
 
     if (this.symbolicExpressionGroup) {

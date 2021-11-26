@@ -3,9 +3,8 @@ import { InputContext } from '../language/compiled/SchemeParser';
 import { SchemeParserVisitor } from '../language/compiled/SchemeParserVisitor';
 import { parseInputContext } from './input';
 import { Expression } from './expression';
-import { InterpretedResult } from './utils';
 
-class Interpreter extends AbstractParseTreeVisitor<InterpretedResult> implements SchemeParserVisitor<InterpretedResult> {
+class Interpreter extends AbstractParseTreeVisitor<string> implements SchemeParserVisitor<string> {
   defaultResult() {
     return '';
   }

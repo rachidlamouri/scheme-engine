@@ -1,9 +1,8 @@
 import { ExpressionContext } from '../language/compiled/SchemeParser';
 import { Evaluable, parseEvaluableParentContext } from './evaluable';
 import { SymbolicExpression } from './symbolicExpression';
-import { List } from './list';
 import { isAtom } from './atom';
-import { buildParseParentContext, InterpretedResult } from './utils';
+import { buildParseParentContext } from './utils';
 
 export class Expression {
   static parseParentContext = buildParseParentContext<Expression, ExpressionContext, 'expression'>(Expression, 'expression');

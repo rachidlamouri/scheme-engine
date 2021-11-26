@@ -1,12 +1,12 @@
 import { StringAtomContext } from '../language/compiled/SchemeParser';
-import { buildParseParentContext, InterpretedResult } from './utils';
+import { buildParseParentContext } from './utils';
 
 export class StringAtom {
   static parseParentContext = buildParseParentContext<StringAtom, StringAtomContext, 'stringAtom'>(StringAtom, 'stringAtom');
 
   constructor (private stringAtomContext: StringAtomContext) {}
 
-  toResult(): InterpretedResult {
+  toResult(): string {
     return this.stringAtomContext.text;
   }
 }

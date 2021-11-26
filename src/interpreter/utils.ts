@@ -1,5 +1,3 @@
-export type InterpretedResult = string;
-
 type InterpreterNodeClass<TInterpreterNode, TChildContext> = { new (childContext: TChildContext): TInterpreterNode };
 
 export const buildParseParentContext = <
