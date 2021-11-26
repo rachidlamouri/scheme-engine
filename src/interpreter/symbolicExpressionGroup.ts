@@ -29,11 +29,11 @@ export class SymbolicExpressionGroup {
     return [this.symbolicExpression];
   }
 
-  toResult(): string {
-    const symbolicExpressionResult = this.symbolicExpression.toResult();
+  toString(): string {
+    const symbolicExpressionResult = this.symbolicExpression.toString();
 
     if (this.symbolicExpressionGroup) {
-      return `${symbolicExpressionResult} ${this.symbolicExpressionGroup.toResult()}`;
+      return `${symbolicExpressionResult} ${this.symbolicExpressionGroup.toString()}`;
     }
 
     return symbolicExpressionResult;

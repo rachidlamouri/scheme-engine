@@ -6,7 +6,7 @@ export class StringAtom {
 
   constructor (private stringAtomContext: StringAtomContext) {}
 
-  toResult(): string {
+  toString(): string {
     return this.stringAtomContext.text;
   }
 }

@@ -15,8 +15,8 @@ export class List {
     return this.symbolicExpressionGroup?.first() ?? null;
   }
 
-  toResult(): string {
-    const groupText = this.symbolicExpressionGroup?.toResult() ?? '';
+  toString(): string {
+    const groupText = this.symbolicExpressionGroup?.toString() ?? '';
     return `(${groupText})`;
   }
 }

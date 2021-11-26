@@ -15,7 +15,7 @@ export class Expression {
 
   evaluate(): SymbolicExpression {
     if (isAtom(this.evaluable)) {
-      throw Error(`Cannot get the car of atom "${this.evaluable.toResult()}"`);
+      throw Error(`Cannot get the car of atom "${this.evaluable.toString()}"`);
     }
 
     const operand = (this.evaluable instanceof Expression)
@@ -23,18 +23,18 @@ export class Expression {
       : this.evaluable;
 
     if (isAtom(operand)) {
-      throw Error(`Cannot get the car of returned atom "${operand.toResult()}"`);
+      throw Error(`Cannot get the car of returned atom "${operand.toString()}"`);
     }
 
     const result = operand.first();
     if (result === null) {
-      throw Error(`Cannot get the car of an empty list "${this.evaluable.toResult()}"`);
+      throw Error(`Cannot get the car of an empty list "${this.evaluable.toString()}"`);
     }
 
     return result;
   }
 
-  toResult(): string {
-    return this.evaluable.toResult();
+  toString(): string {
+    return this.evaluable.toString();
   }
 }
