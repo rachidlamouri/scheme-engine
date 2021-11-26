@@ -15,10 +15,27 @@ export class Expression {
   }
 
   evaluate(): SymbolicExpression {
-    if (this.evaluable instanceof List) {
-      return this.evaluable.first()!;
+    if (isAtom(this.evaluable)) {
+      throw Error(`Cannot get the car of atom "${this.evaluable.toResult()}"`);
     }
 
-    return ((this.evaluable as Expression).evaluate() as List).first()!;
+    const operand = (this.evaluable instanceof Expression)
+      ? this.evaluable.evaluate()
+      : this.evaluable;
+
+    if (isAtom(operand)) {
+      throw Error(`Cannot get the car of returned atom "${operand.toResult()}"`);
+    }
+
+    const result = operand.first();
+    if (result === null) {
+      throw Error(`Cannot get the car of an empty list "${this.evaluable.toResult()}"`);
+    }
+
+    return result;
+  }
+
+  toResult(): string {
+    return this.evaluable.toResult();
   }
 }

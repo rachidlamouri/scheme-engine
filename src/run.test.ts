@@ -32,9 +32,14 @@ describe('run', () => {
     ['car of list length 2', "(car '(a b))", 'a'],
     ['car of list length 3', "(car '(a b c))", 'a'],
     ['car of lst starting with list', "(car '((a b c) x y z))", '(a b c)'],
+    ['car of string atom', "(car 'a)", { error: 'Cannot get the car of atom "a"' }],
+    ['car of empty list', "(car '())", { error: 'Cannot get the car of an empty list "()"' }],
     ['car of list with mixed s-expression', "(car '(((hotdogs)) (and) (pickle) relish))", '((hotdogs))'],
     ['nested car expressions', "(car (car '((a))))", 'a'],
     ['nested car expressions', "(car (car (car '(((a))))))", 'a'],
+    ['nested car expressions', "(car (car '( ((hotdogs)) ((and)) ) ))", '(hotdogs)'],
+    ['car of integer atom', "(car 1234)", { error: 'Cannot get the car of atom "1234"' }],
+    ['invalid nested car', "(car (car '(a)))", { error: 'Cannot get the car of returned atom "a"' }],
   ];
 
   tests.forEach(([description, code, expectedOutput, config = { isOnly: false }]) => {
@@ -48,7 +53,7 @@ describe('run', () => {
       if (isErrorTest) {
         expect(() => run(code)).toThrow(expectedOutput.error);
       } else {
-      expect(run(code)).toEqual(expectedOutput);
+        expect(run(code)).toEqual(expectedOutput);
       }
     });
   });

@@ -12,7 +12,7 @@ class Interpreter extends AbstractParseTreeVisitor<InterpretedResult> implements
 
   visitInput(inputContext: InputContext): string {
     const input = parseInputContext(inputContext);
-    return (input instanceof Expression) ? (input.evaluate()?.toResult() ?? '') : input.toResult();
+    return (input instanceof Expression) ? input.evaluate().toResult(): input.toResult();
   }
 }
 
