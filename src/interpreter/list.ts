@@ -11,12 +11,12 @@ export class List {
     this.symbolicExpressionGroup = SymbolicExpressionGroup.parseParentContext(listContext);
   }
 
-  isNotEmpty(): this is { symbolicExpressionGroup: SymbolicExpressionGroup }  {
-    return this.symbolicExpressionGroup !== null;
+  first() {
+    return this.symbolicExpressionGroup?.first() ?? null;
   }
 
   toResult(): InterpretedResult {
-    const groupText = this.isNotEmpty() ? this.symbolicExpressionGroup.toResult() : '';
+    const groupText = this.symbolicExpressionGroup?.toResult() ?? '';
     return `(${groupText})`;
   }
 }

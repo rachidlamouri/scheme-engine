@@ -1,12 +1,20 @@
 import { AtomContext } from '../language/compiled/SchemeParser';
-import { buildParseParentContext, InterpretedResult } from './utils';
+import { IntegerAtom } from './integerAtom';
+import { StringAtom } from './stringAtom';
 
-export class Atom {
-  static parseParentContext = buildParseParentContext<Atom, AtomContext, 'atom'>(Atom, 'atom');
+export type Atom = StringAtom | IntegerAtom;
 
-  constructor(private atomContext: AtomContext) {}
+export const parseAtomParentContext = (parentContext: Record<'atom', () => AtomContext | undefined>): Atom | null => {
+  const atomContext = parentContext.atom();
 
-  toResult(): InterpretedResult {
-    return this.atomContext.text;
-  }
-}
+  return (
+    atomContext !== undefined
+      ? StringAtom.parseParentContext(atomContext) ?? IntegerAtom.parseParentContext(atomContext)!
+      : null
+  ) as any;
+};
+
+export const isAtom = (arg: any): arg is Atom => (
+  arg instanceof StringAtom
+  || arg instanceof IntegerAtom
+);

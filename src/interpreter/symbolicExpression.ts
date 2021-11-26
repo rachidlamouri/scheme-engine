@@ -1,6 +1,6 @@
 import { SymbolicExpressionContext } from '../language/compiled/SchemeParser';
 import { List } from './list';
-import { Atom } from './atom'
+import { Atom, parseAtomParentContext } from './atom';
 
 export type SymbolicExpression = List | Atom;
 
@@ -11,7 +11,7 @@ export const parseSymbolicExpressionParentContext = <
 
   return (
     symbolicExpressionContext !== undefined
-      ? List.parseParentContext(symbolicExpressionContext) ?? Atom.parseParentContext(symbolicExpressionContext)!
+      ? List.parseParentContext(symbolicExpressionContext) ?? parseAtomParentContext(symbolicExpressionContext)!
       : null
   ) as any;
 };

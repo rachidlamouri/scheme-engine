@@ -1,9 +1,4 @@
 import { InputContext } from '../language/compiled/SchemeParser';
-import { Literal, parseLiteralParentContext } from './literal';
-import { Expression } from './expression';
+import { Evaluable, parseEvaluableParentContext } from './evaluable';
 
-export class Input {
-  static parse(inputContext: InputContext): Literal | Expression {
-    return parseLiteralParentContext(inputContext) ?? Expression.parseParentContext(inputContext)!;
-  }
-}
+export const parseInputContext = (inputContext: InputContext): Evaluable => parseEvaluableParentContext(inputContext);

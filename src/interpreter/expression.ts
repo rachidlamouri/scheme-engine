@@ -1,17 +1,24 @@
 import { ExpressionContext } from '../language/compiled/SchemeParser';
-import { SymbolicExpressionGroup } from './symbolicExpressionGroup';
+import { Evaluable, parseEvaluableParentContext } from './evaluable';
+import { SymbolicExpression } from './symbolicExpression';
+import { List } from './list';
+import { isAtom } from './atom';
 import { buildParseParentContext, InterpretedResult } from './utils';
 
 export class Expression {
   static parseParentContext = buildParseParentContext<Expression, ExpressionContext, 'expression'>(Expression, 'expression');
 
-  private symbolicExpressionGroup: SymbolicExpressionGroup;
+  private evaluable: Evaluable;
 
   constructor(expresssionContext: ExpressionContext) {
-    this.symbolicExpressionGroup = SymbolicExpressionGroup.parseParentContext(expresssionContext);
+    this.evaluable = parseEvaluableParentContext(expresssionContext);
   }
 
-  evaluate(): InterpretedResult {
-    return this.symbolicExpressionGroup.first().toResult();
+  evaluate(): SymbolicExpression {
+    if (this.evaluable instanceof List) {
+      return this.evaluable.first()!;
+    }
+
+    return ((this.evaluable as Expression).evaluate() as List).first()!;
   }
 }

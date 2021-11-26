@@ -21,6 +21,14 @@ export class SymbolicExpressionGroup {
     return this.symbolicExpression;
   }
 
+  toArray(): SymbolicExpression[] {
+    if (this.symbolicExpressionGroup) {
+      return [this.symbolicExpression, ...this.symbolicExpressionGroup.toArray()];
+    }
+
+    return [this.symbolicExpression];
+  }
+
   toResult(): InterpretedResult {
     const symbolicExpressionResult = this.symbolicExpression.toResult();
 

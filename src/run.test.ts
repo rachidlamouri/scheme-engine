@@ -26,11 +26,13 @@ describe('run', () => {
     ['mixed nested s-expressions', "'(or (atom turkey))", "(or (atom turkey))"],
     ['empty list', "'()", "()"],
     ['nested empty lists', "'(() () () ())", "(() () () ())"],
-    ['car of list length 1', '(car (a))', 'a'],
-    ['car of list length 2', '(car (a b))', 'a'],
-    ['car of list length 3', '(car (a b c))', 'a'],
-    ['car of lst starting with list', '(car ((a b c) x y z))', '(a b c)'],
-    ['car of list with mixed s-expression', '(car (((hotdogs)) (and) (pickle) relish))', '((hotdogs))'],
+    ['car of list length 1', "(car '(a))", 'a'],
+    ['car of list length 2', "(car '(a b))", 'a'],
+    ['car of list length 3', "(car '(a b c))", 'a'],
+    ['car of lst starting with list', "(car '((a b c) x y z))", '(a b c)'],
+    ['car of list with mixed s-expression', "(car '(((hotdogs)) (and) (pickle) relish))", '((hotdogs))'],
+    ['nested car expressions', "(car (car '((a))))", 'a'],
+    ['nested car expressions', "(car (car (car '(((a))))))", 'a'],
   ];
 
   tests.forEach(([description, code, expectedOutput, config = { isOnly: false }]) => {

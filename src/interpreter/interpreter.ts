@@ -1,7 +1,8 @@
 import { AbstractParseTreeVisitor } from 'antlr4ts/tree';
 import { InputContext } from '../language/compiled/SchemeParser';
 import { SchemeParserVisitor } from '../language/compiled/SchemeParserVisitor';
-import { Input } from './input';
+import { parseInputContext } from './input';
+import { Expression } from './expression';
 import { InterpretedResult } from './utils';
 
 class Interpreter extends AbstractParseTreeVisitor<InterpretedResult> implements SchemeParserVisitor<InterpretedResult> {
@@ -10,8 +11,8 @@ class Interpreter extends AbstractParseTreeVisitor<InterpretedResult> implements
   }
 
   visitInput(inputContext: InputContext): string {
-    const node = Input.parse(inputContext);
-    return 'toResult' in node ? node.toResult() : node.evaluate();
+    const input = parseInputContext(inputContext);
+    return (input instanceof Expression) ? (input.evaluate()?.toResult() ?? '') : input.toResult();
   }
 }
 

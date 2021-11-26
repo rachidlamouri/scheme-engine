@@ -6,9 +6,10 @@ export type Literal = SymbolicExpression | IntegerAtom;
 
 export const parseLiteralParentContext = (parentContext: Record<'literal', () => LiteralContext | undefined>): Literal | null => {
   const literalContext = parentContext.literal();
-  if (!literalContext) {
-    return null;
-  }
 
-  return parseSymbolicExpressionParentContext(literalContext) ?? IntegerAtom.parseParentContext(literalContext)!;
+  return (
+    literalContext !== undefined
+      ? parseSymbolicExpressionParentContext(literalContext) ?? IntegerAtom.parseParentContext(literalContext)!
+      : null
+  ) as any;
 };
