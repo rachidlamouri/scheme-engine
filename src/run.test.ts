@@ -48,6 +48,9 @@ describe('run', () => {
     ['cdr', "(cdr '())", { error: 'Cannot get the cdr of an empty list'}],
     ['nested cdr', "(cdr (cdr '(a b c)))", '(c)'],
     ['nested cdr error', "(cdr (cdr '(a)))", { error: 'Cannot get the cdr of the returned empty list'}],
+    ['nested car and cdr', "(car (cdr '((b) (x y) ((c))) ))", '(x y)'],
+    ['nested cdr', "(cdr (cdr '((b) (x y) ((c))) ))", '(((c)))'],
+    ['nested cdr and car', "(cdr (car '(a (b (c)) d) ))", { error: 'Cannot get the cdr of returned atom "a"' }],
   ];
 
   tests.forEach(([description, code, expectedOutput, config = { isOnly: false }]) => {
