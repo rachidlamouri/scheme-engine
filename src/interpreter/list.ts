@@ -30,7 +30,7 @@ export class List {
 
   constructor(private contents: SymbolicExpression[]) {}
 
-  first() {
+  car() {
     return this.contents[0];
   }
 

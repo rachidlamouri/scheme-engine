@@ -27,10 +27,10 @@ export class Expression {
     }
 
     if (operand.isEmpty()) {
-      throw Error(`Cannot get the car of an empty list "${this.evaluable.toString()}"`);
+      throw Error('Cannot get the car of an empty list');
     }
 
-    return operand.first();
+    return operand.car();
   }
 
   toString(): string {
