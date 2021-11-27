@@ -1,31 +1,13 @@
 import { SymbolicExpressionContext, SymbolicExpressionGroupContext } from '../language/compiled/SchemeParser';
 import { parseSymbolicExpressionParentContext, SymbolicExpression } from './symbolicExpression';
-import { ParentContext } from './utils';
-
-type ChildSymbolicExpressionGroupContext = SymbolicExpressionGroupContext | undefined;
-
-type SymbolicExpressionGroupParentContext<TChildContext> =
-  [TChildContext] extends [SymbolicExpressionGroupContext]
-    ? ParentContext<'symbolicExpressionGroup', SymbolicExpressionGroupContext>
-    : ParentContext<'symbolicExpressionGroup', SymbolicExpressionGroupContext | undefined>
-
-type ParsedSymbolicExpressionGroup<TChildContext extends ChildSymbolicExpressionGroupContext> =
-  [TChildContext] extends [SymbolicExpressionGroupContext]
-    ? SymbolicExpressionGroup
-    : SymbolicExpressionGroup | null
+import { buildParseParentContext, ParentContext } from './utils';
 
 export class SymbolicExpressionGroup {
-  static parseParentContext = <
-    TChildContext extends ChildSymbolicExpressionGroupContext
-  >(parentContext: SymbolicExpressionGroupParentContext<TChildContext>): ParsedSymbolicExpressionGroup<TChildContext> => {
-    const expressionContext = parentContext.symbolicExpressionGroup();
-
-    if (expressionContext !== undefined) {
-      return new SymbolicExpressionGroup(expressionContext);
-    }
-
-    return null as ParsedSymbolicExpressionGroup<TChildContext>;
-  }
+  static parseParentContext = buildParseParentContext<
+    SymbolicExpressionGroup,
+    SymbolicExpressionGroupContext,
+    'symbolicExpressionGroup'
+  >(SymbolicExpressionGroup, 'symbolicExpressionGroup');
 
   private symbolicExpression: SymbolicExpression;
   private symbolicExpressionGroup: SymbolicExpressionGroup | null;

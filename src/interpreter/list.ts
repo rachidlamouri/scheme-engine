@@ -1,31 +1,9 @@
 import { ListContext } from '../language/compiled/SchemeParser';
 import { SymbolicExpressionGroup } from './symbolicExpressionGroup';
-import { ParentContext } from './utils';
-
-type ChildListContext = ListContext | undefined;
-
-type ListParentContext<TChildContext> =
-  [TChildContext] extends [ListContext]
-    ? ParentContext<'list', ListContext>
-    : ParentContext<'list', ListContext | undefined>
-
-type ParsedList<TChildContext extends ChildListContext> =
-  [TChildContext] extends [ListContext]
-    ? List
-    : List | null
+import { buildParseParentContext } from './utils';
 
 export class List {
-  static parseParentContext = <
-    TChildContext extends ChildListContext
-  >(parentContext: ListParentContext<TChildContext>): ParsedList<TChildContext> => {
-    const listContext = parentContext.list();
-
-    if (listContext !== undefined) {
-      return new List(listContext);
-    }
-
-    return null as ParsedList<TChildContext>;
-  }
+  static parseParentContext = buildParseParentContext<List, ListContext, 'list'>(List, 'list');
 
   protected symbolicExpressionGroup: SymbolicExpressionGroup | null;
 
