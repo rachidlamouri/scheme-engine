@@ -40,6 +40,14 @@ describe('run', () => {
     ['nested car expressions', "(car (car '( ((hotdogs)) ((and)) ) ))", '(hotdogs)'],
     ['car of integer atom', "(car 1234)", { error: 'Cannot get the car of atom "1234"' }],
     ['invalid nested car', "(car (car '(a)))", { error: 'Cannot get the car of returned atom "a"' }],
+    ['cdr', "(cdr '(a b c))", '(b c)'],
+    ['cdr', "(cdr '((a b c) x y z))", '(x y z)'],
+    ['cdr', "(cdr '(hamburger))", '()'],
+    ['cdr', "(cdr '((x) t r))", '(t r)'],
+    ['cdr', "(cdr 'hotdogs)", { error: 'Cannot get the cdr of atom "hotdogs"'}],
+    ['cdr', "(cdr '())", { error: 'Cannot get the cdr of an empty list'}],
+    ['nested cdr', "(cdr (cdr '(a b c)))", '(c)'],
+    ['nested cdr error', "(cdr (cdr '(a)))", { error: 'Cannot get the cdr of the returned empty list'}],
   ];
 
   tests.forEach(([description, code, expectedOutput, config = { isOnly: false }]) => {

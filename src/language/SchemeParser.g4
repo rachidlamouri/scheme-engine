@@ -6,7 +6,7 @@ input: evaluable EOF;
 
 evaluable: expression | literal;
 
-expression: LEFT_SEPARATOR CAR evaluable RIGHT_SEPARATOR;
+expression: LEFT_SEPARATOR KEYWORD evaluable RIGHT_SEPARATOR;
 
 literal: (QUOTE symbolicExpression) | integerAtom ;
 

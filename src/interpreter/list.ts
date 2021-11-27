@@ -30,8 +30,12 @@ export class List {
 
   constructor(private contents: SymbolicExpression[]) {}
 
-  car() {
+  car(): SymbolicExpression {
     return this.contents[0];
+  }
+
+  cdr(): List {
+    return new List(this.contents.slice(1));
   }
 
   isEmpty() {
