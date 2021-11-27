@@ -26,12 +26,11 @@ export class Expression {
       throw Error(`Cannot get the car of returned atom "${operand.toString()}"`);
     }
 
-    const result = operand.first();
-    if (result === null) {
+    if (operand.isEmpty()) {
       throw Error(`Cannot get the car of an empty list "${this.evaluable.toString()}"`);
     }
 
-    return result;
+    return operand.first();
   }
 
   toString(): string {

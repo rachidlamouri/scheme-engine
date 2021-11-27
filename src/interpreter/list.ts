@@ -1,22 +1,45 @@
 import { ListContext } from '../language/compiled/SchemeParser';
+import { SymbolicExpression } from './symbolicExpression';
 import { SymbolicExpressionGroup } from './symbolicExpressionGroup';
-import { buildParseParentContext } from './utils';
+import { ParentContext } from './utils';
 
+type ChildListContext = ListContext | undefined;
+
+type ListParentContext<TChildContext extends ChildListContext> =
+  [TChildContext] extends [ListContext]
+    ? ParentContext<'list', ListContext>
+    : ParentContext<'list', ListContext | undefined>;
+
+type ParsedListContext<TChildContext extends ChildListContext> =
+  [TChildContext] extends [ListContext]
+    ? List
+    : List | null;
 export class List {
-  static parseParentContext = buildParseParentContext<List, ListContext, 'list'>(List, 'list');
+  static parseParentContext = <
+    TChildContext extends ChildListContext
+  >(parentContext: ListParentContext<TChildContext>): ParsedListContext<TChildContext> => {
+    const listContext = parentContext.list();
 
-  protected symbolicExpressionGroup: SymbolicExpressionGroup | null;
+    if (listContext !== undefined) {
+      const symbolicExpressionGroup = SymbolicExpressionGroup.parseParentContext(listContext);
+      return new List(symbolicExpressionGroup?.toArray() ?? []);
+    }
 
-  constructor(listContext: ListContext) {
-    this.symbolicExpressionGroup = SymbolicExpressionGroup.parseParentContext(listContext);
-  }
+    return null as ParsedListContext<TChildContext>;
+  };
+
+  constructor(private contents: SymbolicExpression[]) {}
 
   first() {
-    return this.symbolicExpressionGroup?.first() ?? null;
+    return this.contents[0];
+  }
+
+  isEmpty() {
+    return this.contents.length === 0;
   }
 
   toString(): string {
-    const groupText = this.symbolicExpressionGroup?.toString() ?? '';
-    return `(${groupText})`;
+    const contentsText = this.contents.map((item) => item.toString()).join(' ');
+    return `(${contentsText})`;
   }
 }
