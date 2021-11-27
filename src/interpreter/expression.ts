@@ -1,16 +1,38 @@
-import { ExpressionContext } from '../language/compiled/SchemeParser';
+import { EvaluableContext, ExpressionContext } from '../language/compiled/SchemeParser';
 import { Atom } from './atom';
 import { Evaluable, parseEvaluableParentContext } from './evaluable';
 import { SymbolicExpression } from './symbolicExpression';
-import { buildParseParentContext } from './utils';
+import { ParentContext } from './utils';
+
+type ChildExpressionContext = ExpressionContext | undefined;
+
+type ExpressionParentContext<TChildContext> =
+  [TChildContext] extends [ExpressionContext]
+    ? ParentContext<'expression', ExpressionContext>
+    : ParentContext<'expression', ExpressionContext | undefined>
+
+type ParsedExpression<TChildContext extends ChildExpressionContext> =
+  [TChildContext] extends [ExpressionContext]
+    ? Expression
+    : Expression | null
 
 export class Expression {
-  static parseParentContext = buildParseParentContext<Expression, ExpressionContext, 'expression'>(Expression, 'expression');
+  static parseParentContext = <
+    TChildContext extends ChildExpressionContext
+  >(parentContext: ExpressionParentContext<TChildContext>): ParsedExpression<TChildContext> => {
+    const expressionContext = parentContext.expression();
+
+    if (expressionContext !== undefined) {
+      return new Expression(expressionContext);
+    }
+
+    return null as ParsedExpression<TChildContext>;
+  }
 
   private evaluable: Evaluable;
 
   constructor(expresssionContext: ExpressionContext) {
-    this.evaluable = parseEvaluableParentContext(expresssionContext);
+    this.evaluable = parseEvaluableParentContext<EvaluableContext>(expresssionContext);
   }
 
   evaluate(): SymbolicExpression {

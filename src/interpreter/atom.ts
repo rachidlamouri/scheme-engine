@@ -1,22 +1,26 @@
 import { AtomContext, IntegerAtomContext } from '../language/compiled/SchemeParser';
-
-type ParentContext<Key extends string, ChildContext> = Record<Key, () => ChildContext | undefined>;
-
-type AtomParentContext =
-  ParentContext<'atom', AtomContext>
-  | ParentContext<'integerAtom', IntegerAtomContext>
+import { ParentContext } from './utils';
 
 type ChildAtomContext = AtomContext | IntegerAtomContext | undefined;
 
+type AtomParentContext<TChildContext extends ChildAtomContext> =
+  [TChildContext] extends [AtomContext]
+    ? ParentContext<'atom', AtomContext>
+    : [TChildContext] extends [AtomContext | undefined]
+      ? ParentContext<'atom', AtomContext | undefined>
+      : [TChildContext] extends [IntegerAtomContext]
+        ? ParentContext<'integerAtom', IntegerAtomContext>
+        : ParentContext<'integerAtom', IntegerAtomContext | undefined>;
+
 type ParsedAtom<TChildContext extends ChildAtomContext> =
-  TChildContext extends AtomContext
+  [TChildContext] extends [AtomContext | IntegerAtomContext]
     ? Atom
-    : null
+    : Atom | null;
 
 export class Atom {
-  static parseParentContext =<
-  TChildContext extends ChildAtomContext
->(parentContext: AtomParentContext): ParsedAtom<TChildContext> => {
+  static parseParentContext = <
+    TChildContext extends ChildAtomContext
+  >(parentContext: AtomParentContext<TChildContext>): ParsedAtom<TChildContext> => {
     const atomContext =
       'atom' in parentContext
         ? parentContext.atom()
