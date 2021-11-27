@@ -1,7 +1,7 @@
 import { ExpressionContext } from '../language/compiled/SchemeParser';
+import { Atom } from './atom';
 import { Evaluable, parseEvaluableParentContext } from './evaluable';
 import { SymbolicExpression } from './symbolicExpression';
-import { isAtom } from './atom';
 import { buildParseParentContext } from './utils';
 
 export class Expression {
@@ -14,7 +14,7 @@ export class Expression {
   }
 
   evaluate(): SymbolicExpression {
-    if (isAtom(this.evaluable)) {
+    if (this.evaluable instanceof Atom) {
       throw Error(`Cannot get the car of atom "${this.evaluable.toString()}"`);
     }
 
@@ -22,7 +22,7 @@ export class Expression {
       ? this.evaluable.evaluate()
       : this.evaluable;
 
-    if (isAtom(operand)) {
+    if (operand instanceof Atom) {
       throw Error(`Cannot get the car of returned atom "${operand.toString()}"`);
     }
 

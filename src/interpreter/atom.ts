@@ -1,20 +1,37 @@
-import { AtomContext } from '../language/compiled/SchemeParser';
-import { IntegerAtom } from './integerAtom';
-import { StringAtom } from './stringAtom';
+import { AtomContext, IntegerAtomContext } from '../language/compiled/SchemeParser';
 
-export type Atom = StringAtom | IntegerAtom;
+type ParentContext<Key extends string, ChildContext> = Record<Key, () => ChildContext | undefined>;
 
-export const parseAtomParentContext = (parentContext: Record<'atom', () => AtomContext | undefined>): Atom | null => {
-  const atomContext = parentContext.atom();
+type AtomParentContext =
+  ParentContext<'atom', AtomContext>
+  | ParentContext<'integerAtom', IntegerAtomContext>
 
-  return (
-    atomContext !== undefined
-      ? StringAtom.parseParentContext(atomContext) ?? IntegerAtom.parseParentContext(atomContext)!
-      : null
-  ) as any;
-};
+type ChildAtomContext = AtomContext | IntegerAtomContext | undefined;
 
-export const isAtom = (arg: any): arg is Atom => (
-  arg instanceof StringAtom
-  || arg instanceof IntegerAtom
-);
+type ParsedAtom<TChildContext extends ChildAtomContext> =
+  TChildContext extends AtomContext
+    ? Atom
+    : null
+
+export class Atom {
+  static parseParentContext =<
+  TChildContext extends ChildAtomContext
+>(parentContext: AtomParentContext): ParsedAtom<TChildContext> => {
+    const atomContext =
+      'atom' in parentContext
+        ? parentContext.atom()
+        : parentContext.integerAtom();
+
+    if (atomContext !== undefined) {
+      return new Atom(atomContext) as ParsedAtom<TChildContext>;
+    }
+
+    return null as ParsedAtom<TChildContext>;
+  };
+
+  constructor (private atomContext: AtomContext | IntegerAtomContext) {}
+
+  toString(): string {
+    return this.atomContext.text;
+  }
+}
