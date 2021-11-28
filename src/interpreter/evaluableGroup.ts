@@ -1,27 +1,23 @@
 import { EvaluableGroupContext, EvaluableContext } from '../language/compiled/SchemeParser';
 import { Evaluable, parseEvaluableParentContext } from './evaluable';
-import { buildParseParentContext } from './utils';
+import { SymbolicExpression, isSymbolicExpression } from './symbolicExpression';
+import { buildParseGroupParentContext } from './utils';
 
-export class EvaluableGroup {
-  static parseParentContext = buildParseParentContext<
-    EvaluableGroup,
-    EvaluableGroupContext,
-    'evaluableGroup'
-  >(EvaluableGroup, 'evaluableGroup');
+const parseParentContext = buildParseGroupParentContext<
+  Evaluable,
+  EvaluableContext,
+  typeof parseEvaluableParentContext,
+  'evaluableGroup',
+  EvaluableGroupContext
+>(
+  parseEvaluableParentContext,
+  'evaluableGroup',
+);
 
-  private evaluable: Evaluable;
-  private evaluableGroup: EvaluableGroup | null;
+type EvaluableParentContext = Parameters<typeof parseParentContext>[0];
 
-  constructor(evaluableGroupContext: EvaluableGroupContext) {
-    this.evaluable = parseEvaluableParentContext<EvaluableContext>(evaluableGroupContext);
-    this.evaluableGroup = EvaluableGroup.parseParentContext(evaluableGroupContext);
-  }
-
-  toArray(): Evaluable[] {
-    if (this.evaluableGroup) {
-      return [this.evaluable, ...this.evaluableGroup.toArray()];
-    }
-
-    return [this.evaluable];
-  }
-}
+export const parseEvaluableGroupParentContext = (parentContext: EvaluableParentContext): SymbolicExpression[] => parseParentContext(parentContext).map((evaluable) => (
+  isSymbolicExpression(evaluable)
+    ? evaluable
+    : evaluable.evaluate()
+));

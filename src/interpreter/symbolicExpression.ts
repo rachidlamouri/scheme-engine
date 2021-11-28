@@ -5,6 +5,8 @@ import { OptionalChildContext, NodeParentContext, ParsedNode } from './utils';
 
 export type SymbolicExpression = List | Atom;
 
+export const isSymbolicExpression = (arg: any): arg is SymbolicExpression => arg instanceof List || arg instanceof Atom;
+
 export const parseSymbolicExpressionParentContext = <
   TChildContext extends OptionalChildContext<SymbolicExpressionContext>
 >(parentContext: NodeParentContext<SymbolicExpressionContext, TChildContext, 'symbolicExpression'>): ParsedNode<SymbolicExpression, SymbolicExpressionContext, TChildContext> => {

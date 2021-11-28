@@ -1,6 +1,6 @@
-import { EvaluableGroupContext, ExpressionContext } from '../language/compiled/SchemeParser';
+import { ExpressionContext } from '../language/compiled/SchemeParser';
 import { Atom } from './atom';
-import { EvaluableGroup } from './evaluableGroup';
+import { parseEvaluableGroupParentContext } from './evaluableGroup';
 import { List } from './list';
 import { SymbolicExpression } from './symbolicExpression';
 import { OptionalChildContext, NodeParentContext, ParsedNode } from './utils';
@@ -19,15 +19,8 @@ export abstract class Expression {
     const expressionContext = parentContext.expression();
 
     if (expressionContext !== undefined) {
-      const evaluableGroup = EvaluableGroup.parseParentContext<EvaluableGroupContext>(expressionContext);
-
       const functionName = expressionContext.KEYWORD().text;
-      const parameters: SymbolicExpression[] =
-        evaluableGroup.toArray().map((evaluable) => (
-          evaluable instanceof Expression
-            ? evaluable.evaluate()
-            : evaluable
-        ))
+      const parameters = parseEvaluableGroupParentContext(expressionContext);
 
       return functionName === BuiltInFunctionName.CONS
         ? new ConsExpression(parameters)

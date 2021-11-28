@@ -20,39 +20,38 @@ export type ParsedNode<
   ? TNode
   : TNode | null;
 
-type InterpreterNodeClass<TInterpreterNode, TChildContext> = { new (childContext: TChildContext): TInterpreterNode };
+export type ContextParser<
+  TNode,
+  TContext extends ParserRuleContext,
+  TChildContextName extends string
+> = <TChildContext extends OptionalChildContext<TContext>>(parentContext: NodeParentContext<TContext, TChildContext, TChildContextName>) => ParsedNode<TNode, TContext, TChildContext>;
 
-export const buildParseParentContext = <
-  TInterpreterNode,
-  TChildContext,
-  TChildContextName extends string,
+export const buildParseGroupParentContext = <
+  TNode,
+  TLeftContext extends ParserRuleContext,
+  TLeftContextParser extends ContextParser<TNode, TLeftContext, string>,
+  TRightContextName extends string,
+  TRightContext extends ParserRuleContext & Parameters<TLeftContextParser>[0] & NodeParentContext<TRightContext, OptionalChildContext<TRightContext>, TRightContextName>,
 >(
-  InterpreterNode: InterpreterNodeClass<TInterpreterNode, TChildContext>,
-  childContextName: TChildContextName,
+  leftContextParser: TLeftContextParser,
+  rightContextName: TRightContextName,
 ) => {
-  type TTParentContext<TTChildContext extends TChildContext | undefined> =
-    [TTChildContext] extends [TChildContext]
-      ? ParentContext<TChildContextName, TChildContext>
-      : ParentContext<TChildContextName, TChildContext | undefined>
-
-  type TTParsedInterpreterNode<TTChildContext extends TChildContext | undefined> =
-    [TTChildContext] extends [TChildContext]
-      ? TInterpreterNode
-      : TInterpreterNode | null
-
-  const parseParentContext = <
-    TTChildContext extends TChildContext | undefined
+  const parseGroupParentContext = <
+    TChildContext extends OptionalChildContext<TRightContext>
   >(
-    parentContext: TTParentContext<TTChildContext>
-  ): TTParsedInterpreterNode<TTChildContext> => {
-    const childContext = parentContext[childContextName]();
+    parentContext: NodeParentContext<TRightContext, TChildContext, TRightContextName>
+  ): TNode[] => {
+    const childContext = parentContext[rightContextName]();
 
     if (childContext === undefined) {
-      return null as TTParsedInterpreterNode<TTChildContext>;
+      return [];
     }
 
-    return new InterpreterNode(childContext) as TTParsedInterpreterNode<TTChildContext>;
+    const leftNode = leftContextParser<TLeftContext>(childContext) as TNode;
+    const rightNodes = parseGroupParentContext(childContext);
+
+    return [leftNode, ...rightNodes];
   };
 
-  return parseParentContext;
-}
+  return parseGroupParentContext;
+};

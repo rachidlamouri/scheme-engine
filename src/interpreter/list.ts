@@ -1,6 +1,6 @@
 import { ListContext } from '../language/compiled/SchemeParser';
 import { SymbolicExpression } from './symbolicExpression';
-import { SymbolicExpressionGroup } from './symbolicExpressionGroup';
+import { parseSymbolicExpressionGroupParentContext } from './symbolicExpressionGroup';
 import { OptionalChildContext, NodeParentContext, ParsedNode } from './utils';
 
 export class List {
@@ -10,8 +10,8 @@ export class List {
     const listContext = parentContext.list();
 
     if (listContext !== undefined) {
-      const symbolicExpressionGroup = SymbolicExpressionGroup.parseParentContext(listContext);
-      return new List(symbolicExpressionGroup?.toArray() ?? []);
+      const contents = parseSymbolicExpressionGroupParentContext(listContext)
+      return new List(contents);
     }
 
     return null as ParsedNode<List, ListContext, TChildContext>;
