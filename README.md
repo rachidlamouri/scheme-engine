@@ -33,6 +33,7 @@ echo "'turkey" | npm run scheme -- -i # 'turkey
 - echo literal symbolic expressions
 - car
 - cdr
+- cons
 
 ## Development
 

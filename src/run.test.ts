@@ -71,7 +71,7 @@ describe('run', () => {
     [f, 'nested car expressions', "(car (car (car '(((a))))))", 'a'],
     [f, 'nested car expressions', "(car (car '( ((hotdogs)) ((and)) ) ))", '(hotdogs)'],
     [f, 'integer atom', "(car 1234)", { error: 'Cannot get the car of atom "1234"' }],
-    [f, 'invalid nested car', "(car (car '(a)))", { error: 'Cannot get the car of returned atom "a"' }],
+    [f, 'invalid nested car', "(car (car '(a)))", { error: 'Cannot get the car of atom "a"' }],
   ]);
 
   runSuite('cdr', [
@@ -82,9 +82,22 @@ describe('run', () => {
     [t, 'atom', "(cdr 'hotdogs)", { error: 'Cannot get the cdr of atom "hotdogs"'}],
     [t, 'empty list', "(cdr '())", { error: 'Cannot get the cdr of an empty list'}],
     [f, 'nested cdr', "(cdr (cdr '(a b c)))", '(c)'],
-    [f, 'nested cdr error', "(cdr (cdr '(a)))", { error: 'Cannot get the cdr of the returned empty list'}],
+    [f, 'nested cdr error', "(cdr (cdr '(a)))", { error: 'Cannot get the cdr of an empty list'}],
     [t, 'nested car and cdr', "(car (cdr '((b) (x y) ((c))) ))", '(x y)'],
     [t, 'nested cdr', "(cdr (cdr '((b) (x y) ((c))) ))", '(((c)))'],
-    [t, 'nested cdr and car', "(cdr (car '(a (b (c)) d) ))", { error: 'Cannot get the cdr of returned atom "a"' }],
+    [t, 'nested cdr and car', "(cdr (car '(a (b (c)) d) ))", { error: 'Cannot get the cdr of atom "a"' }],
+  ]);
+
+  runSuite('cons', [
+    [t, 'atom and list', "(cons 'peanut '(butter and jelly))", '(peanut butter and jelly)'],
+    [t, 'list and list', "(cons '(banana and) '(peanut butter and jelly))", '((banana and) peanut butter and jelly)'],
+    [t, 'list and list', "(cons '((help) this) '(is very ((hard) to learn)) )", '(((help) this) is very ((hard) to learn))'],
+    [t, 'list and empty list', "(cons '(a b (c)) '() )", '((a b (c)))'],
+    [t, 'atom and empty list', "(cons 'a '() )", '(a)'],
+    [t, 'list and atom', "(cons '((abcd)) 'b )", { error: 'The second parameter to cons must be a list. Received: "b"' }],
+    [t, 'atom and atom', "(cons 'a 'b )", { error: 'The second parameter to cons must be a list. Received: "b"' }],
+    [f, 'one parameter', "(cons 'a)", { error: 'cons requires two parameters. Received one: "a"' }],
+    [t, 'cons of car', "(cons 'a (car '((b) c d) ))", '(a b)'],
+    [t, 'cons of cdr', "(cons 'a (cdr '((b) c d) ))", '(a c d)'],
   ]);
 });

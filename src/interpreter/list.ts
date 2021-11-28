@@ -38,6 +38,10 @@ export class List {
     return new List(this.contents.slice(1));
   }
 
+  cons(symbolicExpression: SymbolicExpression): List {
+    return new List([symbolicExpression, ...this.contents]);
+  }
+
   isEmpty() {
     return this.contents.length === 0;
   }

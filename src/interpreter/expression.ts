@@ -1,49 +1,105 @@
-import { EvaluableContext, ExpressionContext } from '../language/compiled/SchemeParser';
+import { EvaluableGroupContext, ExpressionContext } from '../language/compiled/SchemeParser';
 import { Atom } from './atom';
-import { Evaluable, parseEvaluableParentContext } from './evaluable';
+import { EvaluableGroup } from './evaluableGroup';
+import { List } from './list';
 import { SymbolicExpression } from './symbolicExpression';
-import { buildParseParentContext, ParentContext } from './utils';
+import { ParentContext } from './utils';
 
-type BuiltInFunction = 'car' | 'cdr';
+enum BuiltInFunctionName {
+  CAR = 'car',
+  CDR = 'cdr',
+  CONS = 'cons',
+};
+type OneParameterFunctionName = BuiltInFunctionName.CAR | BuiltInFunctionName.CDR;
 
-export class Expression {
-  static parseParentContext = buildParseParentContext<Expression, ExpressionContext, 'expression'>(Expression, 'expression');
+type ChildExpressionContext = ExpressionContext | undefined;
 
-  private evaluable: Evaluable;
-  private functionName: BuiltInFunction;
+type ExpressionParentContext<TChildContext extends ChildExpressionContext> =
+  [TChildContext] extends [ExpressionContext]
+    ? ParentContext<'expression', ExpressionContext>
+    : ParentContext<'expression', ExpressionContext | undefined>;
 
-  constructor(expresssionContext: ExpressionContext) {
-    this.evaluable = parseEvaluableParentContext<EvaluableContext>(expresssionContext);
-    this.functionName = expresssionContext.KEYWORD().text as BuiltInFunction;
+type ParsedExpressionContext<TChildContext extends ChildExpressionContext> =
+  [TChildContext] extends [ExpressionContext]
+    ? Expression
+    : Expression | null;
+
+export abstract class Expression {
+  static parseParentContext = <
+    TChildContext extends ChildExpressionContext
+  >(parentContext: ExpressionParentContext<TChildContext>): ParsedExpressionContext<TChildContext> => {
+    const expressionContext = parentContext.expression();
+
+    if (expressionContext !== undefined) {
+      const evaluableGroup = EvaluableGroup.parseParentContext<EvaluableGroupContext>(expressionContext);
+
+      const functionName = expressionContext.KEYWORD().text;
+      const parameters: SymbolicExpression[] =
+        evaluableGroup.toArray().map((evaluable) => (
+          evaluable instanceof Expression
+            ? evaluable.evaluate()
+            : evaluable
+        ))
+
+      return functionName === BuiltInFunctionName.CONS
+        ? new ConsExpression(parameters)
+        : new OneParameterExpression(functionName as OneParameterFunctionName, parameters);
+    }
+
+    return null as ParsedExpressionContext<TChildContext>;
+  };
+
+  constructor(
+    protected functionName: BuiltInFunctionName,
+    protected parameters: SymbolicExpression[],
+  ) {}
+
+  abstract evaluate(): SymbolicExpression;
+}
+
+class OneParameterExpression extends Expression {
+  private parameter: SymbolicExpression;
+
+  constructor(
+    protected functionName: OneParameterFunctionName,
+    parameters: SymbolicExpression[],
+  ) {
+    super(functionName, parameters);
+
+    this.parameter = parameters[0];
   }
 
   evaluate(): SymbolicExpression {
-    if (this.evaluable instanceof Atom) {
-      throw Error(`Cannot get the ${this.functionName} of atom "${this.evaluable.toString()}"`);
+    if (this.parameter instanceof Atom) {
+      throw Error(`Cannot get the ${this.functionName} of atom "${this.parameter.toString()}"`);
     }
 
-    const operand = (this.evaluable instanceof Expression)
-      ? this.evaluable.evaluate()
-      : this.evaluable;
-
-    if (operand instanceof Atom) {
-      throw Error(`Cannot get the ${this.functionName} of returned atom "${operand.toString()}"`);
-    }
-
-    if (operand.isEmpty()) {
-      if (this.evaluable instanceof Expression) {
-        throw Error(`Cannot get the cdr of the returned empty list`);
-      }
-
+    if (this.parameter.isEmpty()) {
       throw Error(`Cannot get the ${this.functionName} of an empty list`);
     }
 
-    return this.functionName === 'car'
-      ? operand.car()
-      : operand.cdr();
+    return this.functionName === BuiltInFunctionName.CAR
+      ? this.parameter.car()
+      : this.parameter.cdr();
+  }
+}
+
+class ConsExpression extends Expression {
+  constructor(parameters: SymbolicExpression[]) {
+    super(BuiltInFunctionName.CONS, parameters);
   }
 
-  toString(): string {
-    return this.evaluable.toString();
+  evaluate(): SymbolicExpression {
+    if (this.parameters.length < 2) {
+      throw Error(`cons requires two parameters. Received one: "${this.parameters[0].toString()}"`);
+    }
+
+    const [firstParameter, secondParameter] = this.parameters;
+
+    if (!(secondParameter instanceof List)) {
+      throw Error(`The second parameter to cons must be a list. Received: "${secondParameter.toString()}"`)
+    }
+
+    return secondParameter.cons(firstParameter);
   }
 }
