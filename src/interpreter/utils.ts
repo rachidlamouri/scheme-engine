@@ -2,22 +2,6 @@ export type ParentContext<Key extends string, ChildContext> = Record<Key, () => 
 
 type InterpreterNodeClass<TInterpreterNode, TChildContext> = { new (childContext: TChildContext): TInterpreterNode };
 
-type TTParentContext<
-  TChildContext,
-  TTChildContext extends TChildContext | undefined,
-  TChildContextName extends string
-> = [TTChildContext] extends [TChildContext]
-  ? ParentContext<TChildContextName, TChildContext>
-  : ParentContext<TChildContextName, TChildContext | undefined>
-
-type TTParsedInterpreterNode<
-  TInterpreterNode,
-  TChildContext,
-  TTChildContext extends TChildContext | undefined
-> = [TTChildContext] extends [TChildContext]
-  ? TInterpreterNode
-  : TInterpreterNode | null
-
 export const buildParseParentContext = <
   TInterpreterNode,
   TChildContext,
@@ -26,18 +10,28 @@ export const buildParseParentContext = <
   InterpreterNode: InterpreterNodeClass<TInterpreterNode, TChildContext>,
   childContextName: TChildContextName,
 ) => {
+  type TTParentContext<TTChildContext extends TChildContext | undefined> =
+    [TTChildContext] extends [TChildContext]
+      ? ParentContext<TChildContextName, TChildContext>
+      : ParentContext<TChildContextName, TChildContext | undefined>
+
+  type TTParsedInterpreterNode<TTChildContext extends TChildContext | undefined> =
+    [TTChildContext] extends [TChildContext]
+      ? TInterpreterNode
+      : TInterpreterNode | null
+
   const parseParentContext = <
     TTChildContext extends TChildContext | undefined
   >(
-    parentContext: TTParentContext<TChildContext, TTChildContext, TChildContextName>
-  ): TTParsedInterpreterNode<TInterpreterNode, TChildContext, TTChildContext> => {
+    parentContext: TTParentContext<TTChildContext>
+  ): TTParsedInterpreterNode<TTChildContext> => {
     const childContext = parentContext[childContextName]();
 
     if (childContext === undefined) {
-      return null as TTParsedInterpreterNode<TInterpreterNode, TChildContext, TTChildContext>;
+      return null as TTParsedInterpreterNode<TTChildContext>;
     }
 
-    return new InterpreterNode(childContext) as TTParsedInterpreterNode<TInterpreterNode, TChildContext, TTChildContext>;
+    return new InterpreterNode(childContext) as TTParsedInterpreterNode<TTChildContext>;
   };
 
   return parseParentContext;
