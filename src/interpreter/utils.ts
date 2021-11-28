@@ -1,7 +1,6 @@
 export type ParentContext<Key extends string, ChildContext> = Record<Key, () => ChildContext>;
 
 type InterpreterNodeClass<TInterpreterNode, TChildContext> = { new (childContext: TChildContext): TInterpreterNode };
-type InterpreterNodeCreator<TInterpreterNode, TChildContext> = (childContext: TChildContext) => TInterpreterNode;
 
 type TTParentContext<
   TChildContext,
@@ -24,7 +23,7 @@ export const buildParseParentContext = <
   TChildContext,
   TChildContextName extends string,
 >(
-  InterpreterNode: InterpreterNodeClass<TInterpreterNode, TChildContext> | InterpreterNodeCreator<TInterpreterNode, TChildContext>,
+  InterpreterNode: InterpreterNodeClass<TInterpreterNode, TChildContext>,
   childContextName: TChildContextName,
 ) => {
   const parseParentContext = <
@@ -38,11 +37,7 @@ export const buildParseParentContext = <
       return null as TTParsedInterpreterNode<TInterpreterNode, TChildContext, TTChildContext>;
     }
 
-    if ('prototype' in InterpreterNode && 'constructor' in InterpreterNode.prototype) {
-      return new (InterpreterNode as InterpreterNodeClass<TInterpreterNode, TChildContext>)(childContext) as TTParsedInterpreterNode<TInterpreterNode, TChildContext, TTChildContext>;
-    }
-
-    return (InterpreterNode as InterpreterNodeCreator<TInterpreterNode, TChildContext>)(childContext) as TTParsedInterpreterNode<TInterpreterNode, TChildContext, TTChildContext>;
+    return new InterpreterNode(childContext) as TTParsedInterpreterNode<TInterpreterNode, TChildContext, TTChildContext>;
   };
 
   return parseParentContext;
