@@ -1,6 +1,6 @@
 import { tokenize } from './tokenize';
 import { parse } from './parse';
-import { interpret } from './interpret';
+import { interpret } from './interpreter/';
 
 export const run = (code: string): string => {
   const tokens = tokenize(code);

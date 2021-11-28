@@ -1,1 +1,1 @@
-export { interpreter } from './interpreter';
+export { interpret } from './interpret';

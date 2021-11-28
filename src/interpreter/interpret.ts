@@ -5,7 +5,7 @@ import { parseInputContext } from './input';
 import { Expression } from './expression';
 
 class Interpreter extends AbstractParseTreeVisitor<string> implements SchemeParserVisitor<string> {
-  defaultResult() {
+  defaultResult(): string {
     return '';
   }
 
@@ -15,4 +15,9 @@ class Interpreter extends AbstractParseTreeVisitor<string> implements SchemePars
   }
 }
 
-export const interpreter = new Interpreter();
+const interpreter = new Interpreter();
+
+export const interpret = (rootAstNode: InputContext): string => {
+  const result = interpreter.visit(rootAstNode);
+  return result;
+};
