@@ -1,23 +1,12 @@
 import { ListContext } from '../language/compiled/SchemeParser';
 import { SymbolicExpression } from './symbolicExpression';
 import { SymbolicExpressionGroup } from './symbolicExpressionGroup';
-import { ParentContext } from './utils';
+import { OptionalChildContext, NodeParentContext, ParsedNode } from './utils';
 
-type ChildListContext = ListContext | undefined;
-
-type ListParentContext<TChildContext extends ChildListContext> =
-  [TChildContext] extends [ListContext]
-    ? ParentContext<'list', ListContext>
-    : ParentContext<'list', ListContext | undefined>;
-
-type ParsedListContext<TChildContext extends ChildListContext> =
-  [TChildContext] extends [ListContext]
-    ? List
-    : List | null;
 export class List {
   static parseParentContext = <
-    TChildContext extends ChildListContext
-  >(parentContext: ListParentContext<TChildContext>): ParsedListContext<TChildContext> => {
+    TChildContext extends OptionalChildContext<ListContext>
+  >(parentContext: NodeParentContext<ListContext, TChildContext, 'list'>): ParsedNode<List, ListContext, TChildContext> => {
     const listContext = parentContext.list();
 
     if (listContext !== undefined) {
@@ -25,7 +14,7 @@ export class List {
       return new List(symbolicExpressionGroup?.toArray() ?? []);
     }
 
-    return null as ParsedListContext<TChildContext>;
+    return null as ParsedNode<List, ListContext, TChildContext>;
   };
 
   constructor(private contents: SymbolicExpression[]) {}

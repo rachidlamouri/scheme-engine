@@ -1,31 +1,19 @@
 import { AtomContext, SymbolicExpressionContext } from '../language/compiled/SchemeParser';
 import { List } from './list';
 import { Atom } from './atom';
-import { ParentContext } from './utils';
+import { OptionalChildContext, NodeParentContext, ParsedNode } from './utils';
 
 export type SymbolicExpression = List | Atom;
 
-type ChildSymbolicExpressionContext = SymbolicExpressionContext | undefined;
-
-type SymbolicExpressionParentContext<TChildContext> =
-  [TChildContext] extends [SymbolicExpressionContext]
-    ? ParentContext<'symbolicExpression', SymbolicExpressionContext>
-    : ParentContext<'symbolicExpression', SymbolicExpressionContext | undefined>
-
-type ParsedSymbolicExpression<TChildContext extends ChildSymbolicExpressionContext> =
-  [TChildContext] extends [SymbolicExpressionContext]
-    ? SymbolicExpression
-    : SymbolicExpression | null
-
 export const parseSymbolicExpressionParentContext = <
-  TChildContext extends ChildSymbolicExpressionContext
->(parentContext: SymbolicExpressionParentContext<TChildContext>): ParsedSymbolicExpression<TChildContext> => {
+  TChildContext extends OptionalChildContext<SymbolicExpressionContext>
+>(parentContext: NodeParentContext<SymbolicExpressionContext, TChildContext, 'symbolicExpression'>): ParsedNode<SymbolicExpression, SymbolicExpressionContext, TChildContext> => {
   const symbolicExpressionContext = parentContext.symbolicExpression();
 
   if (symbolicExpressionContext !== undefined) {
     return List.parseParentContext(symbolicExpressionContext)
-    ?? Atom.parseParentContext<AtomContext | undefined>(symbolicExpressionContext) as ParsedSymbolicExpression<TChildContext>;
+    ?? Atom.parseParentContext<AtomContext | undefined>(symbolicExpressionContext) as ParsedNode<SymbolicExpression, SymbolicExpressionContext, TChildContext>;
   }
 
-  return null as ParsedSymbolicExpression<TChildContext>;
+  return null as ParsedNode<SymbolicExpression, SymbolicExpressionContext, TChildContext>;
 };

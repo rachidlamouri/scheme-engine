@@ -1,6 +1,6 @@
 import { SymbolicExpressionContext, SymbolicExpressionGroupContext } from '../language/compiled/SchemeParser';
 import { parseSymbolicExpressionParentContext, SymbolicExpression } from './symbolicExpression';
-import { buildParseParentContext, ParentContext } from './utils';
+import { buildParseParentContext } from './utils';
 
 export class SymbolicExpressionGroup {
   static parseParentContext = buildParseParentContext<

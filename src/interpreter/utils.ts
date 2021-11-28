@@ -1,4 +1,24 @@
+import { ParserRuleContext } from 'antlr4ts';
+
 export type ParentContext<Key extends string, ChildContext> = Record<Key, () => ChildContext>;
+
+export type OptionalChildContext<TContext extends ParserRuleContext> = TContext | undefined;
+
+export type NodeParentContext<
+  TContext extends ParserRuleContext,
+  TChildContext extends OptionalChildContext<TContext>,
+  TChildContextName extends string
+> = [TChildContext] extends [TContext]
+  ? ParentContext<TChildContextName, TContext>
+  : ParentContext<TChildContextName, OptionalChildContext<TContext>>;
+
+export type ParsedNode<
+  TNode,
+  TContext extends ParserRuleContext,
+  TChildContext extends OptionalChildContext<TContext>,
+> = [TChildContext] extends [TContext]
+  ? TNode
+  : TNode | null;
 
 type InterpreterNodeClass<TInterpreterNode, TChildContext> = { new (childContext: TChildContext): TInterpreterNode };
 

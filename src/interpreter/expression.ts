@@ -3,7 +3,7 @@ import { Atom } from './atom';
 import { EvaluableGroup } from './evaluableGroup';
 import { List } from './list';
 import { SymbolicExpression } from './symbolicExpression';
-import { ParentContext } from './utils';
+import { OptionalChildContext, NodeParentContext, ParsedNode } from './utils';
 
 enum BuiltInFunctionName {
   CAR = 'car',
@@ -12,22 +12,10 @@ enum BuiltInFunctionName {
 };
 type OneParameterFunctionName = BuiltInFunctionName.CAR | BuiltInFunctionName.CDR;
 
-type ChildExpressionContext = ExpressionContext | undefined;
-
-type ExpressionParentContext<TChildContext extends ChildExpressionContext> =
-  [TChildContext] extends [ExpressionContext]
-    ? ParentContext<'expression', ExpressionContext>
-    : ParentContext<'expression', ExpressionContext | undefined>;
-
-type ParsedExpressionContext<TChildContext extends ChildExpressionContext> =
-  [TChildContext] extends [ExpressionContext]
-    ? Expression
-    : Expression | null;
-
 export abstract class Expression {
   static parseParentContext = <
-    TChildContext extends ChildExpressionContext
-  >(parentContext: ExpressionParentContext<TChildContext>): ParsedExpressionContext<TChildContext> => {
+    TChildContext extends OptionalChildContext<ExpressionContext>
+  >(parentContext: NodeParentContext<ExpressionContext, TChildContext, 'expression'>): ParsedNode<Expression, ExpressionContext, TChildContext> => {
     const expressionContext = parentContext.expression();
 
     if (expressionContext !== undefined) {
@@ -46,7 +34,7 @@ export abstract class Expression {
         : new OneParameterExpression(functionName as OneParameterFunctionName, parameters);
     }
 
-    return null as ParsedExpressionContext<TChildContext>;
+    return null as ParsedNode<Expression, ExpressionContext, TChildContext>;
   };
 
   constructor(
