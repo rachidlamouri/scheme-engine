@@ -2,22 +2,20 @@
   "scripts": {
     "clean": "rm -rf build/; rm -rf src/language/compiled",
     "compile:grammar": "antlr4ts -visitor -o src/language/compiled/ src/language/SchemeLexer.g4 src/language/SchemeParser.g4",
-    "compile:grammar:watch": "nodemon -e g4 --exec \"npm run compile:grammar\"",
     "compile:ts": "tsc",
-    "dev": "concurrently -n grammar,tests -c blue,green \"npm run compile:grammar:watch\" \"npm run test -- --watch\"",
+    "dev": "ts-node dev.ts",
     "scheme": "node build/src/cli",
     "test": "mocha"
   },
   "devDependencies": {
     "@tsconfig/node16": "^1.0.2",
+    "@types/glob": "^7.2.0",
     "@types/mocha": "^9.0.0",
     "@types/node": "^16.11.9",
     "antlr4ts-cli": "^0.5.0-alpha.4",
     "chalk": "^4.1.2",
-    "concurrently": "^6.4.0",
     "earljs": "^0.1.10",
     "mocha": "^9.1.3",
-    "nodemon": "^2.0.15",
     "ts-node": "^10.4.0",
     "typescript": "^4.5.2"
   },
