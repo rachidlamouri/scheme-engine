@@ -8,8 +8,6 @@ An exercie in building a scheme interpeter while reading [The Little Schemer](ht
 npm install
 
 npm run compile:grammar
-
-npm run compile:ts
 ```
 
 ## Running the Interpreter

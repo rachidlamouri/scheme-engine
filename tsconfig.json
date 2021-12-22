@@ -3,7 +3,7 @@
   "compilerOptions": {
     "noImplicitAny": true,
     "rootDir": "src/",
-    "outDir": "build/src",
+    "noEmit": true,
     "esModuleInterop": true
   }
 }

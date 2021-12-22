@@ -1,10 +1,9 @@
 {
   "scripts": {
-    "clean": "rm -rf build/; rm -rf src/language/compiled",
+    "clean": "rm -rf src/language/compiled",
     "compile:grammar": "antlr4ts -visitor -o src/language/compiled/ src/language/SchemeLexer.g4 src/language/SchemeParser.g4",
-    "compile:ts": "tsc",
     "dev": "ts-node dev.ts",
-    "scheme": "node build/src/cli",
+    "scheme": "ts-node src/cli",
     "test": "mocha"
   },
   "devDependencies": {
