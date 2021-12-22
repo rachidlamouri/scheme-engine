@@ -9,7 +9,7 @@
     "test": "mocha"
   },
   "devDependencies": {
-    "@tsconfig/node14": "^1.0.1",
+    "@tsconfig/node16": "^1.0.2",
     "@types/mocha": "^9.0.0",
     "@types/node": "^16.11.9",
     "antlr4ts-cli": "^0.5.0-alpha.4",
