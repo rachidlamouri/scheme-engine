@@ -33,8 +33,9 @@ const runTest = ([isFromBook, description, code, expectedOutput, config = { isOn
   });
 };
 
-const runSuite = (suiteName: string, tests: RunConfig[]) => {
-  describe(suiteName, () => {
+const runSuite = (suiteName: string, tests: RunConfig[], config?: MochaConfig) => {
+  const method = config !== undefined && config.isOnly ? describe.only : describe;
+  method(suiteName, () => {
     tests.forEach(runTest);
   })
 };
