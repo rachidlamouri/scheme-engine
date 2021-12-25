@@ -33,6 +33,7 @@ echo "'turkey" | npm run scheme -- -i # 'turkey
 - cdr
 - cons
 - null?
+- atom?
 
 ## Development
 

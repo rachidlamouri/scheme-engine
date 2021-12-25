@@ -32,6 +32,10 @@ export class List {
     return new List([symbolicExpression, ...this.contents]);
   }
 
+  isAtom() {
+    return new SchemeBoolean(false);
+  }
+
   isEmpty() {
     return this.contents.length === 0;
   }

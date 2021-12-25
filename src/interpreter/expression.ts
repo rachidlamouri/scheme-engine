@@ -11,8 +11,9 @@ enum BuiltInFunctionName {
   CDR = 'cdr',
   CONS = 'cons',
   IS_NULL = 'null?',
+  IS_ATOM = 'atom?',
 };
-type OneParameterFunctionName = BuiltInFunctionName.CAR | BuiltInFunctionName.CDR | BuiltInFunctionName.IS_NULL;
+type OneParameterFunctionName = BuiltInFunctionName.CAR | BuiltInFunctionName.CDR | BuiltInFunctionName.IS_NULL | BuiltInFunctionName.IS_ATOM;
 
 export abstract class Expression {
   static parseParentContext = <
@@ -53,6 +54,10 @@ class OneParameterExpression extends Expression {
   }
 
   evaluate(): SymbolicExpression {
+    if (this.functionName === BuiltInFunctionName.IS_ATOM) {
+      return this.parameter.isAtom();
+    }
+
     if (this.parameter instanceof Atom) {
       throw Error(`Cannot call ${this.functionName} on atom "${this.parameter.toString()}"`);
     }

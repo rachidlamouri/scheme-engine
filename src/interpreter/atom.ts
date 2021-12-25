@@ -1,4 +1,5 @@
 import { AtomContext, IntegerAtomContext } from '../language/compiled/SchemeParser';
+import { SchemeBoolean } from './schemeBoolean';
 import { ParentContext } from './utils';
 
 type ChildAtomContext = AtomContext | IntegerAtomContext | undefined;
@@ -34,6 +35,10 @@ export class Atom {
   };
 
   constructor (private atomContext: AtomContext | IntegerAtomContext) {}
+
+  isAtom() {
+    return new SchemeBoolean(true);
+  }
 
   toString(): string {
     return this.atomContext.text;

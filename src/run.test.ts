@@ -116,4 +116,17 @@ describe('run', () => {
     [f, 'cons and null?', "(cons (null? '(a b c)) '())", '(false)'],
     [f, 'cons and null?', "(cons 'a (null? '()))", { error: 'The second parameter to cons must be a list. Received: "true"' }],
   ]);
+
+  runSuite('atom?', [
+    [t, 'atom', "(atom? 'Harry)", 'true'],
+    [f, 'integer atom', "(atom? 1234)", 'true'],
+    [t, 'list', "(atom? '(Harry had a heap of apples))", 'false'],
+    [f, 'empty list', "(atom? '())", 'false'],
+    [t, 'atom? and car', "(atom? (car '(Harry had a heap of apples) ))", 'true'],
+    [t, 'atom? and cdr', "(atom? (cdr '(Harry had a heap of apples) ))", 'false'],
+    [t, 'atom? and cdr', "(atom? (cdr '(Harry) ))", 'false'],
+    [t, 'atom?, car and cdr', "(atom? (car (cdr '(swing low sweet cherry oat) )))", 'true'],
+    [t, 'atom?, car and cdr', "(atom? (car (cdr '(swing (low sweet) cherry oat) )))", 'false'],
+    [f, 'nested atom?', "(atom? (atom? '()))", 'true'],
+  ]);
 });
