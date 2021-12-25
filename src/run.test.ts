@@ -46,6 +46,7 @@ describe('run', () => {
   runSuite('literals', [
     [t, 'string', "'atom", 'atom'],
     [t, 'string', "'turkey", 'turkey'],
+    [f, 'uppercase string', "'TURKEY", 'TURKEY'],
     [t, 'integer', "'1492", '1492'],
     [f, 'unquoted integer', "1492", '1492'],
     [t, 'single character', "'u", 'u'],

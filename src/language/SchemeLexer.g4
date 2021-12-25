@@ -4,7 +4,7 @@ QUOTE: '\'';
 
 KEYWORD: 'car' | 'cdr' | 'cons' | 'null?';
 
-STRING: ('a'..'z' | '*' | '$')+;
+STRING: ('A'..'z' | '*' | '$')+;
 
 INTEGER: '1'..'9'+ '0'..'9'*;
 
