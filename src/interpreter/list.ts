@@ -1,4 +1,5 @@
 import { ListContext } from '../language/compiled/SchemeParser';
+import { SchemeBoolean } from './schemeBoolean';
 import { SymbolicExpression } from './symbolicExpression';
 import { parseSymbolicExpressionGroupParentContext } from './symbolicExpressionGroup';
 import { OptionalChildContext, NodeParentContext, ParsedNode } from './utils';
@@ -33,6 +34,10 @@ export class List {
 
   isEmpty() {
     return this.contents.length === 0;
+  }
+
+  isNull() {
+    return new SchemeBoolean(this.isEmpty());
   }
 
   toString(): string {

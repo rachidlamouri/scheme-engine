@@ -32,6 +32,7 @@ echo "'turkey" | npm run scheme -- -i # 'turkey
 - car
 - cdr
 - cons
+- null?
 
 ## Development
 

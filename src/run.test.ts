@@ -65,14 +65,14 @@ describe('run', () => {
     [f, 'list of  length 2', "(car '(a b))", 'a'],
     [t, 'list of  length 3', "(car '(a b c))", 'a'],
     [t, 'list starting with list', "(car '((a b c) x y z))", '(a b c)'],
-    [t, 'string atom', "(car 'hotdog)", { error: 'Cannot get the car of atom "hotdog"' }],
-    [t, 'empty list', "(car '())", { error: 'Cannot get the car of an empty list' }],
+    [t, 'string atom', "(car 'hotdog)", { error: 'Cannot call car on atom "hotdog"' }],
+    [t, 'empty list', "(car '())", { error: 'Cannot call car on an empty list' }],
     [t, 'list with mixed s-expression', "(car '(((hotdogs)) (and) (pickle) relish))", '((hotdogs))'],
     [f, 'nested car expressions', "(car (car '((a))))", 'a'],
     [f, 'nested car expressions', "(car (car (car '(((a))))))", 'a'],
     [f, 'nested car expressions', "(car (car '( ((hotdogs)) ((and)) ) ))", '(hotdogs)'],
-    [f, 'integer atom', "(car 1234)", { error: 'Cannot get the car of atom "1234"' }],
-    [f, 'invalid nested car', "(car (car '(a)))", { error: 'Cannot get the car of atom "a"' }],
+    [f, 'integer atom', "(car 1234)", { error: 'Cannot call car on atom "1234"' }],
+    [f, 'invalid nested car', "(car (car '(a)))", { error: 'Cannot call car on atom "a"' }],
   ]);
 
   runSuite('cdr', [
@@ -80,13 +80,13 @@ describe('run', () => {
     [t, 'car of list is list', "(cdr '((a b c) x y z))", '(x y z)'],
     [t, 'list with one atom', "(cdr '(hamburger))", '()'],
     [t, 'car of list is list', "(cdr '((x) t r))", '(t r)'],
-    [t, 'atom', "(cdr 'hotdogs)", { error: 'Cannot get the cdr of atom "hotdogs"'}],
-    [t, 'empty list', "(cdr '())", { error: 'Cannot get the cdr of an empty list'}],
+    [t, 'atom', "(cdr 'hotdogs)", { error: 'Cannot call cdr on atom "hotdogs"'}],
+    [t, 'empty list', "(cdr '())", { error: 'Cannot call cdr on an empty list'}],
     [f, 'nested cdr', "(cdr (cdr '(a b c)))", '(c)'],
-    [f, 'nested cdr error', "(cdr (cdr '(a)))", { error: 'Cannot get the cdr of an empty list'}],
+    [f, 'nested cdr error', "(cdr (cdr '(a)))", { error: 'Cannot call cdr on an empty list'}],
     [t, 'nested car and cdr', "(car (cdr '((b) (x y) ((c))) ))", '(x y)'],
     [t, 'nested cdr', "(cdr (cdr '((b) (x y) ((c))) ))", '(((c)))'],
-    [t, 'nested cdr and car', "(cdr (car '(a (b (c)) d) ))", { error: 'Cannot get the cdr of atom "a"' }],
+    [t, 'nested cdr and car', "(cdr (car '(a (b (c)) d) ))", { error: 'Cannot call cdr on atom "a"' }],
   ]);
 
   runSuite('cons', [
@@ -100,5 +100,19 @@ describe('run', () => {
     [f, 'one parameter', "(cons 'a)", { error: 'cons requires two parameters. Received one: "a"' }],
     [t, 'cons of car', "(cons 'a (car '((b) c d) ))", '(a b)'],
     [t, 'cons of cdr', "(cons 'a (cdr '((b) c d) ))", '(a c d)'],
+  ]);
+
+  runSuite('null?', [
+    [t, 'empty list', "(null? '())", 'true'],
+    [t, 'non empty list', "(null? '(a b c))", 'false'],
+    [t, 'atom', "(null? 'a)", { error: 'Cannot call null? on atom "a"'}],
+    [f, 'nested null?', "(null? (null? '()))", { error: 'Cannot call null? on a boolean' }],
+    [f, 'null? and car', "(null? (car '(a b c)))", { error: 'Cannot call null? on atom "a"' }],
+    [f, 'car and null?', "(car (null? '(a b c)))", { error: 'Cannot call car on a boolean' }],
+    [f, 'null? and cdr', "(null? (cdr '(a b c)))", 'false'],
+    [f, 'cdr and null?', "(cdr (null? '(a b c)))", { error: 'Cannot call cdr on a boolean' }],
+    [f, 'null? and cons', "(null? (cons 'a '()))", 'false'],
+    [f, 'cons and null?', "(cons (null? '(a b c)) '())", '(false)'],
+    [f, 'cons and null?', "(cons 'a (null? '()))", { error: 'The second parameter to cons must be a list. Received: "true"' }],
   ]);
 });

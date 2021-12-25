@@ -2,6 +2,7 @@ import { ExpressionContext } from '../language/compiled/SchemeParser';
 import { Atom } from './atom';
 import { parseEvaluableGroupParentContext } from './evaluableGroup';
 import { List } from './list';
+import { SchemeBoolean } from './schemeBoolean';
 import { SymbolicExpression } from './symbolicExpression';
 import { OptionalChildContext, NodeParentContext, ParsedNode } from './utils';
 
@@ -9,8 +10,9 @@ enum BuiltInFunctionName {
   CAR = 'car',
   CDR = 'cdr',
   CONS = 'cons',
+  IS_NULL = 'null?',
 };
-type OneParameterFunctionName = BuiltInFunctionName.CAR | BuiltInFunctionName.CDR;
+type OneParameterFunctionName = BuiltInFunctionName.CAR | BuiltInFunctionName.CDR | BuiltInFunctionName.IS_NULL;
 
 export abstract class Expression {
   static parseParentContext = <
@@ -52,16 +54,25 @@ class OneParameterExpression extends Expression {
 
   evaluate(): SymbolicExpression {
     if (this.parameter instanceof Atom) {
-      throw Error(`Cannot get the ${this.functionName} of atom "${this.parameter.toString()}"`);
+      throw Error(`Cannot call ${this.functionName} on atom "${this.parameter.toString()}"`);
     }
 
-    if (this.parameter.isEmpty()) {
-      throw Error(`Cannot get the ${this.functionName} of an empty list`);
+    if (this.parameter instanceof SchemeBoolean) {
+      throw Error(`Cannot call ${this.functionName} on a boolean`);
     }
 
-    return this.functionName === BuiltInFunctionName.CAR
-      ? this.parameter.car()
-      : this.parameter.cdr();
+    if ([BuiltInFunctionName.CAR, BuiltInFunctionName.CDR].includes(this.functionName) && this.parameter.isEmpty()) {
+      throw Error(`Cannot call ${this.functionName} on an empty list`);
+    }
+
+    switch (this.functionName) {
+      case BuiltInFunctionName.CAR:
+          return this.parameter.car();
+      case BuiltInFunctionName.CDR:
+          return this.parameter.cdr();
+      case BuiltInFunctionName.IS_NULL:
+          return this.parameter.isNull();
+    }
   }
 }
 

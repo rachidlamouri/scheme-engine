@@ -2,8 +2,9 @@ import { AtomContext, SymbolicExpressionContext } from '../language/compiled/Sch
 import { List } from './list';
 import { Atom } from './atom';
 import { OptionalChildContext, NodeParentContext, ParsedNode } from './utils';
+import { SchemeBoolean } from './schemeBoolean';
 
-export type SymbolicExpression = List | Atom;
+export type SymbolicExpression = List | Atom | SchemeBoolean;
 
 export const isSymbolicExpression = (arg: any): arg is SymbolicExpression => arg instanceof List || arg instanceof Atom;
 

@@ -2,7 +2,7 @@ lexer grammar SchemeLexer;
 
 QUOTE: '\'';
 
-KEYWORD: 'car' | 'cdr' | 'cons';
+KEYWORD: 'car' | 'cdr' | 'cons' | 'null?';
 
 STRING: ('a'..'z' | '*' | '$')+;
 
