@@ -1,5 +1,5 @@
 import { ExpressionContext } from '../language/compiled/SchemeParser';
-import { Atom, BooleanAtom } from './atom';
+import { Atom, BooleanAtom, IntegerAtom } from './atom';
 import { parseEvaluableGroupParentContext } from './evaluableGroup';
 import { List } from './list';
 import { SymbolicExpression } from './symbolicExpression';
@@ -11,8 +11,10 @@ enum BuiltInFunctionName {
   CONS = 'cons',
   IS_NULL = 'null?',
   IS_ATOM = 'atom?',
+  IS_EQUAL = 'eq?',
 };
 type OneParameterFunctionName = BuiltInFunctionName.CAR | BuiltInFunctionName.CDR | BuiltInFunctionName.IS_NULL | BuiltInFunctionName.IS_ATOM;
+type TwoParameterFunctionName = BuiltInFunctionName.CONS | BuiltInFunctionName.IS_EQUAL;
 
 export abstract class Expression {
   static parseParentContext = <
@@ -24,8 +26,8 @@ export abstract class Expression {
       const functionName = expressionContext.KEYWORD().text;
       const parameters = parseEvaluableGroupParentContext(expressionContext);
 
-      return functionName === BuiltInFunctionName.CONS
-        ? new ConsExpression(parameters)
+      return functionName === BuiltInFunctionName.CONS || functionName === BuiltInFunctionName.IS_EQUAL
+        ? new TwoParameterExpression(functionName, parameters)
         : new OneParameterExpression(functionName as OneParameterFunctionName, parameters);
     }
 
@@ -80,14 +82,24 @@ class OneParameterExpression extends Expression {
   }
 }
 
-class ConsExpression extends Expression {
-  constructor(parameters: SymbolicExpression[]) {
+class TwoParameterExpression extends Expression {
+  constructor(protected functionName: TwoParameterFunctionName, parameters: SymbolicExpression[]) {
     super(BuiltInFunctionName.CONS, parameters);
   }
 
   evaluate(): SymbolicExpression {
     if (this.parameters.length < 2) {
-      throw Error(`cons requires two parameters. Received one: "${this.parameters[0].toString()}"`);
+      throw Error(`${this.functionName} requires two parameters. Received one: "${this.parameters[0].toString()}"`);
+    }
+
+    if (this.functionName === BuiltInFunctionName.IS_EQUAL) {
+      const [parameter0, parameter1] = this.parameters;
+
+      if (parameter0 instanceof IntegerAtom || parameter1 instanceof IntegerAtom) {
+        throw Error(`Cannot call ${this.functionName} on integer literal`);
+      }
+
+      return new BooleanAtom(!(parameter0 instanceof List) && !(parameter1 instanceof List) && parameter0.value === parameter1.value);
     }
 
     const [firstParameter, secondParameter] = this.parameters;

@@ -141,4 +141,18 @@ describe('run', () => {
     [t, 'atom?, car and cdr', "(atom? (car (cdr '(swing (low sweet) cherry oat) )))", 'false'],
     [f, 'nested atom?', "(atom? (atom? '()))", 'true'],
   ]);
+
+  runSuite('eq?', [
+    [t, 'atoms', "(eq? 'Harry 'Harry)", 'true'],
+    [t, 'atoms', "(eq? 'margarine 'butter)", 'false'],
+    [t, 'lists', "(eq? '() '(strawberry))", 'false'],
+    [f, 'lists', "(eq? '() '())", 'false'],
+    [f, 'lists', "(eq? '(strawberry) '(strawberry))", 'false'],
+    [f, 'numbers', "(eq? 6 6)", { error: 'Cannot call eq? on integer literal' }],
+    [f, 'number and string', "(eq? 'a 6)", { error: 'Cannot call eq? on integer literal' }],
+    [f, 'one parameter', "(eq? 'a)", { error: 'eq? requires two parameters. Received one: "a"' }],
+    [t, 'eq? and car', "(eq? (car '(Mary had a little lamb chop)) 'Mary)", 'true'],
+    [t, 'eq? and cdr', "(eq? (cdr '(soured milk)) 'milk)", 'false'],
+    [t, 'eq?, car and cdr', "(eq? (car '(beans beans we need jelly beans)) (car (cdr '(beans beans we need jelly beans))))", 'true'],
+  ]);
 });
