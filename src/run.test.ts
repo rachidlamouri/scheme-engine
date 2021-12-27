@@ -3,7 +3,11 @@ import chalk from 'chalk';
 import { run } from './run';
 
 type MochaConfig = {
-  isOnly: boolean;
+  isOnly?: boolean;
+  isSkipped?: never;
+} | {
+  isOnly?: never;
+  isSkipped?: boolean;
 }
 
 type OutputConfig = string | { error: string };
@@ -34,7 +38,15 @@ const runTest = ([isFromBook, description, code, expectedOutput, config = { isOn
 };
 
 const runSuite = (suiteName: string, tests: RunConfig[], config?: MochaConfig) => {
-  const method = config !== undefined && config.isOnly ? describe.only : describe;
+  let method: Mocha.SuiteFunction | Mocha.ExclusiveSuiteFunction | Mocha.PendingSuiteFunction;
+  if (config !== undefined && config.isOnly) {
+    method = describe.only;
+  } else if (config !== undefined && config.isSkipped) {
+    method = describe.skip;
+  } else {
+    method = describe;
+  }
+
   method(suiteName, () => {
     tests.forEach(runTest);
   })
