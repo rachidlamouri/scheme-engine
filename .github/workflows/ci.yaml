@@ -1,0 +1,25 @@
+name: Scheme Engine CI
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  scheme-engine-ci:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup Node 16.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: '16.x'
+      - name: Install
+        run: npm ci
+      - name: Compile Grammar
+        run: npm run compile:grammar
+      - name: Run Tests
+        run: npm test
+      - name: Run CLI
+        run: echo \'turkey | npm run scheme -- -i
