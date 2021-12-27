@@ -78,14 +78,15 @@ describe('run', () => {
     [f, 'list of  length 2', "(car '(a b))", 'a'],
     [t, 'list of  length 3', "(car '(a b c))", 'a'],
     [t, 'list starting with list', "(car '((a b c) x y z))", '(a b c)'],
-    [t, 'string atom', "(car 'hotdog)", { error: 'Cannot call car on atom "hotdog"' }],
-    [t, 'empty list', "(car '())", { error: 'Cannot call car on an empty list' }],
+    [t, 'string atom', "(car 'hotdog)", { error: 'Parameter 0 of car cannot be an atom' }],
+    [t, 'empty list', "(car '())", { error: 'Parameter 0 of car cannot be an empty list' }],
     [t, 'list with mixed s-expression', "(car '(((hotdogs)) (and) (pickle) relish))", '((hotdogs))'],
     [f, 'nested car expressions', "(car (car '((a))))", 'a'],
     [f, 'nested car expressions', "(car (car (car '(((a))))))", 'a'],
     [f, 'nested car expressions', "(car (car '( ((hotdogs)) ((and)) ) ))", '(hotdogs)'],
-    [f, 'integer atom', "(car 1234)", { error: 'Cannot call car on atom "1234"' }],
-    [f, 'invalid nested car', "(car (car '(a)))", { error: 'Cannot call car on atom "a"' }],
+    [f, 'integer atom', "(car 1234)", { error: 'Parameter 0 of car cannot be an atom' }],
+    [f, 'invalid nested car', "(car (car '(a)))", { error: 'Parameter 0 of car cannot be an atom' }],
+    [f, 'wrong number of parameters', "(car '(a) '(a))", { error: 'car requires 1 parameter(s), but received 2'}]
   ]);
 
   runSuite('cdr', [
@@ -93,13 +94,13 @@ describe('run', () => {
     [t, 'car of list is list', "(cdr '((a b c) x y z))", '(x y z)'],
     [t, 'list with one atom', "(cdr '(hamburger))", '()'],
     [t, 'car of list is list', "(cdr '((x) t r))", '(t r)'],
-    [t, 'atom', "(cdr 'hotdogs)", { error: 'Cannot call cdr on atom "hotdogs"'}],
-    [t, 'empty list', "(cdr '())", { error: 'Cannot call cdr on an empty list'}],
+    [t, 'atom', "(cdr 'hotdogs)", { error: 'Parameter 0 of cdr cannot be an atom'}],
+    [t, 'empty list', "(cdr '())", { error: 'Parameter 0 of cdr cannot be an empty list'}],
     [f, 'nested cdr', "(cdr (cdr '(a b c)))", '(c)'],
-    [f, 'nested cdr error', "(cdr (cdr '(a)))", { error: 'Cannot call cdr on an empty list'}],
+    [f, 'nested cdr error', "(cdr (cdr '(a)))", { error: 'Parameter 0 of cdr cannot be an empty list'}],
     [t, 'nested car and cdr', "(car (cdr '((b) (x y) ((c))) ))", '(x y)'],
     [t, 'nested cdr', "(cdr (cdr '((b) (x y) ((c))) ))", '(((c)))'],
-    [t, 'nested cdr and car', "(cdr (car '(a (b (c)) d) ))", { error: 'Cannot call cdr on atom "a"' }],
+    [t, 'nested cdr and car', "(cdr (car '(a (b (c)) d) ))", { error: 'Parameter 0 of cdr cannot be an atom' }],
   ]);
 
   runSuite('cons', [
@@ -108,9 +109,9 @@ describe('run', () => {
     [t, 'list and list', "(cons '((help) this) '(is very ((hard) to learn)) )", '(((help) this) is very ((hard) to learn))'],
     [t, 'list and empty list', "(cons '(a b (c)) '() )", '((a b (c)))'],
     [t, 'atom and empty list', "(cons 'a '() )", '(a)'],
-    [t, 'list and atom', "(cons '((abcd)) 'b )", { error: 'The second parameter to cons must be a list. Received: "b"' }],
-    [t, 'atom and atom', "(cons 'a 'b )", { error: 'The second parameter to cons must be a list. Received: "b"' }],
-    [f, 'one parameter', "(cons 'a)", { error: 'cons requires two parameters. Received one: "a"' }],
+    [t, 'list and atom', "(cons '((abcd)) 'b )", { error: 'Parameter 1 of cons cannot be an atom' }],
+    [t, 'atom and atom', "(cons 'a 'b )", { error: 'Parameter 1 of cons cannot be an atom' }],
+    [f, 'one parameter', "(cons 'a)", { error: 'cons requires 2 parameter(s), but received 1' }],
     [t, 'cons of car', "(cons 'a (car '((b) c d) ))", '(a b)'],
     [t, 'cons of cdr', "(cons 'a (cdr '((b) c d) ))", '(a c d)'],
   ]);
@@ -118,15 +119,15 @@ describe('run', () => {
   runSuite('null?', [
     [t, 'empty list', "(null? '())", 'true'],
     [t, 'non empty list', "(null? '(a b c))", 'false'],
-    [t, 'atom', "(null? 'a)", { error: 'Cannot call null? on atom "a"'}],
-    [f, 'nested null?', "(null? (null? '()))", { error: 'Cannot call null? on a boolean' }],
-    [f, 'null? and car', "(null? (car '(a b c)))", { error: 'Cannot call null? on atom "a"' }],
-    [f, 'car and null?', "(car (null? '(a b c)))", { error: 'Cannot call car on a boolean' }],
+    [t, 'atom', "(null? 'a)", { error: 'Parameter 0 of null? cannot be an atom'}],
+    [f, 'nested null?', "(null? (null? '()))", { error: 'Parameter 0 of null? cannot be an atom' }],
+    [f, 'null? and car', "(null? (car '(a b c)))", { error: 'Parameter 0 of null? cannot be an atom' }],
+    [f, 'car and null?', "(car (null? '(a b c)))", { error: 'Parameter 0 of car cannot be an atom' }],
     [f, 'null? and cdr', "(null? (cdr '(a b c)))", 'false'],
-    [f, 'cdr and null?', "(cdr (null? '(a b c)))", { error: 'Cannot call cdr on a boolean' }],
+    [f, 'cdr and null?', "(cdr (null? '(a b c)))", { error: 'Parameter 0 of cdr cannot be an atom' }],
     [f, 'null? and cons', "(null? (cons 'a '()))", 'false'],
     [f, 'cons and null?', "(cons (null? '(a b c)) '())", '(false)'],
-    [f, 'cons and null?', "(cons 'a (null? '()))", { error: 'The second parameter to cons must be a list. Received: "true"' }],
+    [f, 'cons and null?', "(cons 'a (null? '()))", { error: 'Parameter 1 of cons cannot be an atom' }],
   ]);
 
   runSuite('atom?', [
@@ -145,14 +146,14 @@ describe('run', () => {
   runSuite('eq?', [
     [t, 'atoms', "(eq? 'Harry 'Harry)", 'true'],
     [t, 'atoms', "(eq? 'margarine 'butter)", 'false'],
-    [t, 'lists', "(eq? '() '(strawberry))", 'false'],
-    [f, 'lists', "(eq? '() '())", 'false'],
-    [f, 'lists', "(eq? '(strawberry) '(strawberry))", 'false'],
-    [f, 'numbers', "(eq? 6 6)", { error: 'Cannot call eq? on integer literal' }],
-    [f, 'number and string', "(eq? 'a 6)", { error: 'Cannot call eq? on integer literal' }],
-    [f, 'one parameter', "(eq? 'a)", { error: 'eq? requires two parameters. Received one: "a"' }],
+    [t, 'lists', "(eq? '() '(strawberry))", { error: 'Parameter 0 of eq? cannot be a list' }],
+    [f, 'lists', "(eq? '() '())", { error: 'Parameter 0 of eq? cannot be a list' }],
+    [f, 'lists', "(eq? '(strawberry) '(strawberry))", { error: 'Parameter 0 of eq? cannot be a list' }],
+    [f, 'numbers', "(eq? 6 6)", { error: 'Parameter 0 of eq? cannot be an integer atom' }],
+    [f, 'number and string', "(eq? 'a 6)", { error: 'Parameter 1 of eq? cannot be an integer atom' }],
+    [f, 'one parameter', "(eq? 'a)", { error: 'eq? requires 2 parameter(s), but received 1' }],
     [t, 'eq? and car', "(eq? (car '(Mary had a little lamb chop)) 'Mary)", 'true'],
-    [t, 'eq? and cdr', "(eq? (cdr '(soured milk)) 'milk)", 'false'],
+    [t, 'eq? and cdr', "(eq? (cdr '(soured milk)) 'milk)", { error: 'Parameter 0 of eq? cannot be a list' }],
     [t, 'eq?, car and cdr', "(eq? (car '(beans beans we need jelly beans)) (car (cdr '(beans beans we need jelly beans))))", 'true'],
   ]);
 });
