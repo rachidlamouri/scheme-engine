@@ -1,6 +1,6 @@
 import { LiteralContext } from '../language/compiled/SchemeParser';
 import { parseSymbolicExpressionParentContext, SymbolicExpression } from './symbolicExpression';
-import { Atom } from './atom';
+import { parseAtomParentContext } from './atom';
 import { OptionalChildContext, NodeParentContext, ParsedNode } from './utils';
 
 export type Literal = SymbolicExpression;
@@ -12,7 +12,7 @@ export const parseLiteralParentContext = <
 
   if (literalContext !== undefined) {
     return parseSymbolicExpressionParentContext(literalContext)
-      ?? Atom.parseParentContext(literalContext) as ParsedNode<Literal, LiteralContext, TChildContext>;
+      ?? parseAtomParentContext(literalContext) as ParsedNode<Literal, LiteralContext, TChildContext>;
   }
 
   return null as ParsedNode<Literal, LiteralContext, TChildContext>;

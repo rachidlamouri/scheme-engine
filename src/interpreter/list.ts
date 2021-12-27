@@ -1,7 +1,7 @@
 import { ListContext } from '../language/compiled/SchemeParser';
-import { SchemeBoolean } from './schemeBoolean';
 import { SymbolicExpression } from './symbolicExpression';
 import { parseSymbolicExpressionGroupParentContext } from './symbolicExpressionGroup';
+import { BooleanAtom } from './atom';
 import { OptionalChildContext, NodeParentContext, ParsedNode } from './utils';
 
 export class List {
@@ -33,7 +33,7 @@ export class List {
   }
 
   isAtom() {
-    return new SchemeBoolean(false);
+    return new BooleanAtom(false);
   }
 
   isEmpty() {
@@ -41,7 +41,7 @@ export class List {
   }
 
   isNull() {
-    return new SchemeBoolean(this.isEmpty());
+    return new BooleanAtom(this.isEmpty());
   }
 
   toString(): string {

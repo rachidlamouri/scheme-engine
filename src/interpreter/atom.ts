@@ -1,6 +1,37 @@
-import { AtomContext, IntegerAtomContext } from '../language/compiled/SchemeParser';
-import { SchemeBoolean } from './schemeBoolean';
+import { AtomContext, IntegerAtomContext, StringAtomContext } from '../language/compiled/SchemeParser';
 import { ParentContext } from './utils';
+
+type Primitive = string | number | boolean;
+
+export abstract class Atom {
+  constructor(public readonly value: Primitive) {}
+
+  isAtom() {
+    return new BooleanAtom(true);
+  }
+
+  toString(): string {
+    return `${this.value}`;
+  }
+}
+
+export class StringAtom extends Atom {
+  constructor(value: string) {
+    super(value);
+  }
+}
+
+export class IntegerAtom extends Atom {
+  constructor(value: number) {
+    super(value);
+  }
+}
+
+export class BooleanAtom extends Atom {
+  constructor(value: boolean) {
+    super(value);
+  }
+}
 
 type ChildAtomContext = AtomContext | IntegerAtomContext | undefined;
 
@@ -18,29 +49,25 @@ type ParsedAtom<TChildContext extends ChildAtomContext> =
     ? Atom
     : Atom | null;
 
-export class Atom {
-  static parseParentContext = <
-    TChildContext extends ChildAtomContext
+export const parseAtomParentContext = <
+  TChildContext extends ChildAtomContext
   >(parentContext: AtomParentContext<TChildContext>): ParsedAtom<TChildContext> => {
-    const atomContext =
-      'atom' in parentContext
-        ? parentContext.atom()
-        : parentContext.integerAtom();
+  let primitiveContext: StringAtomContext | IntegerAtomContext;
+  if ('atom' in parentContext) {
+    const atomContext = parentContext.atom();
 
-    if (atomContext !== undefined) {
-      return new Atom(atomContext) as ParsedAtom<TChildContext>;
+    if (atomContext === undefined) {
+      return null as ParsedAtom<TChildContext>;
     }
 
-    return null as ParsedAtom<TChildContext>;
-  };
-
-  constructor (private atomContext: AtomContext | IntegerAtomContext) {}
-
-  isAtom() {
-    return new SchemeBoolean(true);
+    primitiveContext = atomContext.stringAtom() ?? atomContext.integerAtom()!;
+  } else {
+    primitiveContext = parentContext.integerAtom()!;
   }
 
-  toString(): string {
-    return this.atomContext.text;
+  if (primitiveContext instanceof StringAtomContext) {
+    return new StringAtom(primitiveContext.text);
   }
+
+  return new IntegerAtom(Number.parseInt(primitiveContext.text));
 }

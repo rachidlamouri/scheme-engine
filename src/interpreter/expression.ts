@@ -1,8 +1,7 @@
 import { ExpressionContext } from '../language/compiled/SchemeParser';
-import { Atom } from './atom';
+import { Atom, BooleanAtom } from './atom';
 import { parseEvaluableGroupParentContext } from './evaluableGroup';
 import { List } from './list';
-import { SchemeBoolean } from './schemeBoolean';
 import { SymbolicExpression } from './symbolicExpression';
 import { OptionalChildContext, NodeParentContext, ParsedNode } from './utils';
 
@@ -58,12 +57,12 @@ class OneParameterExpression extends Expression {
       return this.parameter.isAtom();
     }
 
-    if (this.parameter instanceof Atom) {
-      throw Error(`Cannot call ${this.functionName} on atom "${this.parameter.toString()}"`);
+    if (this.parameter instanceof BooleanAtom) {
+      throw Error(`Cannot call ${this.functionName} on a boolean`);
     }
 
-    if (this.parameter instanceof SchemeBoolean) {
-      throw Error(`Cannot call ${this.functionName} on a boolean`);
+    if (this.parameter instanceof Atom) {
+      throw Error(`Cannot call ${this.functionName} on atom "${this.parameter.toString()}"`);
     }
 
     if ([BuiltInFunctionName.CAR, BuiltInFunctionName.CDR].includes(this.functionName) && this.parameter.isEmpty()) {
