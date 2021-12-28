@@ -2,16 +2,16 @@ parser grammar SchemeParser;
 
 options { tokenVocab=SchemeLexer; }
 
-input: evaluable EOF;
-
-evaluable: expression | literal;
-
-expression: LEFT_SEPARATOR KEYWORD evaluableGroup RIGHT_SEPARATOR;
+input: evaluableGroup EOF;
 
 evaluableGroup:
   evaluable evaluableGroup
   | evaluable
   ;
+
+evaluable: expression | literal;
+
+expression: LEFT_SEPARATOR KEYWORD evaluableGroup RIGHT_SEPARATOR;
 
 literal: (QUOTE symbolicExpression) | integerAtom ;
 

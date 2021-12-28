@@ -22,9 +22,10 @@ const f = false;
 const runTest = ([isFromBook, description, code, expectedOutput, config = { isOnly: false }]: RunConfig) => {
   const method = config.isOnly ? it.only : it;
   const isErrorTest = typeof expectedOutput === 'object';
-  const outputDescription = isErrorTest
+  let outputDescription = isErrorTest
     ? chalk.red(expectedOutput.error)
     : chalk.yellow(expectedOutput)
+  outputDescription = outputDescription.split('\n').join(chalk.cyan('\\n'));
 
   const prefix = isFromBook ? '*' : ' ';
 
@@ -155,5 +156,22 @@ describe('run', () => {
     [t, 'eq? and car', "(eq? (car '(Mary had a little lamb chop)) 'Mary)", 'true'],
     [t, 'eq? and cdr', "(eq? (cdr '(soured milk)) 'milk)", { error: 'Parameter 0 of eq? cannot be a list' }],
     [t, 'eq?, car and cdr', "(eq? (car '(beans beans we need jelly beans)) (car (cdr '(beans beans we need jelly beans))))", 'true'],
+  ]);
+
+  runSuite('independent expressions', [
+    [f, 'atom literals', "'atom 'turkey", 'atom\nturkey'],
+    [f, 'list literals', "'() '(a b c)", '()\n(a b c)'],
+    [f, 'expressions', "(car '(a)) (cdr '(a b c))", 'a\n(b c)'],
+    [f, 's-expressions', "'atom '() '(a b c) (car '(a)) (cdr '(a b c)) (cons 'a '(b c)) (null? '()) (atom? '()) (eq? 'a 'a)", [
+      'atom',
+      '()',
+      '(a b c)',
+      'a',
+      '(b c)',
+      '(a b c)',
+      'true',
+      'false',
+      'true',
+    ].join('\n')],
   ]);
 });
