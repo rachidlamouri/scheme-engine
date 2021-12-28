@@ -4,6 +4,10 @@
 
 An exercie in building a scheme interpeter while reading [The Little Schemer](https://mitpress.mit.edu/books/little-schemer-fourth-edition). The grammar is made up to satisfy the rules described in the book. The lexer and parser are generated with [antlr4ts](https://www.npmjs.com/package/antlr4ts).
 
+## Environment
+
+Requires Java for grammar compilation, and Node for execution. Developed with [Temurin JDK 17](https://adoptium.net/index.htm) and [Node 16](https://nodejs.org/).
+
 ## Setup
 
 ```bash
