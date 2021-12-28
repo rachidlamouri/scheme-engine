@@ -11,11 +11,8 @@ class Interpreter extends AbstractParseTreeVisitor<string> implements SchemePars
 
   visitInput(inputContext: InputContext): string {
     const symbolicExpressions = parseInputContext(inputContext);
-    return symbolicExpressions.map((symbolicExpression) => (
-      (symbolicExpression instanceof Expression)
-        ? symbolicExpression.evaluate().toString()
-        : symbolicExpression.toString()
-    ))
+    return symbolicExpressions
+      .map((symbolicExpression) => symbolicExpression.evaluate().toString())
       .join('\n');
   }
 }

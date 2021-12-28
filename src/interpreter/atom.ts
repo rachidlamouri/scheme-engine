@@ -1,10 +1,15 @@
 import { AtomContext, IntegerAtomContext, StringAtomContext } from '../language/compiled/SchemeParser';
+import { SymbolicExpression } from './symbolicExpression';
 import { ParentContext } from './utils';
 
 type Primitive = string | number | boolean;
 
 export abstract class Atom {
   constructor(public readonly value: Primitive) {}
+
+  evaluate(): SymbolicExpression {
+    return this;
+  }
 
   isAtom() {
     return new BooleanAtom(true);

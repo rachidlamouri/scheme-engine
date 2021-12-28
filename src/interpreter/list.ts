@@ -32,6 +32,10 @@ export class List {
     return new List([symbolicExpression, ...this.contents]);
   }
 
+  evaluate(): SymbolicExpression {
+    return this;
+  }
+
   isAtom() {
     return new BooleanAtom(false);
   }

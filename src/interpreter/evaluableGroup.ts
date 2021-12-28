@@ -16,8 +16,4 @@ const parseParentContext = buildParseGroupParentContext<
 
 type EvaluableParentContext = Parameters<typeof parseParentContext>[0];
 
-export const parseEvaluableGroupParentContext = (parentContext: EvaluableParentContext): SymbolicExpression[] => parseParentContext(parentContext).map((evaluable) => (
-  isSymbolicExpression(evaluable)
-    ? evaluable
-    : evaluable.evaluate()
-));
+export const parseEvaluableGroupParentContext = (parentContext: EvaluableParentContext): SymbolicExpression[] => parseParentContext(parentContext).map((evaluable) => evaluable.evaluate());
