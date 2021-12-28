@@ -1,6 +1,6 @@
 lexer grammar SchemeLexer;
 
-QUOTE: '\'';
+QUOTE: '\''
 
 KEYWORD: 'car' | 'cdr' | 'cons' | 'null?' | 'atom?' | 'eq?';
 
