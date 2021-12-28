@@ -19,17 +19,19 @@ npm run compile:grammar
 ## Running the Interpreter
 
 ```bash
-# option 1
+# option 1: run a file
 npm run scheme -- -f <filepath>
 
-# option 2
+# option 2: run stdin
 <schemeCode> | npm run scheme -- -i
 
-# option 3
+# option 3: run a file whose filename is passed via stdin
 <filepath> | npm run scheme -- -i -f
 
-# example
-echo "'turkey" | npm run scheme -- -i # 'turkey
+# examples
+npm run scheme -- -f ci/example
+echo \'turkey | npm run scheme -- -i
+echo ci/example | npm run scheme -- -i -f
 ```
 
 ### Supported Features

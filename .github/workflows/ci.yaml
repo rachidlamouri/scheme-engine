@@ -26,5 +26,9 @@ jobs:
         run: npm run compile:grammar
       - name: Run Tests
         run: npm test
-      - name: Run CLI
+      - name: Run CLI Option 1
+        run: npm run scheme -- -f ci/example
+      - name: Run CLI Option 2
         run: echo \'turkey | npm run scheme -- -i
+      - name: Run CLI Option 3
+        run: echo ci/example | npm run scheme -- -i -f
