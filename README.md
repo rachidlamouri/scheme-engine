@@ -45,6 +45,6 @@ echo "'turkey" | npm run scheme -- -i # 'turkey
 ## Development
 
 ```bash
-# watches grammar and typescript files, and rebuilds and runs tests on changes
+# Watches grammar and typescript files. Recompiles grammars when changed, and reruns tests on all file changes
 npm run dev
 ```
