@@ -1,7 +1,7 @@
 {
   "scripts": {
     "clean": "rm -rf src/language/compiled",
-    "compile:grammar": "antlr4ts -visitor -o src/language/compiled/ src/language/SchemeLexer.g4 src/language/SchemeParser.g4",
+    "compile:grammar": "antlr4ts -visitor -Xexact-output-dir -o src/language/compiled/ src/language/SchemeLexer.g4 src/language/SchemeParser.g4",
     "dev": "ts-node dev.ts",
     "scheme": "ts-node src/cli",
     "test": "mocha"
