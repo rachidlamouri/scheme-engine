@@ -1,4 +1,4 @@
-import { AtomContext, IntegerAtomContext, StringAtomContext } from '../language/compiled/SchemeParser';
+import { AtomContext, IntegerAtomContext, ReferenceAtomContext, StringAtomContext } from '../language/compiled/SchemeParser';
 import { Evaluable } from './evaluable';
 import { UnreachableError } from './utils';
 
@@ -40,12 +40,22 @@ export class BooleanAtom extends Atom {
   }
 }
 
+export class ReferenceAtom extends Atom {
+  constructor(public readonly name: string) {
+    super(`&${name}`);
+  }
+}
+
 const refineStringAtomContext = (stringAtomContext: StringAtomContext): StringAtom => (
   new StringAtom(stringAtomContext.STRING().text)
 );
 
 export const refineIntegerAtomContext = (integerAtomContext: IntegerAtomContext): IntegerAtom => (
   new IntegerAtom(Number.parseInt(integerAtomContext.INTEGER().text))
+);
+
+export const refineReferenceAtomContext = (referenceAtomContext: ReferenceAtomContext): ReferenceAtom => (
+  new ReferenceAtom(referenceAtomContext.STRING().text)
 );
 
 export const refineAtomContext = (atomContext: AtomContext): Atom => {

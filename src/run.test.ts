@@ -174,4 +174,10 @@ describe('run', () => {
       'true',
     ].join('\n')],
   ]);
+
+  runSuite('lambda definitions', [
+    [f, 'basic definition', "(define myLambda (lambda () 'atom))", '&myLambda'],
+    [f, 'definition with one argument', '(define echoLiteral (lambda (a) a))', '&echoLiteral'],
+    [f, 'definition with multiple arguments', '(define echoLiterals (lambda (a b) (cons a b)))', '&echoLiterals'],
+  ]);
 });

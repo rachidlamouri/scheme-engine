@@ -9,9 +9,16 @@ evaluableGroup:
   | evaluable
   ;
 
-evaluable: callExpression | literal;
+evaluable: callExpression | lambdaReferenceDefinition | referenceAtom | literal;
 
 callExpression: LEFT_SEPARATOR BUILT_IN_FUNCTION evaluableGroup RIGHT_SEPARATOR;
+
+lambdaReferenceDefinition: LEFT_SEPARATOR DEFINE referenceAtom lambdaDefinition RIGHT_SEPARATOR;
+
+lambdaDefinition:
+  LEFT_SEPARATOR LAMBDA LEFT_SEPARATOR referenceAtomGroup RIGHT_SEPARATOR evaluable RIGHT_SEPARATOR
+  | LEFT_SEPARATOR LAMBDA LEFT_SEPARATOR RIGHT_SEPARATOR evaluable RIGHT_SEPARATOR
+  ;
 
 literal: (QUOTE symbolicExpression) | integerAtom ;
 
@@ -35,3 +42,10 @@ atom:
 stringAtom: STRING;
 
 integerAtom: INTEGER;
+
+referenceAtomGroup:
+  referenceAtom referenceAtomGroup
+  | referenceAtom
+  ;
+
+referenceAtom: STRING;

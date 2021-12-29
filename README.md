@@ -43,6 +43,7 @@ echo ci/example | npm run scheme -- -i -f
 - null?
 - atom?
 - eq?
+- lambda definitions
 
 ## Development
 
