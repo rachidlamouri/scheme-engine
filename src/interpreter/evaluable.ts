@@ -1,9 +1,9 @@
 import { Literal, parseLiteralParentContext } from './literal';
-import { Expression } from './expression';
+import { CallExpression } from './callExpression';
 import { EvaluableContext } from '../language/compiled/SchemeParser';
 import { OptionalChildContext, NodeParentContext, ParsedNode } from './utils';
 
-export type Evaluable = Expression | Literal;
+export type Evaluable = CallExpression | Literal;
 
 export const parseEvaluableParentContext = <
   TChildContext extends OptionalChildContext<EvaluableContext>
@@ -11,7 +11,7 @@ export const parseEvaluableParentContext = <
   const evaluableContext = parentContext.evaluable();
 
   if (evaluableContext !== undefined) {
-    return Expression.parseParentContext(evaluableContext)
+    return CallExpression.parseParentContext(evaluableContext)
       ?? parseLiteralParentContext(evaluableContext) as ParsedNode<Evaluable, EvaluableContext, TChildContext>;
   }
 

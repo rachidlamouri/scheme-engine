@@ -2,7 +2,6 @@ import { AbstractParseTreeVisitor } from 'antlr4ts/tree';
 import { InputContext } from '../language/compiled/SchemeParser';
 import { SchemeParserVisitor } from '../language/compiled/SchemeParserVisitor';
 import { parseInputContext } from './input';
-import { Expression } from './expression';
 
 class Interpreter extends AbstractParseTreeVisitor<string> implements SchemeParserVisitor<string> {
   defaultResult(): string {

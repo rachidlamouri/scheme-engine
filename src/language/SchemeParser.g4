@@ -9,9 +9,9 @@ evaluableGroup:
   | evaluable
   ;
 
-evaluable: expression | literal;
+evaluable: callExpression | literal;
 
-expression: LEFT_SEPARATOR KEYWORD evaluableGroup RIGHT_SEPARATOR;
+callExpression: LEFT_SEPARATOR BUILT_IN_FUNCTION evaluableGroup RIGHT_SEPARATOR;
 
 literal: (QUOTE symbolicExpression) | integerAtom ;
 

@@ -1,4 +1,4 @@
-import { ExpressionContext } from '../language/compiled/SchemeParser';
+import { CallExpressionContext } from '../language/compiled/SchemeParser';
 import { Atom, BooleanAtom, IntegerAtom } from './atom';
 import { parseEvaluableGroupParentContext } from './evaluableGroup';
 import { List } from './list';
@@ -28,32 +28,32 @@ type ValidationConfig =
     allowsEmptyLists: boolean;
   }
 
-export abstract class Expression {
+export abstract class CallExpression {
   static parseParentContext = <
-    TChildContext extends OptionalChildContext<ExpressionContext>
-  >(parentContext: NodeParentContext<ExpressionContext, TChildContext, 'expression'>): ParsedNode<Expression, ExpressionContext, TChildContext> => {
-    const expressionContext = parentContext.expression();
+    TChildContext extends OptionalChildContext<CallExpressionContext>
+  >(parentContext: NodeParentContext<CallExpressionContext, TChildContext, 'callExpression'>): ParsedNode<CallExpression, CallExpressionContext, TChildContext> => {
+    const expressionContext = parentContext.callExpression();
 
     if (expressionContext === undefined) {
-      return null as ParsedNode<Expression, ExpressionContext, TChildContext>;
+      return null as ParsedNode<CallExpression, CallExpressionContext, TChildContext>;
     }
 
-    const functionName = expressionContext.KEYWORD().text;
+    const functionName = expressionContext.BUILT_IN_FUNCTION().text;
     const parameters = parseEvaluableGroupParentContext(expressionContext);
 
     switch (functionName) {
       case BuiltInFunctionName.CAR:
-          return new CarExpression(parameters) as ParsedNode<Expression, ExpressionContext, TChildContext>;
+          return new CarExpression(parameters) as ParsedNode<CallExpression, CallExpressionContext, TChildContext>;
       case BuiltInFunctionName.CDR:
-        return new CdrExpression(parameters) as ParsedNode<Expression, ExpressionContext, TChildContext>;
+        return new CdrExpression(parameters) as ParsedNode<CallExpression, CallExpressionContext, TChildContext>;
       case BuiltInFunctionName.CONS:
-        return new ConsExpression(parameters) as ParsedNode<Expression, ExpressionContext, TChildContext>;
+        return new ConsExpression(parameters) as ParsedNode<CallExpression, CallExpressionContext, TChildContext>;
       case BuiltInFunctionName.IS_NULL:
-        return new IsNullExpression(parameters) as ParsedNode<Expression, ExpressionContext, TChildContext>;
+        return new IsNullExpression(parameters) as ParsedNode<CallExpression, CallExpressionContext, TChildContext>;
       case BuiltInFunctionName.IS_ATOM:
-        return new IsAtomExpression(parameters) as ParsedNode<Expression, ExpressionContext, TChildContext>;
+        return new IsAtomExpression(parameters) as ParsedNode<CallExpression, CallExpressionContext, TChildContext>;
       case BuiltInFunctionName.IS_EQUAL:
-        return new IsEqualExpression(parameters) as ParsedNode<Expression, ExpressionContext, TChildContext>;
+        return new IsEqualExpression(parameters) as ParsedNode<CallExpression, CallExpressionContext, TChildContext>;
       default: throw Error(`Expression "${functionName}" is not implemented`)
     }
   };
@@ -61,14 +61,14 @@ export abstract class Expression {
   constructor(
     protected functionName: BuiltInFunctionName,
     protected parameters: SymbolicExpression[],
-    parameterValiations: ValidationConfig[],
+    parameterValidations: ValidationConfig[],
   ) {
-    const expectedParameterCount = parameterValiations.length;
+    const expectedParameterCount = parameterValidations.length;
     if (parameters.length !== expectedParameterCount) {
       throw Error(`${functionName} requires ${expectedParameterCount} parameter(s), but received ${parameters.length}`)
     }
 
-    parameterValiations.forEach((validationConfig, index) => {
+    parameterValidations.forEach((validationConfig, index) => {
       const parameter = parameters[index];
 
       const disallowsAllAtoms = validationConfig.allowsAtoms === false;
@@ -95,7 +95,7 @@ export abstract class Expression {
   abstract evaluate(): SymbolicExpression;
 }
 
-abstract class OneParameterExpression<T extends SymbolicExpression> extends Expression {
+abstract class OneParameterExpression<T extends SymbolicExpression> extends CallExpression {
   protected parameter: T;
 
   constructor(
@@ -165,7 +165,7 @@ export class IsAtomExpression extends OneParameterExpression<SymbolicExpression>
   }
 }
 
-abstract class TwoParameterExpression<T0 extends SymbolicExpression, T1 extends SymbolicExpression> extends Expression {
+abstract class TwoParameterExpression<T0 extends SymbolicExpression, T1 extends SymbolicExpression> extends CallExpression {
   protected parameter0: T0;
   protected parameter1: T1;
 
