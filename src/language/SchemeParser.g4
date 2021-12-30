@@ -2,7 +2,20 @@ parser grammar SchemeParser;
 
 options { tokenVocab=SchemeLexer; }
 
-input: evaluableGroup EOF;
+input:
+  importDeclarationGroup EOF
+  | importDeclarationGroup evaluableGroup EOF
+  | evaluableGroup EOF
+  ;
+
+importDeclarationGroup: LEFT_SEPARATOR IMPORT importPathGroup RIGHT_SEPARATOR;
+
+importPathGroup:
+  importPath importPathGroup
+  | importPath
+  ;
+
+importPath: IMPORT_PATH;
 
 evaluableGroup:
   evaluable evaluableGroup

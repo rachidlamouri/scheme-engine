@@ -190,4 +190,12 @@ describe('run', () => {
     [f, 'invalid reference', "(abc)", { error: 'Invalid reference "abc"' }],
     [f, 'invalid execution', "(define invokeInvalid (lambda (abc) (abc))) (invokeInvalid 'a)", { error: '"abc" is not callable' }],
   ]);
+
+  runSuite('import', [
+    [f, 'single import', "(import importExamples/exampleA)", '&exampleA'],
+    [f, 'single import and execute', "(import importExamples/exampleA) (exampleA '(a b c))", '&exampleA\na'],
+    [f, 'multiple import', "(import importExamples/exampleA importExamples/exampleB)", '&exampleA\n&exampleB'],
+    [f, 'multiple import and execute', "(import importExamples/exampleA importExamples/exampleB) (exampleA (exampleB '(a b c)))", '&exampleA\n&exampleB\nb'],
+    [f, 'invalid import', "(import importExamples/exampleABC)", { error: 'Standard library "standardLibrary/importExamples/exampleABC" does not exist' }],
+  ]);
 });

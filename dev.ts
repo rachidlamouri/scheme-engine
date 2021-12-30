@@ -8,7 +8,10 @@ const debug = (...data: any[]) => {
   }
 }
 
-const watchDir = 'src/**/*';
+const watchDirs = [
+  'schemeLibrary/**/*',
+  'src/**/*',
+]
 
 const commands = {
   compile: 'npm.cmd run compile:grammar',
@@ -78,7 +81,9 @@ const watchFiles = (filepaths: string[]) => {
 };
 
 const start = () => {
-  const filepaths = glob.sync(watchDir).filter((filepath) => !fs.statSync(filepath).isDirectory());
+  const filepaths =
+    watchDirs.flatMap((watchDir) => (glob.sync(watchDir)))
+      .filter((filepath) => !fs.statSync(filepath).isDirectory());
   watchFiles(filepaths);
   runner.addToQueue('compile');
   runner.addToQueue('test');

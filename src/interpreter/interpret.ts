@@ -1,10 +1,7 @@
-import { InputContext } from '../language/compiled/SchemeParser';
-import { executionContext } from './executionContext';
-import { refineInputContext } from './input';
+import { Evaluable } from './evaluable';
 
-export const interpret = (rootAstNode: InputContext): string => {
-  executionContext.reset();
-  return refineInputContext(rootAstNode)
+export const interpret = (evaluables: Evaluable[]): string => {
+  return evaluables
     .map((evaluable) => {
       const result = evaluable.evaluate();
       const serializedResult = result.toString();

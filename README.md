@@ -47,6 +47,7 @@ For examples see [run.test.ts](./src/run.test.ts)
 - eq?
 - lambda definitions
 - lambda executions
+- standard library imports
 
 ## Development
 

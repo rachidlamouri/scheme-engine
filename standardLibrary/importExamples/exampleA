@@ -1,0 +1,5 @@
+(define exampleA
+  (lambda (listA)
+    (car listA)
+  )
+)
