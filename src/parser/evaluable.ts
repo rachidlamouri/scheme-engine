@@ -1,10 +1,10 @@
-import { refineLiteralContext } from './literal';
-import { refineCallExpressionContext } from './callExpression';
+import { Evaluable } from '../interpreterNodes/evaluable';
 import { EvaluableContext, EvaluableGroupContext } from '../language/compiled/SchemeParser';
-import { buildRefineGroupContext, NormalizedGroupContext, UnhandledContextError } from './utils';
-import { Evaluable } from './evaluableClass';
-import { refineLambdaReferenceDefinitionContext } from './lambdaReferenceDefinition';
 import { refineReferenceAtomContext } from './atom';
+import { refineCallExpressionContext } from './callExpression';
+import { refineLambdaReferenceDefinitionContext } from './lambdaReferenceDefinition';
+import { refineLiteralContext } from './literal';
+import { buildRefineGroupContext, NormalizedGroupContext, UnhandledContextError } from './utils';
 
 export const refineEvaluableContext = (evaluableContext: EvaluableContext): Evaluable => {
   const callExpressionContext = evaluableContext.callExpression();

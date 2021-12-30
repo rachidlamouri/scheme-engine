@@ -1,12 +1,10 @@
-import { CallExpressionContext } from '../language/compiled/SchemeParser';
-import { Atom, BooleanAtom, IntegerAtom, ReferenceAtom, refineReferenceAtomContext } from './atom';
-import { Evaluable } from './evaluableClass';
-import { refineEvaluableGroupContext } from './evaluable';
+import { Atom, BooleanAtom, IntegerAtom, ReferenceAtom } from './atom';
+import { Evaluable } from './evaluable';
 import { Lambda } from './lambda';
 import { List } from './list';
 import { SymbolicExpression } from './symbolicExpression';
 
-enum BuiltInFunctionName {
+export enum BuiltInFunctionName {
   CAR = 'car',
   CDR = 'cdr',
   CONS = 'cons',
@@ -29,7 +27,7 @@ type ValidationConfig =
     allowsEmptyLists: boolean;
   }
 
-abstract class CallExpression extends Evaluable {
+export abstract class CallExpression extends Evaluable {
   constructor(
     protected functionName: string,
     protected unevaluatedParameters: Evaluable[],
@@ -89,7 +87,7 @@ abstract class OneParameterExpression<T extends SymbolicExpression> extends Call
   }
 }
 
-class CarExpression extends OneParameterExpression<List> {
+export class CarExpression extends OneParameterExpression<List> {
   constructor(unevaluatedParameters: Evaluable[]) {
     super(BuiltInFunctionName.CAR, unevaluatedParameters, {
       allowsAtoms: false,
@@ -104,7 +102,7 @@ class CarExpression extends OneParameterExpression<List> {
   }
 }
 
-class CdrExpression extends OneParameterExpression<List> {
+export class CdrExpression extends OneParameterExpression<List> {
   constructor(unevaluatedParameters: Evaluable[]) {
     super(BuiltInFunctionName.CDR, unevaluatedParameters, {
       allowsAtoms: false,
@@ -119,7 +117,7 @@ class CdrExpression extends OneParameterExpression<List> {
   }
 }
 
-class IsNullExpression extends OneParameterExpression<List> {
+export class IsNullExpression extends OneParameterExpression<List> {
   constructor(unevaluatedParameters: Evaluable[]) {
     super(BuiltInFunctionName.IS_NULL, unevaluatedParameters, {
       allowsAtoms: false,
@@ -134,7 +132,7 @@ class IsNullExpression extends OneParameterExpression<List> {
   }
 }
 
-class IsAtomExpression extends OneParameterExpression<SymbolicExpression> {
+export class IsAtomExpression extends OneParameterExpression<SymbolicExpression> {
   constructor(unevaluatedParameters: Evaluable[]) {
     super(BuiltInFunctionName.IS_ATOM, unevaluatedParameters, {
       allowsAtoms: true,
@@ -164,7 +162,7 @@ abstract class TwoParameterExpression<T0 extends SymbolicExpression, T1 extends 
   }
 }
 
-class ConsExpression extends TwoParameterExpression<SymbolicExpression, List> {
+export class ConsExpression extends TwoParameterExpression<SymbolicExpression, List> {
   constructor(unevaluatedParameters: Evaluable[]) {
     super(
       BuiltInFunctionName.CONS,
@@ -188,7 +186,7 @@ class ConsExpression extends TwoParameterExpression<SymbolicExpression, List> {
   }
 }
 
-class IsEqualExpression extends TwoParameterExpression<Atom, Atom> {
+export class IsEqualExpression extends TwoParameterExpression<Atom, Atom> {
   constructor(unevaluatedParameters: Evaluable[]) {
     const validationConfig: ValidationConfig = {
       allowsAtoms: {
@@ -213,7 +211,7 @@ class IsEqualExpression extends TwoParameterExpression<Atom, Atom> {
   }
 }
 
-class ReferenceCallExpression extends CallExpression {
+export class ReferenceCallExpression extends CallExpression {
   constructor(private functionReference: ReferenceAtom, unevaluatedParameters: Evaluable[]) {
     super(
       functionReference.name,
@@ -236,27 +234,4 @@ class ReferenceCallExpression extends CallExpression {
     const parameters = this.evaluateParameters(validationConfigs);
     return lambda.evaluate(parameters);
   }
-}
-
-export const refineCallExpressionContext = (callExpressionContext: CallExpressionContext): CallExpression => {
-  const functionReference = refineReferenceAtomContext(callExpressionContext.referenceAtom());
-  const evaluableGroupContext = callExpressionContext.evaluableGroup();
-  const parameters = evaluableGroupContext !== undefined ? refineEvaluableGroupContext(evaluableGroupContext): [];
-
-  switch (functionReference.name) {
-    case BuiltInFunctionName.CAR:
-        return new CarExpression(parameters);
-    case BuiltInFunctionName.CDR:
-      return new CdrExpression(parameters);
-    case BuiltInFunctionName.CONS:
-      return new ConsExpression(parameters);
-    case BuiltInFunctionName.IS_NULL:
-      return new IsNullExpression(parameters);
-    case BuiltInFunctionName.IS_ATOM:
-      return new IsAtomExpression(parameters);
-    case BuiltInFunctionName.IS_EQUAL:
-      return new IsEqualExpression(parameters);
-  }
-
-  return new ReferenceCallExpression(functionReference, parameters);
 }

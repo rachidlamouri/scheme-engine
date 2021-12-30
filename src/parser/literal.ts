@@ -1,11 +1,10 @@
+import { SymbolicExpression } from '../interpreterNodes/symbolicExpression';
 import { LiteralContext } from '../language/compiled/SchemeParser';
-import { refineSymbolicExpressionContext, SymbolicExpression } from './symbolicExpression';
-import {  refineIntegerAtomContext } from './atom';
+import { refineIntegerAtomContext } from './atom';
+import { refineSymbolicExpressionContext } from './symbolicExpression';
 import { UnhandledContextError } from './utils';
 
-export type Literal = SymbolicExpression;
-
-export const refineLiteralContext = (literalContext: LiteralContext): Literal => {
+export const refineLiteralContext = (literalContext: LiteralContext): SymbolicExpression => {
   const symbolicExpressionContext = literalContext.symbolicExpression();
   const integerAtomContext = literalContext.integerAtom();
 

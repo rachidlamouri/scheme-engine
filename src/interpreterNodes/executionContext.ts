@@ -1,4 +1,4 @@
-import { Evaluable } from './evaluableClass';
+import { Evaluable } from './evaluable';
 
 class ExecutionContext {
   private lookupTable: Record<string, Evaluable> = {};

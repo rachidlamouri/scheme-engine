@@ -1,8 +1,6 @@
-import { ListContext } from '../language/compiled/SchemeParser';
 import { SymbolicExpression } from './symbolicExpression';
-import { refineSymbolicExpressionGroupContext } from './symbolicExpression';
 import { BooleanAtom } from './atom';
-import { Evaluable } from './evaluableClass';
+import { Evaluable } from './evaluable';
 
 export class List extends Evaluable {
   constructor(private contents: SymbolicExpression[]) {
@@ -41,14 +39,4 @@ export class List extends Evaluable {
     const contentsText = this.contents.map((item) => item.toString()).join(' ');
     return `(${contentsText})`;
   }
-}
-
-export const refineListContext = (listContext: ListContext): List => {
-  const symbolicExpressionGroupContext = listContext.symbolicExpressionGroup();
-
-  return new List(
-    symbolicExpressionGroupContext !== undefined
-      ? refineSymbolicExpressionGroupContext(symbolicExpressionGroupContext)
-      : []
-  );
 }

@@ -1,24 +1,24 @@
 import { tokenize } from './tokenize';
 import { parse } from './parse';
-import { Evaluable, executionContext, interpret, refineRootAstNode } from './interpreter/';
+import { Evaluable } from './interpreterNodes/evaluable';
+import { interpret } from './interpret';
 
 const tokenizeAndParse = (code: string): Evaluable[] => {
   const tokens = tokenize(code);
-  const rootAstNode = parse(tokens);
-  const refinedRootAstNode = refineRootAstNode(rootAstNode);
+  const rootInterpreterNode = parse(tokens);
 
   const importedEvaluables =
-    refinedRootAstNode.importDeclarations.map((importDeclaration) => importDeclaration.loadCode())
-    .flatMap((importedCode) => tokenizeAndParse(importedCode));
+    rootInterpreterNode.importDeclarations
+      .map((importDeclaration) => importDeclaration.loadCode())
+      .flatMap((importedCode) => tokenizeAndParse(importedCode));
 
   return [
     ...importedEvaluables,
-    ...refinedRootAstNode.evaluables,
+    ...rootInterpreterNode.evaluables,
   ];
 }
 
 export const run = (code: string): string => {
-  executionContext.reset();
   const evaluables = tokenizeAndParse(code);
   const result = interpret(evaluables);
   return result;

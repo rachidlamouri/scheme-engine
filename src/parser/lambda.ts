@@ -1,23 +1,7 @@
+import { Lambda } from '../interpreterNodes/lambda';
 import { LambdaDefinitionContext } from '../language/compiled/SchemeParser';
-import { ReferenceAtom } from './atom';
-import { Evaluable } from './evaluableClass';
 import { refineReferenceAtomGroupContext } from './atom';
 import { refineEvaluableContext } from './evaluable';
-
-export class Lambda extends Evaluable {
-  constructor(public readonly parameterReferences: ReferenceAtom[], private body: Evaluable) {
-    super();
-  }
-
-  evaluate(parameters: Evaluable[]): Evaluable {
-    this.parameterReferences.forEach((reference, index) => {
-      const value = parameters[index];
-      reference.register(value);
-    });
-
-    return this.body.evaluate();
-  }
-}
 
 export const refineLambdaDefinitionContext = (lambdaDefinitionContext: LambdaDefinitionContext): Lambda => {
   const referenceAtomGroupContext = lambdaDefinitionContext.referenceAtomGroup();

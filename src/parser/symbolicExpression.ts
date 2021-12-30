@@ -1,11 +1,8 @@
+import { SymbolicExpression } from '../interpreterNodes/symbolicExpression';
 import { SymbolicExpressionContext, SymbolicExpressionGroupContext } from '../language/compiled/SchemeParser';
-import { List, refineListContext } from './list';
-import { Atom, refineAtomContext } from './atom';
+import { refineAtomContext } from './atom';
+import { refineListContext } from './list';
 import { buildRefineGroupContext, NormalizedGroupContext, UnhandledContextError } from './utils';
-
-export type SymbolicExpression = List | Atom;
-
-export const isSymbolicExpression = (arg: any): arg is SymbolicExpression => arg instanceof List || arg instanceof Atom;
 
 export const refineSymbolicExpressionContext = (symbolicExpressionContext: SymbolicExpressionContext): SymbolicExpression => {
   const listContext = symbolicExpressionContext.list();

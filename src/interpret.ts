@@ -1,6 +1,8 @@
-import { Evaluable } from './evaluableClass';
+import { Evaluable } from './interpreterNodes/evaluable';
+import { executionContext } from './interpreterNodes/executionContext';
 
 export const interpret = (evaluables: Evaluable[]): string => {
+  executionContext.reset();
   return evaluables
     .map((evaluable) => {
       const result = evaluable.evaluate();
