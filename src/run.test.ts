@@ -179,5 +179,15 @@ describe('run', () => {
     [f, 'basic definition', "(define myLambda (lambda () 'atom))", '&myLambda'],
     [f, 'definition with one argument', '(define echoLiteral (lambda (a) a))', '&echoLiteral'],
     [f, 'definition with multiple arguments', '(define echoLiterals (lambda (a b) (cons a b)))', '&echoLiterals'],
+    [f, 'repeated references', "(define abc (lambda () 'a)) (define abc (lambda () 'b))", { error: 'Reference "abc" already exists' }],
+  ]);
+
+  runSuite('lambda executions', [
+    [f, 'basic execution', "(define myLambda (lambda () 'atom)) (myLambda)", '&myLambda\natom'],
+    [f, 'execution with one argument', "(define echoLiteral (lambda (a) a)) (echoLiteral 'turkey)", '&echoLiteral\nturkey'],
+    [f, 'execution with multiple arguments', "(define echoLiterals (lambda (a b) (cons a b))) (echoLiterals 'I '(like cookies))", '&echoLiterals\n(I like cookies)'],
+    [f, 'execution with invalid number of arguments', "(define echoLiterals (lambda (a b) (cons a b))) (echoLiterals 'a)", { error: 'echoLiterals requires 2 parameter(s), but received 1' }],
+    [f, 'invalid reference', "(abc)", { error: 'Invalid reference "abc"' }],
+    [f, 'invalid execution', "(define invokeInvalid (lambda (abc) (abc))) (invokeInvalid 'a)", { error: '"abc" is not callable' }],
   ]);
 });

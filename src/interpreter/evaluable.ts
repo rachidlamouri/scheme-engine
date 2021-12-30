@@ -1,3 +1,3 @@
 export abstract class Evaluable {
-  abstract evaluate(): Evaluable;
+  abstract evaluate(...args: any[]): Evaluable;
 }

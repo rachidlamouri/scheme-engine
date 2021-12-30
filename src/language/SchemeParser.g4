@@ -11,7 +11,10 @@ evaluableGroup:
 
 evaluable: callExpression | lambdaReferenceDefinition | referenceAtom | literal;
 
-callExpression: LEFT_SEPARATOR BUILT_IN_FUNCTION evaluableGroup RIGHT_SEPARATOR;
+callExpression:
+  LEFT_SEPARATOR referenceAtom evaluableGroup RIGHT_SEPARATOR
+  | LEFT_SEPARATOR referenceAtom RIGHT_SEPARATOR
+  ;
 
 lambdaReferenceDefinition: LEFT_SEPARATOR DEFINE referenceAtom lambdaDefinition RIGHT_SEPARATOR;
 

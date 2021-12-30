@@ -44,6 +44,7 @@ echo ci/example | npm run scheme -- -i -f
 - atom?
 - eq?
 - lambda definitions
+- lambda executions
 
 ## Development
 

@@ -1,5 +1,6 @@
 import { AtomContext, IntegerAtomContext, ReferenceAtomContext, StringAtomContext } from '../language/compiled/SchemeParser';
 import { Evaluable } from './evaluable';
+import { executionContext } from './executionContext';
 import { UnhandledContextError } from './utils';
 
 type Primitive = string | number | boolean;
@@ -43,6 +44,20 @@ export class BooleanAtom extends Atom {
 export class ReferenceAtom extends Atom {
   constructor(public readonly name: string) {
     super(`&${name}`);
+  }
+
+  evaluate(): Evaluable {
+    const evaluable = executionContext.lookup(this.name)
+
+    if (evaluable === undefined) {
+      throw Error(`Invalid reference "${this.name}"`);
+    }
+
+    return evaluable;
+  }
+
+  register(value: Evaluable) {
+    executionContext.register(this.name, value);
   }
 }
 

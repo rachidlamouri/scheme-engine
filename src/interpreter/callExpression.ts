@@ -1,7 +1,8 @@
 import { CallExpressionContext } from '../language/compiled/SchemeParser';
-import { Atom, BooleanAtom, IntegerAtom } from './atom';
+import { Atom, BooleanAtom, IntegerAtom, ReferenceAtom, refineReferenceAtomContext } from './atom';
 import { Evaluable } from './evaluable';
 import { refineEvaluableGroupContext } from './evaluableGroup';
+import { Lambda } from './lambda';
 import { List } from './list';
 import { SymbolicExpression } from './symbolicExpression';
 
@@ -30,19 +31,24 @@ type ValidationConfig =
 
 export abstract class CallExpression extends Evaluable {
   constructor(
-    protected functionName: BuiltInFunctionName,
-    protected parameters: Evaluable[],
-    parameterValidations: ValidationConfig[],
+    protected functionName: string,
+    protected unevaluatedParameters: Evaluable[],
   ) {
     super();
+  }
 
+  abstract evaluate(): Evaluable;
+
+  protected evaluateParameters(parameterValidations: ValidationConfig[]): Evaluable[] {
     const expectedParameterCount = parameterValidations.length;
-    if (parameters.length !== expectedParameterCount) {
-      throw Error(`${functionName} requires ${expectedParameterCount} parameter(s), but received ${parameters.length}`)
+    if (this.unevaluatedParameters.length !== expectedParameterCount) {
+      throw Error(`${this.functionName} requires ${expectedParameterCount} parameter(s), but received ${this.unevaluatedParameters.length}`)
     }
 
+    const evaluatedParameters = this.unevaluatedParameters.map((parameter) => parameter.evaluate());
+
     parameterValidations.forEach((validationConfig, index) => {
-      const parameter = parameters[index];
+      const parameter = evaluatedParameters[index];
 
       const disallowsAllAtoms = validationConfig.allowsAtoms === false;
       const allowsIntegerAtoms = validationConfig.allowsAtoms === true || (typeof validationConfig.allowsAtoms !== 'boolean' && validationConfig.allowsAtoms.allowsIntegers);
@@ -63,28 +69,29 @@ export abstract class CallExpression extends Evaluable {
         throw Error(`Parameter ${index} of ${this.functionName} cannot be an empty list`);
       }
     })
-  }
 
-  abstract evaluate(): Evaluable;
+    return evaluatedParameters;
+  }
 }
 
 abstract class OneParameterExpression<T extends SymbolicExpression> extends CallExpression {
-  protected parameter: T;
-
   constructor(
     functionName: BuiltInFunctionName,
-    parameters: Evaluable[],
-    validationConfig: ValidationConfig,
+    unevaluatedParameters: Evaluable[],
+    private validationConfig: ValidationConfig,
   ) {
-    super(functionName, parameters, [validationConfig]);
+    super(functionName, unevaluatedParameters);
+  }
 
-    [this.parameter] = parameters as [T];
+  protected evaluateParameter(): T {
+    const [parameter] = super.evaluateParameters([this.validationConfig]);
+    return parameter as T;
   }
 }
 
 export class CarExpression extends OneParameterExpression<List> {
-  constructor(parameters: Evaluable[]) {
-    super(BuiltInFunctionName.CAR, parameters, {
+  constructor(unevaluatedParameters: Evaluable[]) {
+    super(BuiltInFunctionName.CAR, unevaluatedParameters, {
       allowsAtoms: false,
       allowsLists: true,
       allowsEmptyLists: false,
@@ -92,13 +99,14 @@ export class CarExpression extends OneParameterExpression<List> {
   }
 
   evaluate(): Evaluable {
-    return this.parameter.car();
+    const parameter = super.evaluateParameter();
+    return parameter.car();
   }
 }
 
 export class CdrExpression extends OneParameterExpression<List> {
-  constructor(parameters: Evaluable[]) {
-    super(BuiltInFunctionName.CDR, parameters, {
+  constructor(unevaluatedParameters: Evaluable[]) {
+    super(BuiltInFunctionName.CDR, unevaluatedParameters, {
       allowsAtoms: false,
       allowsLists: true,
       allowsEmptyLists: false,
@@ -106,13 +114,14 @@ export class CdrExpression extends OneParameterExpression<List> {
   }
 
   evaluate(): Evaluable {
-    return this.parameter.cdr();
+    const parameter = super.evaluateParameter();
+    return parameter.cdr();
   }
 }
 
 export class IsNullExpression extends OneParameterExpression<List> {
-  constructor(parameters: Evaluable[]) {
-    super(BuiltInFunctionName.IS_NULL, parameters, {
+  constructor(unevaluatedParameters: Evaluable[]) {
+    super(BuiltInFunctionName.IS_NULL, unevaluatedParameters, {
       allowsAtoms: false,
       allowsLists: true,
       allowsEmptyLists: true,
@@ -120,13 +129,14 @@ export class IsNullExpression extends OneParameterExpression<List> {
   }
 
   evaluate(): Evaluable {
-    return this.parameter.isNull();
+    const parameter = super.evaluateParameter();
+    return parameter.isNull();
   }
 }
 
 export class IsAtomExpression extends OneParameterExpression<SymbolicExpression> {
-  constructor(parameters: Evaluable[]) {
-    super(BuiltInFunctionName.IS_ATOM, parameters, {
+  constructor(unevaluatedParameters: Evaluable[]) {
+    super(BuiltInFunctionName.IS_ATOM, unevaluatedParameters, {
       allowsAtoms: true,
       allowsLists: true,
       allowsEmptyLists: true,
@@ -134,31 +144,31 @@ export class IsAtomExpression extends OneParameterExpression<SymbolicExpression>
   }
 
   evaluate(): Evaluable {
-    return this.parameter.isAtom();
+    const parameter = super.evaluateParameter();
+    return parameter.isAtom();
   }
 }
 
 abstract class TwoParameterExpression<T0 extends SymbolicExpression, T1 extends SymbolicExpression> extends CallExpression {
-  protected parameter0: T0;
-  protected parameter1: T1;
-
   constructor(
     functionName: BuiltInFunctionName,
-    parameters: Evaluable[],
-    validationConfig0: ValidationConfig,
-    validationConfig1: ValidationConfig,
+    unevaluatedParameters: Evaluable[],
+    private validationConfig0: ValidationConfig,
+    private validationConfig1: ValidationConfig,
   ) {
-    super(functionName, parameters, [validationConfig0, validationConfig1]);
+    super(functionName, unevaluatedParameters);
+  }
 
-    [this.parameter0, this.parameter1] = parameters as [T0, T1];
+  protected evaluateParameters(): [T0, T1] {
+    return super.evaluateParameters([this.validationConfig0, this.validationConfig1]) as [T0, T1];
   }
 }
 
 export class ConsExpression extends TwoParameterExpression<SymbolicExpression, List> {
-  constructor(parameters: Evaluable[]) {
+  constructor(unevaluatedParameters: Evaluable[]) {
     super(
       BuiltInFunctionName.CONS,
-      parameters,
+      unevaluatedParameters,
       {
         allowsAtoms: true,
         allowsLists: true,
@@ -173,12 +183,13 @@ export class ConsExpression extends TwoParameterExpression<SymbolicExpression, L
   }
 
   evaluate(): Evaluable {
-    return this.parameter1.cons(this.parameter0);
+    const [parameter0, parameter1] = this.evaluateParameters();
+    return parameter1.cons(parameter0);
   }
 }
 
 export class IsEqualExpression extends TwoParameterExpression<Atom, Atom> {
-  constructor(parameters: Evaluable[]) {
+  constructor(unevaluatedParameters: Evaluable[]) {
     const validationConfig: ValidationConfig = {
       allowsAtoms: {
         allowsNonIntegers: true,
@@ -190,23 +201,49 @@ export class IsEqualExpression extends TwoParameterExpression<Atom, Atom> {
 
     super(
       BuiltInFunctionName.IS_EQUAL,
-      parameters,
+      unevaluatedParameters,
       validationConfig,
       validationConfig
     );
   }
 
   evaluate(): Evaluable {
-    return new BooleanAtom(this.parameter0.value === this.parameter1.value);
+    const [parameter0, parameter1] = this.evaluateParameters();
+    return new BooleanAtom(parameter0.value === parameter1.value);
+  }
+}
+
+class ReferenceCallExpression extends CallExpression {
+  constructor(private functionReference: ReferenceAtom, unevaluatedParameters: Evaluable[]) {
+    super(
+      functionReference.name,
+      unevaluatedParameters,
+    )
+  }
+
+  evaluate(): Evaluable {
+    const unknownValue = this.functionReference.evaluate();
+    if (!(unknownValue instanceof Lambda)) {
+      throw Error(`"${this.functionReference.name}" is not callable`)
+    }
+
+    const lambda = unknownValue;
+    const validationConfigs: ValidationConfig[] = lambda.parameterReferences.map(() => ({
+      allowsAtoms: true,
+      allowsLists: true,
+      allowsEmptyLists: true,
+    }))
+    const parameters = this.evaluateParameters(validationConfigs);
+    return lambda.evaluate(parameters);
   }
 }
 
 export const refineCallExpressionContext = (callExpressionContext: CallExpressionContext): CallExpression => {
-  const functionName = callExpressionContext.BUILT_IN_FUNCTION().text;
-  const parameterEvaluables = refineEvaluableGroupContext(callExpressionContext.evaluableGroup());
-  const parameters = parameterEvaluables.map((evaluable) => evaluable.evaluate());
+  const functionReference = refineReferenceAtomContext(callExpressionContext.referenceAtom());
+  const evaluableGroupContext = callExpressionContext.evaluableGroup();
+  const parameters = evaluableGroupContext !== undefined ? refineEvaluableGroupContext(evaluableGroupContext): [];
 
-  switch (functionName) {
+  switch (functionReference.name) {
     case BuiltInFunctionName.CAR:
         return new CarExpression(parameters);
     case BuiltInFunctionName.CDR:
@@ -219,6 +256,7 @@ export const refineCallExpressionContext = (callExpressionContext: CallExpressio
       return new IsAtomExpression(parameters);
     case BuiltInFunctionName.IS_EQUAL:
       return new IsEqualExpression(parameters);
-    default: throw Error(`Expression "${functionName}" is not implemented`)
   }
+
+  return new ReferenceCallExpression(functionReference, parameters);
 }
