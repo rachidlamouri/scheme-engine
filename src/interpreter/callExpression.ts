@@ -29,7 +29,7 @@ type ValidationConfig =
     allowsEmptyLists: boolean;
   }
 
-export abstract class CallExpression extends Evaluable {
+abstract class CallExpression extends Evaluable {
   constructor(
     protected functionName: string,
     protected unevaluatedParameters: Evaluable[],
@@ -89,7 +89,7 @@ abstract class OneParameterExpression<T extends SymbolicExpression> extends Call
   }
 }
 
-export class CarExpression extends OneParameterExpression<List> {
+class CarExpression extends OneParameterExpression<List> {
   constructor(unevaluatedParameters: Evaluable[]) {
     super(BuiltInFunctionName.CAR, unevaluatedParameters, {
       allowsAtoms: false,
@@ -104,7 +104,7 @@ export class CarExpression extends OneParameterExpression<List> {
   }
 }
 
-export class CdrExpression extends OneParameterExpression<List> {
+class CdrExpression extends OneParameterExpression<List> {
   constructor(unevaluatedParameters: Evaluable[]) {
     super(BuiltInFunctionName.CDR, unevaluatedParameters, {
       allowsAtoms: false,
@@ -119,7 +119,7 @@ export class CdrExpression extends OneParameterExpression<List> {
   }
 }
 
-export class IsNullExpression extends OneParameterExpression<List> {
+class IsNullExpression extends OneParameterExpression<List> {
   constructor(unevaluatedParameters: Evaluable[]) {
     super(BuiltInFunctionName.IS_NULL, unevaluatedParameters, {
       allowsAtoms: false,
@@ -134,7 +134,7 @@ export class IsNullExpression extends OneParameterExpression<List> {
   }
 }
 
-export class IsAtomExpression extends OneParameterExpression<SymbolicExpression> {
+class IsAtomExpression extends OneParameterExpression<SymbolicExpression> {
   constructor(unevaluatedParameters: Evaluable[]) {
     super(BuiltInFunctionName.IS_ATOM, unevaluatedParameters, {
       allowsAtoms: true,
@@ -164,7 +164,7 @@ abstract class TwoParameterExpression<T0 extends SymbolicExpression, T1 extends 
   }
 }
 
-export class ConsExpression extends TwoParameterExpression<SymbolicExpression, List> {
+class ConsExpression extends TwoParameterExpression<SymbolicExpression, List> {
   constructor(unevaluatedParameters: Evaluable[]) {
     super(
       BuiltInFunctionName.CONS,
@@ -188,7 +188,7 @@ export class ConsExpression extends TwoParameterExpression<SymbolicExpression, L
   }
 }
 
-export class IsEqualExpression extends TwoParameterExpression<Atom, Atom> {
+class IsEqualExpression extends TwoParameterExpression<Atom, Atom> {
   constructor(unevaluatedParameters: Evaluable[]) {
     const validationConfig: ValidationConfig = {
       allowsAtoms: {
