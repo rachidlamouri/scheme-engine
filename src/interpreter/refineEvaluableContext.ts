@@ -1,7 +1,7 @@
 import { refineLiteralContext } from './literal';
 import { refineCallExpressionContext } from './callExpression';
 import { EvaluableContext } from '../language/compiled/SchemeParser';
-import { UnreachableError } from './utils';
+import { UnhandledContextError } from './utils';
 import { Evaluable } from './evaluable';
 import { refineLambdaReferenceDefinitionContext } from './lambdaReferenceDefinition';
 
@@ -18,5 +18,5 @@ export const refineEvaluableContext = (evaluableContext: EvaluableContext): Eval
     return refineLiteralContext(literalContext);
   }
 
-  throw new UnreachableError();
+  throw new UnhandledContextError(evaluableContext);
 };

@@ -1,7 +1,7 @@
 import { SymbolicExpressionContext } from '../language/compiled/SchemeParser';
 import { List, refineListContext } from './list';
 import { Atom, refineAtomContext } from './atom';
-import { UnreachableError } from './utils';
+import { UnhandledContextError } from './utils';
 
 export type SymbolicExpression = List | Atom;
 
@@ -17,5 +17,5 @@ export const refineSymbolicExpressionContext = (symbolicExpressionContext: Symbo
     return refineAtomContext(atomContext);
   }
 
-  throw new UnreachableError();
+  throw new UnhandledContextError(symbolicExpressionContext);
 };

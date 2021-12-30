@@ -1,6 +1,6 @@
 import { AtomContext, IntegerAtomContext, ReferenceAtomContext, StringAtomContext } from '../language/compiled/SchemeParser';
 import { Evaluable } from './evaluable';
-import { UnreachableError } from './utils';
+import { UnhandledContextError } from './utils';
 
 type Primitive = string | number | boolean;
 
@@ -68,5 +68,5 @@ export const refineAtomContext = (atomContext: AtomContext): Atom => {
     return refineIntegerAtomContext(integerAtomContext);
   }
 
-  throw new UnreachableError();
+  throw new UnhandledContextError(atomContext);
 }

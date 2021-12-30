@@ -1,7 +1,7 @@
 import { LiteralContext } from '../language/compiled/SchemeParser';
 import { refineSymbolicExpressionContext, SymbolicExpression } from './symbolicExpression';
 import {  refineIntegerAtomContext } from './atom';
-import { UnreachableError } from './utils';
+import { UnhandledContextError } from './utils';
 
 export type Literal = SymbolicExpression;
 
@@ -15,5 +15,5 @@ export const refineLiteralContext = (literalContext: LiteralContext): Literal =>
     return refineIntegerAtomContext(integerAtomContext);
   }
 
-  throw new UnreachableError();
+  throw new UnhandledContextError(literalContext);
 };
