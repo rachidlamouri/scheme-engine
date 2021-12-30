@@ -67,8 +67,6 @@ const runner = new Runner();
  * Registers commands based on file changes
  */
 const watchFiles = (filepaths: string[]) => {
-  console.log(`Watching ${filepaths.length} files`);
-
   filepaths.forEach((filepath) => {
     fs.watch(filepath, () => {
       if (/g4$/.test(filepath)) {
@@ -80,11 +78,20 @@ const watchFiles = (filepaths: string[]) => {
   })
 };
 
+const [arg] = process.argv.slice(2);
+
 const start = () => {
   const filepaths =
     watchDirs.flatMap((watchDir) => (glob.sync(watchDir)))
       .filter((filepath) => !fs.statSync(filepath).isDirectory());
-  watchFiles(filepaths);
+
+  if (arg === '--watch') {
+    console.log(`Watching ${filepaths.length} files`);
+    watchFiles(filepaths);
+  } else {
+    console.log('Running once!');
+  }
+
   runner.addToQueue('compile');
   runner.addToQueue('test');
 }

@@ -53,5 +53,5 @@ For examples see [run.test.ts](./src/run.test.ts)
 
 ```bash
 # Watches grammar and typescript files. Recompiles grammars when changed, and reruns tests on all file changes
-npm run dev
+npm run dev -- --watch
 ```
