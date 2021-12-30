@@ -1,7 +1,7 @@
-import { SymbolicExpressionContext } from '../language/compiled/SchemeParser';
+import { SymbolicExpressionContext, SymbolicExpressionGroupContext } from '../language/compiled/SchemeParser';
 import { List, refineListContext } from './list';
 import { Atom, refineAtomContext } from './atom';
-import { UnhandledContextError } from './utils';
+import { buildRefineGroupContext, NormalizedGroupContext, UnhandledContextError } from './utils';
 
 export type SymbolicExpression = List | Atom;
 
@@ -19,3 +19,15 @@ export const refineSymbolicExpressionContext = (symbolicExpressionContext: Symbo
 
   throw new UnhandledContextError(symbolicExpressionContext);
 };
+
+export const refineSymbolicExpressionGroupContext = buildRefineGroupContext<
+  SymbolicExpressionContext,
+  SymbolicExpressionGroupContext,
+  SymbolicExpression
+>(
+  (symbolicExpressionGroupContext: SymbolicExpressionGroupContext): NormalizedGroupContext<SymbolicExpressionContext, SymbolicExpressionGroupContext> => ({
+    elementContext: symbolicExpressionGroupContext.symbolicExpression(),
+    groupContext: symbolicExpressionGroupContext.symbolicExpressionGroup(),
+  }),
+  refineSymbolicExpressionContext,
+);

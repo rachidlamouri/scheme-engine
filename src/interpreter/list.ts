@@ -1,6 +1,6 @@
 import { ListContext } from '../language/compiled/SchemeParser';
 import { SymbolicExpression } from './symbolicExpression';
-import { refineSymbolicExpressionGroupContext } from './symbolicExpressionGroup';
+import { refineSymbolicExpressionGroupContext } from './symbolicExpression';
 import { BooleanAtom } from './atom';
 import { Evaluable } from './evaluable';
 

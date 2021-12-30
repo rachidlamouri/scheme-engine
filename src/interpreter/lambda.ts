@@ -1,7 +1,7 @@
 import { LambdaDefinitionContext } from '../language/compiled/SchemeParser';
 import { ReferenceAtom } from './atom';
 import { Evaluable } from './evaluable';
-import { refineReferenceAtomGroupContext } from './referenceAtomGroup';
+import { refineReferenceAtomGroupContext } from './atom';
 import { refineEvaluableContext } from './refineEvaluableContext';
 
 export class Lambda extends Evaluable {
@@ -27,4 +27,3 @@ export const refineLambdaDefinitionContext = (lambdaDefinitionContext: LambdaDef
 
   return new Lambda(parameterReferences, body);
 }
-

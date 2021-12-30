@@ -1,7 +1,7 @@
 import { InputContext } from '../language/compiled/SchemeParser';
 import { Evaluable } from './evaluable';
-import { refineEvaluableGroupContext } from './evaluableGroup';
-import { ImportDeclaration, refineImportDeclarationGroupContext } from './importDeclarationGroup';
+import { refineEvaluableGroupContext } from './refineEvaluableContext';
+import { ImportDeclaration, refineImportDeclarationGroupContext } from './importDeclaration';
 
 type Input = {
   importDeclarations: ImportDeclaration[];

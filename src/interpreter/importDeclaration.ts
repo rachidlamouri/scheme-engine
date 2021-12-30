@@ -1,6 +1,6 @@
 import fs from 'fs';
 import { ImportDeclarationGroupContext } from '../language/compiled/SchemeParser';
-import { refineImportPathGroup } from './importPathGroup';
+import { refineImportPathGroup } from './importPath';
 
 export class ImportDeclaration {
   constructor(private importPath: string) {}

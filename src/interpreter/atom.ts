@@ -1,7 +1,7 @@
-import { AtomContext, IntegerAtomContext, ReferenceAtomContext, StringAtomContext } from '../language/compiled/SchemeParser';
+import { AtomContext, IntegerAtomContext, ReferenceAtomContext, ReferenceAtomGroupContext, StringAtomContext } from '../language/compiled/SchemeParser';
 import { Evaluable } from './evaluable';
 import { executionContext } from './executionContext';
-import { UnhandledContextError } from './utils';
+import { buildRefineGroupContext, NormalizedGroupContext, UnhandledContextError } from './utils';
 
 type Primitive = string | number | boolean;
 
@@ -71,6 +71,18 @@ export const refineIntegerAtomContext = (integerAtomContext: IntegerAtomContext)
 
 export const refineReferenceAtomContext = (referenceAtomContext: ReferenceAtomContext): ReferenceAtom => (
   new ReferenceAtom(referenceAtomContext.STRING().text)
+);
+
+export const refineReferenceAtomGroupContext = buildRefineGroupContext<
+  ReferenceAtomContext,
+  ReferenceAtomGroupContext,
+  ReferenceAtom
+>(
+  (referenceAtomGroupContext: ReferenceAtomGroupContext): NormalizedGroupContext<ReferenceAtomContext, ReferenceAtomGroupContext> => ({
+    elementContext: referenceAtomGroupContext.referenceAtom(),
+    groupContext: referenceAtomGroupContext.referenceAtomGroup(),
+  }),
+  refineReferenceAtomContext,
 );
 
 export const refineAtomContext = (atomContext: AtomContext): Atom => {

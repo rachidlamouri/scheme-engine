@@ -1,7 +1,7 @@
 import { refineLiteralContext } from './literal';
 import { refineCallExpressionContext } from './callExpression';
-import { EvaluableContext } from '../language/compiled/SchemeParser';
-import { UnhandledContextError } from './utils';
+import { EvaluableContext, EvaluableGroupContext } from '../language/compiled/SchemeParser';
+import { buildRefineGroupContext, NormalizedGroupContext, UnhandledContextError } from './utils';
 import { Evaluable } from './evaluable';
 import { refineLambdaReferenceDefinitionContext } from './lambdaReferenceDefinition';
 import { refineReferenceAtomContext } from './atom';
@@ -24,3 +24,15 @@ export const refineEvaluableContext = (evaluableContext: EvaluableContext): Eval
 
   throw new UnhandledContextError(evaluableContext);
 };
+
+export const refineEvaluableGroupContext = buildRefineGroupContext<
+  EvaluableContext,
+  EvaluableGroupContext,
+  Evaluable
+>(
+  (evaluableGroupContext: EvaluableGroupContext): NormalizedGroupContext<EvaluableContext, EvaluableGroupContext> => ({
+    elementContext: evaluableGroupContext.evaluable(),
+    groupContext: evaluableGroupContext.evaluableGroup(),
+  }),
+  refineEvaluableContext,
+);
