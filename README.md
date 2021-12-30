@@ -36,6 +36,8 @@ echo ci/example | npm run scheme -- -i -f
 
 ### Supported Features
 
+For examples see [run.test.ts](./src/run.test.ts)
+
 - echo literal symbolic expressions
 - car
 - cdr
