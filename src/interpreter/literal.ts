@@ -1,19 +1,19 @@
 import { LiteralContext } from '../language/compiled/SchemeParser';
-import { parseSymbolicExpressionParentContext, SymbolicExpression } from './symbolicExpression';
-import { parseAtomParentContext } from './atom';
-import { OptionalChildContext, NodeParentContext, ParsedNode } from './utils';
+import { refineSymbolicExpressionContext, SymbolicExpression } from './symbolicExpression';
+import {  refineIntegerAtomContext } from './atom';
+import { UnreachableError } from './utils';
 
 export type Literal = SymbolicExpression;
 
-export const parseLiteralParentContext = <
-  TChildContext extends OptionalChildContext<LiteralContext>
->(parentContext: NodeParentContext<LiteralContext, TChildContext, 'literal'>): ParsedNode<Literal, LiteralContext, TChildContext> => {
-  const literalContext = parentContext.literal();
+export const refineLiteralContext = (literalContext: LiteralContext): Literal => {
+  const symbolicExpressionContext = literalContext.symbolicExpression();
+  const integerAtomContext = literalContext.integerAtom();
 
-  if (literalContext !== undefined) {
-    return parseSymbolicExpressionParentContext(literalContext)
-      ?? parseAtomParentContext(literalContext) as ParsedNode<Literal, LiteralContext, TChildContext>;
+  if (symbolicExpressionContext !== undefined && integerAtomContext === undefined) {
+    return refineSymbolicExpressionContext(symbolicExpressionContext);
+  } else if (symbolicExpressionContext === undefined && integerAtomContext !== undefined) {
+    return refineIntegerAtomContext(integerAtomContext);
   }
 
-  return null as ParsedNode<Literal, LiteralContext, TChildContext>;
+  throw new UnreachableError();
 };

@@ -1,26 +1,15 @@
 import { ListContext } from '../language/compiled/SchemeParser';
 import { SymbolicExpression } from './symbolicExpression';
-import { parseSymbolicExpressionGroupParentContext } from './symbolicExpressionGroup';
+import { refineSymbolicExpressionGroupContext } from './symbolicExpressionGroup';
 import { BooleanAtom } from './atom';
-import { OptionalChildContext, NodeParentContext, ParsedNode } from './utils';
+import { Evaluable } from './evaluable';
 
-export class List {
-  static parseParentContext = <
-    TChildContext extends OptionalChildContext<ListContext>
-  >(parentContext: NodeParentContext<ListContext, TChildContext, 'list'>): ParsedNode<List, ListContext, TChildContext> => {
-    const listContext = parentContext.list();
+export class List extends Evaluable {
+  constructor(private contents: SymbolicExpression[]) {
+    super();
+  }
 
-    if (listContext !== undefined) {
-      const contents = parseSymbolicExpressionGroupParentContext(listContext)
-      return new List(contents);
-    }
-
-    return null as ParsedNode<List, ListContext, TChildContext>;
-  };
-
-  constructor(private contents: SymbolicExpression[]) {}
-
-  car(): SymbolicExpression {
+  car(): Evaluable {
     return this.contents[0];
   }
 
@@ -32,7 +21,7 @@ export class List {
     return new List([symbolicExpression, ...this.contents]);
   }
 
-  evaluate(): SymbolicExpression {
+  evaluate(): Evaluable {
     return this;
   }
 
@@ -52,4 +41,14 @@ export class List {
     const contentsText = this.contents.map((item) => item.toString()).join(' ');
     return `(${contentsText})`;
   }
+}
+
+export const refineListContext = (listContext: ListContext): List => {
+  const symbolicExpressionGroupContext = listContext.symbolicExpressionGroup();
+
+  return new List(
+    symbolicExpressionGroupContext !== undefined
+      ? refineSymbolicExpressionGroupContext(symbolicExpressionGroupContext)
+      : []
+  );
 }

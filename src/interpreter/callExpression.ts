@@ -1,9 +1,9 @@
 import { CallExpressionContext } from '../language/compiled/SchemeParser';
 import { Atom, BooleanAtom, IntegerAtom } from './atom';
-import { parseEvaluableGroupParentContext } from './evaluableGroup';
+import { Evaluable } from './evaluable';
+import { refineEvaluableGroupContext } from './evaluableGroup';
 import { List } from './list';
 import { SymbolicExpression } from './symbolicExpression';
-import { OptionalChildContext, NodeParentContext, ParsedNode } from './utils';
 
 enum BuiltInFunctionName {
   CAR = 'car',
@@ -28,41 +28,14 @@ type ValidationConfig =
     allowsEmptyLists: boolean;
   }
 
-export abstract class CallExpression {
-  static parseParentContext = <
-    TChildContext extends OptionalChildContext<CallExpressionContext>
-  >(parentContext: NodeParentContext<CallExpressionContext, TChildContext, 'callExpression'>): ParsedNode<CallExpression, CallExpressionContext, TChildContext> => {
-    const expressionContext = parentContext.callExpression();
-
-    if (expressionContext === undefined) {
-      return null as ParsedNode<CallExpression, CallExpressionContext, TChildContext>;
-    }
-
-    const functionName = expressionContext.BUILT_IN_FUNCTION().text;
-    const parameters = parseEvaluableGroupParentContext(expressionContext);
-
-    switch (functionName) {
-      case BuiltInFunctionName.CAR:
-          return new CarExpression(parameters) as ParsedNode<CallExpression, CallExpressionContext, TChildContext>;
-      case BuiltInFunctionName.CDR:
-        return new CdrExpression(parameters) as ParsedNode<CallExpression, CallExpressionContext, TChildContext>;
-      case BuiltInFunctionName.CONS:
-        return new ConsExpression(parameters) as ParsedNode<CallExpression, CallExpressionContext, TChildContext>;
-      case BuiltInFunctionName.IS_NULL:
-        return new IsNullExpression(parameters) as ParsedNode<CallExpression, CallExpressionContext, TChildContext>;
-      case BuiltInFunctionName.IS_ATOM:
-        return new IsAtomExpression(parameters) as ParsedNode<CallExpression, CallExpressionContext, TChildContext>;
-      case BuiltInFunctionName.IS_EQUAL:
-        return new IsEqualExpression(parameters) as ParsedNode<CallExpression, CallExpressionContext, TChildContext>;
-      default: throw Error(`Expression "${functionName}" is not implemented`)
-    }
-  };
-
+export abstract class CallExpression extends Evaluable {
   constructor(
     protected functionName: BuiltInFunctionName,
-    protected parameters: SymbolicExpression[],
+    protected parameters: Evaluable[],
     parameterValidations: ValidationConfig[],
   ) {
+    super();
+
     const expectedParameterCount = parameterValidations.length;
     if (parameters.length !== expectedParameterCount) {
       throw Error(`${functionName} requires ${expectedParameterCount} parameter(s), but received ${parameters.length}`)
@@ -92,7 +65,7 @@ export abstract class CallExpression {
     })
   }
 
-  abstract evaluate(): SymbolicExpression;
+  abstract evaluate(): Evaluable;
 }
 
 abstract class OneParameterExpression<T extends SymbolicExpression> extends CallExpression {
@@ -100,7 +73,7 @@ abstract class OneParameterExpression<T extends SymbolicExpression> extends Call
 
   constructor(
     functionName: BuiltInFunctionName,
-    parameters: SymbolicExpression[],
+    parameters: Evaluable[],
     validationConfig: ValidationConfig,
   ) {
     super(functionName, parameters, [validationConfig]);
@@ -110,7 +83,7 @@ abstract class OneParameterExpression<T extends SymbolicExpression> extends Call
 }
 
 export class CarExpression extends OneParameterExpression<List> {
-  constructor(parameters: SymbolicExpression[]) {
+  constructor(parameters: Evaluable[]) {
     super(BuiltInFunctionName.CAR, parameters, {
       allowsAtoms: false,
       allowsLists: true,
@@ -118,13 +91,13 @@ export class CarExpression extends OneParameterExpression<List> {
     });
   }
 
-  evaluate(): SymbolicExpression {
+  evaluate(): Evaluable {
     return this.parameter.car();
   }
 }
 
 export class CdrExpression extends OneParameterExpression<List> {
-  constructor(parameters: SymbolicExpression[]) {
+  constructor(parameters: Evaluable[]) {
     super(BuiltInFunctionName.CDR, parameters, {
       allowsAtoms: false,
       allowsLists: true,
@@ -132,13 +105,13 @@ export class CdrExpression extends OneParameterExpression<List> {
     });
   }
 
-  evaluate(): SymbolicExpression {
+  evaluate(): Evaluable {
     return this.parameter.cdr();
   }
 }
 
 export class IsNullExpression extends OneParameterExpression<List> {
-  constructor(parameters: SymbolicExpression[]) {
+  constructor(parameters: Evaluable[]) {
     super(BuiltInFunctionName.IS_NULL, parameters, {
       allowsAtoms: false,
       allowsLists: true,
@@ -146,13 +119,13 @@ export class IsNullExpression extends OneParameterExpression<List> {
     });
   }
 
-  evaluate(): SymbolicExpression {
+  evaluate(): Evaluable {
     return this.parameter.isNull();
   }
 }
 
 export class IsAtomExpression extends OneParameterExpression<SymbolicExpression> {
-  constructor(parameters: SymbolicExpression[]) {
+  constructor(parameters: Evaluable[]) {
     super(BuiltInFunctionName.IS_ATOM, parameters, {
       allowsAtoms: true,
       allowsLists: true,
@@ -160,7 +133,7 @@ export class IsAtomExpression extends OneParameterExpression<SymbolicExpression>
     });
   }
 
-  evaluate(): SymbolicExpression {
+  evaluate(): Evaluable {
     return this.parameter.isAtom();
   }
 }
@@ -171,7 +144,7 @@ abstract class TwoParameterExpression<T0 extends SymbolicExpression, T1 extends 
 
   constructor(
     functionName: BuiltInFunctionName,
-    parameters: SymbolicExpression[],
+    parameters: Evaluable[],
     validationConfig0: ValidationConfig,
     validationConfig1: ValidationConfig,
   ) {
@@ -182,7 +155,7 @@ abstract class TwoParameterExpression<T0 extends SymbolicExpression, T1 extends 
 }
 
 export class ConsExpression extends TwoParameterExpression<SymbolicExpression, List> {
-  constructor(parameters: SymbolicExpression[]) {
+  constructor(parameters: Evaluable[]) {
     super(
       BuiltInFunctionName.CONS,
       parameters,
@@ -199,13 +172,13 @@ export class ConsExpression extends TwoParameterExpression<SymbolicExpression, L
     );
   }
 
-  evaluate(): SymbolicExpression {
+  evaluate(): Evaluable {
     return this.parameter1.cons(this.parameter0);
   }
 }
 
 export class IsEqualExpression extends TwoParameterExpression<Atom, Atom> {
-  constructor(parameters: SymbolicExpression[]) {
+  constructor(parameters: Evaluable[]) {
     const validationConfig: ValidationConfig = {
       allowsAtoms: {
         allowsNonIntegers: true,
@@ -223,7 +196,29 @@ export class IsEqualExpression extends TwoParameterExpression<Atom, Atom> {
     );
   }
 
-  evaluate(): SymbolicExpression {
+  evaluate(): Evaluable {
     return new BooleanAtom(this.parameter0.value === this.parameter1.value);
+  }
+}
+
+export const refineCallExpressionContext = (callExpressionContext: CallExpressionContext): CallExpression => {
+  const functionName = callExpressionContext.BUILT_IN_FUNCTION().text;
+  const parameterEvaluables = refineEvaluableGroupContext(callExpressionContext.evaluableGroup());
+  const parameters = parameterEvaluables.map((evaluable) => evaluable.evaluate());
+
+  switch (functionName) {
+    case BuiltInFunctionName.CAR:
+        return new CarExpression(parameters);
+    case BuiltInFunctionName.CDR:
+      return new CdrExpression(parameters);
+    case BuiltInFunctionName.CONS:
+      return new ConsExpression(parameters);
+    case BuiltInFunctionName.IS_NULL:
+      return new IsNullExpression(parameters);
+    case BuiltInFunctionName.IS_ATOM:
+      return new IsAtomExpression(parameters);
+    case BuiltInFunctionName.IS_EQUAL:
+      return new IsEqualExpression(parameters);
+    default: throw Error(`Expression "${functionName}" is not implemented`)
   }
 }

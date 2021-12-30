@@ -1,5 +1,7 @@
 import { InputContext } from '../language/compiled/SchemeParser';
-import { parseEvaluableGroupParentContext } from './evaluableGroup';
-import { SymbolicExpression } from './symbolicExpression';
+import { Evaluable } from './evaluable';
+import { refineEvaluableGroupContext } from './evaluableGroup';
 
-export const parseInputContext = (inputContext: InputContext): SymbolicExpression[] => parseEvaluableGroupParentContext(inputContext);
+export const refineInputContext = (inputContext: InputContext): Evaluable[] => (
+  refineEvaluableGroupContext(inputContext.evaluableGroup())
+);

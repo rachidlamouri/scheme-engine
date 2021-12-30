@@ -1,13 +1,15 @@
 import { AtomContext, IntegerAtomContext, StringAtomContext } from '../language/compiled/SchemeParser';
-import { SymbolicExpression } from './symbolicExpression';
-import { ParentContext } from './utils';
+import { Evaluable } from './evaluable';
+import { UnreachableError } from './utils';
 
 type Primitive = string | number | boolean;
 
-export abstract class Atom {
-  constructor(public readonly value: Primitive) {}
+export abstract class Atom extends Evaluable {
+  constructor(public readonly value: Primitive) {
+    super();
+  }
 
-  evaluate(): SymbolicExpression {
+  evaluate(): Evaluable {
     return this;
   }
 
@@ -38,41 +40,23 @@ export class BooleanAtom extends Atom {
   }
 }
 
-type ChildAtomContext = AtomContext | IntegerAtomContext | undefined;
+const refineStringAtomContext = (stringAtomContext: StringAtomContext): StringAtom => (
+  new StringAtom(stringAtomContext.STRING().text)
+);
 
-type AtomParentContext<TChildContext extends ChildAtomContext> =
-  [TChildContext] extends [AtomContext]
-    ? ParentContext<'atom', AtomContext>
-    : [TChildContext] extends [AtomContext | undefined]
-      ? ParentContext<'atom', AtomContext | undefined>
-      : [TChildContext] extends [IntegerAtomContext]
-        ? ParentContext<'integerAtom', IntegerAtomContext>
-        : ParentContext<'integerAtom', IntegerAtomContext | undefined>;
+export const refineIntegerAtomContext = (integerAtomContext: IntegerAtomContext): IntegerAtom => (
+  new IntegerAtom(Number.parseInt(integerAtomContext.INTEGER().text))
+);
 
-type ParsedAtom<TChildContext extends ChildAtomContext> =
-  [TChildContext] extends [AtomContext | IntegerAtomContext]
-    ? Atom
-    : Atom | null;
+export const refineAtomContext = (atomContext: AtomContext): Atom => {
+  const stringAtomContext = atomContext.stringAtom();
+  const integerAtomContext = atomContext.integerAtom();
 
-export const parseAtomParentContext = <
-  TChildContext extends ChildAtomContext
-  >(parentContext: AtomParentContext<TChildContext>): ParsedAtom<TChildContext> => {
-  let primitiveContext: StringAtomContext | IntegerAtomContext;
-  if ('atom' in parentContext) {
-    const atomContext = parentContext.atom();
-
-    if (atomContext === undefined) {
-      return null as ParsedAtom<TChildContext>;
-    }
-
-    primitiveContext = atomContext.stringAtom() ?? atomContext.integerAtom()!;
-  } else {
-    primitiveContext = parentContext.integerAtom()!;
+  if (stringAtomContext !== undefined && integerAtomContext === undefined) {
+    return refineStringAtomContext(stringAtomContext);
+  } else if (stringAtomContext === undefined && integerAtomContext !== undefined) {
+    return refineIntegerAtomContext(integerAtomContext);
   }
 
-  if (primitiveContext instanceof StringAtomContext) {
-    return new StringAtom(primitiveContext.text);
-  }
-
-  return new IntegerAtom(Number.parseInt(primitiveContext.text));
+  throw new UnreachableError();
 }

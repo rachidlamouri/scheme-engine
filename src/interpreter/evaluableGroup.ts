@@ -1,19 +1,12 @@
-import { EvaluableGroupContext, EvaluableContext } from '../language/compiled/SchemeParser';
-import { Evaluable, parseEvaluableParentContext } from './evaluable';
-import { SymbolicExpression, isSymbolicExpression } from './symbolicExpression';
-import { buildParseGroupParentContext } from './utils';
+import { EvaluableGroupContext } from '../language/compiled/SchemeParser';
+import { refineEvaluableContext } from './refineEvaluableContext';
+import { Evaluable } from './evaluable';
 
-const parseParentContext = buildParseGroupParentContext<
-  Evaluable,
-  EvaluableContext,
-  typeof parseEvaluableParentContext,
-  'evaluableGroup',
-  EvaluableGroupContext
->(
-  parseEvaluableParentContext,
-  'evaluableGroup',
-);
+export const refineEvaluableGroupContext = (evaluableGroupContext: EvaluableGroupContext): Evaluable[] => {
+  const innerEvaluableGroupContext = evaluableGroupContext.evaluableGroup();
 
-type EvaluableParentContext = Parameters<typeof parseParentContext>[0];
+  const firstNode = refineEvaluableContext(evaluableGroupContext.evaluable());
+  const otherNodes = innerEvaluableGroupContext !== undefined ? refineEvaluableGroupContext(innerEvaluableGroupContext) : []
 
-export const parseEvaluableGroupParentContext = (parentContext: EvaluableParentContext): SymbolicExpression[] => parseParentContext(parentContext).map((evaluable) => evaluable.evaluate());
+  return [firstNode, ...otherNodes];
+};
