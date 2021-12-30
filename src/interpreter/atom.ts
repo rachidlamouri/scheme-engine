@@ -77,9 +77,9 @@ export const refineAtomContext = (atomContext: AtomContext): Atom => {
   const stringAtomContext = atomContext.stringAtom();
   const integerAtomContext = atomContext.integerAtom();
 
-  if (stringAtomContext !== undefined && integerAtomContext === undefined) {
+  if (stringAtomContext !== undefined) {
     return refineStringAtomContext(stringAtomContext);
-  } else if (stringAtomContext === undefined && integerAtomContext !== undefined) {
+  } else if (integerAtomContext !== undefined) {
     return refineIntegerAtomContext(integerAtomContext);
   }
 

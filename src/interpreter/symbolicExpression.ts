@@ -11,9 +11,9 @@ export const refineSymbolicExpressionContext = (symbolicExpressionContext: Symbo
   const listContext = symbolicExpressionContext.list();
   const atomContext = symbolicExpressionContext.atom();
 
-  if (listContext !== undefined && atomContext === undefined) {
+  if (listContext !== undefined) {
     return refineListContext(listContext);
-  } else if (listContext === undefined && atomContext !== undefined) {
+  } else if (atomContext !== undefined) {
     return refineAtomContext(atomContext);
   }
 

@@ -9,9 +9,9 @@ export const refineLiteralContext = (literalContext: LiteralContext): Literal =>
   const symbolicExpressionContext = literalContext.symbolicExpression();
   const integerAtomContext = literalContext.integerAtom();
 
-  if (symbolicExpressionContext !== undefined && integerAtomContext === undefined) {
+  if (symbolicExpressionContext !== undefined) {
     return refineSymbolicExpressionContext(symbolicExpressionContext);
-  } else if (symbolicExpressionContext === undefined && integerAtomContext !== undefined) {
+  } else if (integerAtomContext !== undefined) {
     return refineIntegerAtomContext(integerAtomContext);
   }
 
