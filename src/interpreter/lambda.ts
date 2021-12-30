@@ -1,8 +1,8 @@
 import { LambdaDefinitionContext } from '../language/compiled/SchemeParser';
 import { ReferenceAtom } from './atom';
-import { Evaluable } from './evaluable';
+import { Evaluable } from './evaluableClass';
 import { refineReferenceAtomGroupContext } from './atom';
-import { refineEvaluableContext } from './refineEvaluableContext';
+import { refineEvaluableContext } from './evaluable';
 
 export class Lambda extends Evaluable {
   constructor(public readonly parameterReferences: ReferenceAtom[], private body: Evaluable) {

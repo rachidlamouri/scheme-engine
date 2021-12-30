@@ -1,4 +1,4 @@
-import { Evaluable } from './evaluable';
+import { Evaluable } from './evaluableClass';
 
 export const interpret = (evaluables: Evaluable[]): string => {
   return evaluables

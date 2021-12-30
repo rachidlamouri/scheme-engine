@@ -1,7 +1,7 @@
 import { LambdaReferenceDefinitionContext, LambdaDefinitionContext, ReferenceAtomContext } from '../language/compiled/SchemeParser';
 import { Lambda, refineLambdaDefinitionContext } from './lambda';
 import { ReferenceAtom, refineReferenceAtomContext } from './atom';
-import { Evaluable } from './evaluable';
+import { Evaluable } from './evaluableClass';
 
 export class LambdaReferenceDefinition implements Evaluable {
   constructor(private reference: ReferenceAtom, private lambda: Lambda) {}

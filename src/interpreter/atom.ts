@@ -1,5 +1,5 @@
 import { AtomContext, IntegerAtomContext, ReferenceAtomContext, ReferenceAtomGroupContext, StringAtomContext } from '../language/compiled/SchemeParser';
-import { Evaluable } from './evaluable';
+import { Evaluable } from './evaluableClass';
 import { executionContext } from './executionContext';
 import { buildRefineGroupContext, NormalizedGroupContext, UnhandledContextError } from './utils';
 

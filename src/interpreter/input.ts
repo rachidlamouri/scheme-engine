@@ -1,6 +1,6 @@
 import { InputContext } from '../language/compiled/SchemeParser';
-import { Evaluable } from './evaluable';
-import { refineEvaluableGroupContext } from './refineEvaluableContext';
+import { Evaluable } from './evaluableClass';
+import { refineEvaluableGroupContext } from './evaluable';
 import { ImportDeclaration, refineImportDeclarationGroupContext } from './importDeclaration';
 
 type Input = {

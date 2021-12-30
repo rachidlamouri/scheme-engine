@@ -2,7 +2,7 @@ import { ListContext } from '../language/compiled/SchemeParser';
 import { SymbolicExpression } from './symbolicExpression';
 import { refineSymbolicExpressionGroupContext } from './symbolicExpression';
 import { BooleanAtom } from './atom';
-import { Evaluable } from './evaluable';
+import { Evaluable } from './evaluableClass';
 
 export class List extends Evaluable {
   constructor(private contents: SymbolicExpression[]) {

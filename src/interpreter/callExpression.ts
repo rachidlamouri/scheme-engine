@@ -1,7 +1,7 @@
 import { CallExpressionContext } from '../language/compiled/SchemeParser';
 import { Atom, BooleanAtom, IntegerAtom, ReferenceAtom, refineReferenceAtomContext } from './atom';
-import { Evaluable } from './evaluable';
-import { refineEvaluableGroupContext } from './refineEvaluableContext';
+import { Evaluable } from './evaluableClass';
+import { refineEvaluableGroupContext } from './evaluable';
 import { Lambda } from './lambda';
 import { List } from './list';
 import { SymbolicExpression } from './symbolicExpression';
