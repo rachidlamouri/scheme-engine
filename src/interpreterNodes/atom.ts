@@ -1,5 +1,5 @@
 import { Evaluable } from './evaluable';
-import { executionContext } from './executionContext';
+import { globalExecutionContext } from './executionContext';
 
 type Primitive = string | number | boolean;
 
@@ -45,7 +45,7 @@ export class ReferenceAtom extends Atom {
   }
 
   evaluate(): Evaluable {
-    const evaluable = executionContext.lookup(this.name)
+    const evaluable = globalExecutionContext.lookup(this.name)
 
     if (evaluable === undefined) {
       throw Error(`Invalid reference "${this.name}"`);
@@ -55,6 +55,6 @@ export class ReferenceAtom extends Atom {
   }
 
   register(value: Evaluable) {
-    executionContext.register(this.name, value);
+    globalExecutionContext.register(this.name, value);
   }
 }

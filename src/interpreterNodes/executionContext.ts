@@ -29,4 +29,4 @@ class ExecutionContext {
   }
 }
 
-export const executionContext = new ExecutionContext();
+export const globalExecutionContext = new ExecutionContext();
