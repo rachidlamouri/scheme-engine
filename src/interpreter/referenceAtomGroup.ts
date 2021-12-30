@@ -1,11 +1,15 @@
-import { ReferenceAtomGroupContext } from '../language/compiled/SchemeParser';
+import { ReferenceAtomContext, ReferenceAtomGroupContext } from '../language/compiled/SchemeParser';
 import { ReferenceAtom, refineReferenceAtomContext } from './atom';
+import { buildRefineGroupContext, NormalizedGroupContext } from './utils';
 
-export const refineReferenceAtomGroupContext = (referenceAtomGroupContext: ReferenceAtomGroupContext): ReferenceAtom[] => {
-  const innerReferenceAtomGroupContext = referenceAtomGroupContext.referenceAtomGroup();
-
-  const firstNode = refineReferenceAtomContext(referenceAtomGroupContext.referenceAtom());
-  const otherNodes = innerReferenceAtomGroupContext !== undefined ? refineReferenceAtomGroupContext(innerReferenceAtomGroupContext) : []
-
-  return [firstNode, ...otherNodes];
-};
+export const refineReferenceAtomGroupContext = buildRefineGroupContext<
+  ReferenceAtomContext,
+  ReferenceAtomGroupContext,
+  ReferenceAtom
+>(
+  (referenceAtomGroupContext: ReferenceAtomGroupContext): NormalizedGroupContext<ReferenceAtomContext, ReferenceAtomGroupContext> => ({
+    elementContext: referenceAtomGroupContext.referenceAtom(),
+    groupContext: referenceAtomGroupContext.referenceAtomGroup(),
+  }),
+  refineReferenceAtomContext,
+);

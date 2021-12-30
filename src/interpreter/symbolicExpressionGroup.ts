@@ -1,11 +1,15 @@
-import { SymbolicExpressionGroupContext } from '../language/compiled/SchemeParser';
+import { SymbolicExpressionContext, SymbolicExpressionGroupContext } from '../language/compiled/SchemeParser';
 import { refineSymbolicExpressionContext, SymbolicExpression } from './symbolicExpression';
+import { buildRefineGroupContext, NormalizedGroupContext } from './utils';
 
-export const refineSymbolicExpressionGroupContext = (symbolicExpressionGroupContext: SymbolicExpressionGroupContext): SymbolicExpression[] => {
-  const innerSymbolicExpressionGroupContext = symbolicExpressionGroupContext.symbolicExpressionGroup();
-
-  const firstNode = refineSymbolicExpressionContext(symbolicExpressionGroupContext.symbolicExpression());
-  const otherNodes = innerSymbolicExpressionGroupContext !== undefined ? refineSymbolicExpressionGroupContext(innerSymbolicExpressionGroupContext) : []
-
-  return [firstNode, ...otherNodes];
-};
+export const refineSymbolicExpressionGroupContext = buildRefineGroupContext<
+  SymbolicExpressionContext,
+  SymbolicExpressionGroupContext,
+  SymbolicExpression
+>(
+  (symbolicExpressionGroupContext: SymbolicExpressionGroupContext): NormalizedGroupContext<SymbolicExpressionContext, SymbolicExpressionGroupContext> => ({
+    elementContext: symbolicExpressionGroupContext.symbolicExpression(),
+    groupContext: symbolicExpressionGroupContext.symbolicExpressionGroup(),
+  }),
+  refineSymbolicExpressionContext,
+);
