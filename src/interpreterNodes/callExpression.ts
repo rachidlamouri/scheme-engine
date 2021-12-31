@@ -2,6 +2,7 @@ import { Atom, BooleanAtom, IntegerAtom, ReferenceAtom } from './atom';
 import { Evaluable } from './evaluable';
 import { Lambda } from './lambda';
 import { List } from './list';
+import { PredicateValuePair } from './predicateValuePair';
 import { SymbolicExpression } from './symbolicExpression';
 
 export enum BuiltInFunctionName {
@@ -11,6 +12,7 @@ export enum BuiltInFunctionName {
   IS_NULL = 'null?',
   IS_ATOM = 'atom?',
   IS_EQUAL = 'eq?',
+  COND = 'cond',
 };
 
 type AtomValidationConfig = boolean | { allowsNonIntegers: true, allowsIntegers: false };
@@ -233,5 +235,27 @@ export class ReferenceCallExpression extends CallExpression {
     }))
     const parameters = this.evaluateParameters(validationConfigs);
     return lambda.evaluate(parameters);
+  }
+}
+
+export class ConditionExpression extends CallExpression {
+  constructor(private predicateValuePairs: PredicateValuePair[], private elseEvaluable: Evaluable) {
+    super(BuiltInFunctionName.COND, []);
+  }
+
+  evaluate(): Evaluable {
+    const pair = this.predicateValuePairs.find((nextPair, index): boolean => {
+      const conditionalValue = nextPair.evaluatePredicate();
+
+      if (!(conditionalValue instanceof BooleanAtom)) {
+        throw Error(`cond condition ${index} did not return a boolean`);
+      }
+
+      return conditionalValue.value as boolean;
+    })
+
+    return pair !== undefined
+      ? pair.evaluateValue()
+      : this.elseEvaluable.evaluate();
   }
 }

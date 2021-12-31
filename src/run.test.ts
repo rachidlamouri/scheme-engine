@@ -198,4 +198,13 @@ describe('run', () => {
     [f, 'multiple import and execute', "(import importExamples/exampleA importExamples/exampleB) (exampleA (exampleB '(a b c)))", '&exampleA\n&exampleB\nb'],
     [f, 'invalid import', "(import importExamples/exampleABC)", { error: 'Standard library "standardLibrary/importExamples/exampleABC" does not exist' }],
   ]);
+
+  runSuite('cond', [
+    [f, 'one predicate that stops at if', "(cond ((null? '()) 'a) (else 'b))", 'a'],
+    [f, 'one predicate that reaches else', "(cond ((null? '(1 2 3)) 'a) (else 'b))", 'b'],
+    [f, 'multiple predicates that stop at if', "(cond ((null? '()) 'a) ((atom? '()) 'b) (else 'c))", 'a'],
+    [f, 'multiple predicates that stop at elseif', "(cond ((null? '(1 2 3)) 'a) ((atom? '1) 'b) (else 'c))", 'b'],
+    [f, 'multiple predicates that stop at else', "(cond ((null? '(1 2 3)) 'a) ((atom? '()) 'b) ((eq? 'x 'y) 'c) (else 'd))", 'd'],
+    [f, 'invalid predicate', "(cond ((null? '(1 2 3)) 'a) ((car '(1 2 3)) 'b) (else 'c))", { error: 'cond condition 1 did not return a boolean' }],
+  ]);
 });

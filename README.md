@@ -48,6 +48,7 @@ For examples see [run.test.ts](./src/run.test.ts)
 - lambda definitions
 - lambda executions
 - standard library imports
+- cond
 
 ## Development
 

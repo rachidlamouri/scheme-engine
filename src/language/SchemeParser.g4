@@ -27,7 +27,19 @@ evaluable: callExpression | lambdaReferenceDefinition | referenceAtom | literal;
 callExpression:
   LEFT_SEPARATOR referenceAtom evaluableGroup RIGHT_SEPARATOR
   | LEFT_SEPARATOR referenceAtom RIGHT_SEPARATOR
+  | LEFT_SEPARATOR conditionExpression RIGHT_SEPARATOR
   ;
+
+conditionExpression: COND predicateValuePairGroup elseExpression;
+
+predicateValuePairGroup:
+  predicateValuePair predicateValuePairGroup
+  | predicateValuePair
+  ;
+
+predicateValuePair: LEFT_SEPARATOR callExpression evaluable RIGHT_SEPARATOR;
+
+elseExpression: LEFT_SEPARATOR ELSE evaluable RIGHT_SEPARATOR;
 
 lambdaReferenceDefinition: LEFT_SEPARATOR DEFINE referenceAtom lambdaDefinition RIGHT_SEPARATOR;
 

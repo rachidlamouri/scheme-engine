@@ -8,6 +8,10 @@ DEFINE: 'define';
 
 LAMBDA: 'lambda';
 
+COND: 'cond';
+
+ELSE: 'else';
+
 STRING: ('A'..'z' | '*' | '$' | '?')+;
 
 IMPORT_PATH: (STRING | '/')+;
