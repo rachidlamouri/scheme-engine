@@ -36,6 +36,10 @@ export class BooleanAtom extends Atom<boolean> {
   constructor(value: boolean) {
     super(value);
   }
+
+  toString() {
+    return this.value ? '#t' : '#f';
+  }
 }
 
 export class ReferenceAtom extends Atom<string> {

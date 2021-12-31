@@ -72,9 +72,9 @@ describe('run', () => {
     [f, 'mixed nested s-expressions', "'(or (atom turkey))", "(or (atom turkey))"],
     [t, 'empty list', "'()", "()"],
     [t, 'nested empty lists', "'(() () () ())", "(() () () ())"],
-    [f, 'true', '#t', 'true'],
-    [f, 'false', '#f', 'false'],
-    [f, 'list of booleans', "'(#t #f)", '(true false)'],
+    [f, 'true', '#t', '#t'],
+    [f, 'false', '#f', '#f'],
+    [f, 'list of booleans', "'(#t #f)", '(#t #f)'],
   ]);
 
   runSuite('car', [
@@ -121,44 +121,44 @@ describe('run', () => {
   ]);
 
   runSuite('null?', [
-    [t, 'empty list', "(null? '())", 'true'],
-    [t, 'non empty list', "(null? '(a b c))", 'false'],
+    [t, 'empty list', "(null? '())", '#t'],
+    [t, 'non empty list', "(null? '(a b c))", '#f'],
     [t, 'atom', "(null? 'a)", { error: 'Parameter 0 of null? cannot be an atom'}],
     [f, 'nested null?', "(null? (null? '()))", { error: 'Parameter 0 of null? cannot be an atom' }],
     [f, 'null? and car', "(null? (car '(a b c)))", { error: 'Parameter 0 of null? cannot be an atom' }],
     [f, 'car and null?', "(car (null? '(a b c)))", { error: 'Parameter 0 of car cannot be an atom' }],
-    [f, 'null? and cdr', "(null? (cdr '(a b c)))", 'false'],
+    [f, 'null? and cdr', "(null? (cdr '(a b c)))", '#f'],
     [f, 'cdr and null?', "(cdr (null? '(a b c)))", { error: 'Parameter 0 of cdr cannot be an atom' }],
-    [f, 'null? and cons', "(null? (cons 'a '()))", 'false'],
-    [f, 'cons and null?', "(cons (null? '(a b c)) '())", '(false)'],
+    [f, 'null? and cons', "(null? (cons 'a '()))", '#f'],
+    [f, 'cons and null?', "(cons (null? '(a b c)) '())", '(#f)'],
     [f, 'cons and null?', "(cons 'a (null? '()))", { error: 'Parameter 1 of cons cannot be an atom' }],
   ]);
 
   runSuite('atom?', [
-    [t, 'atom', "(atom? 'Harry)", 'true'],
-    [f, 'integer atom', "(atom? 1234)", 'true'],
-    [t, 'list', "(atom? '(Harry had a heap of apples))", 'false'],
-    [f, 'empty list', "(atom? '())", 'false'],
-    [t, 'atom? and car', "(atom? (car '(Harry had a heap of apples) ))", 'true'],
-    [t, 'atom? and cdr', "(atom? (cdr '(Harry had a heap of apples) ))", 'false'],
-    [t, 'atom? and cdr', "(atom? (cdr '(Harry) ))", 'false'],
-    [t, 'atom?, car and cdr', "(atom? (car (cdr '(swing low sweet cherry oat) )))", 'true'],
-    [t, 'atom?, car and cdr', "(atom? (car (cdr '(swing (low sweet) cherry oat) )))", 'false'],
-    [f, 'nested atom?', "(atom? (atom? '()))", 'true'],
+    [t, 'atom', "(atom? 'Harry)", '#t'],
+    [f, 'integer atom', "(atom? 1234)", '#t'],
+    [t, 'list', "(atom? '(Harry had a heap of apples))", '#f'],
+    [f, 'empty list', "(atom? '())", '#f'],
+    [t, 'atom? and car', "(atom? (car '(Harry had a heap of apples) ))", '#t'],
+    [t, 'atom? and cdr', "(atom? (cdr '(Harry had a heap of apples) ))", '#f'],
+    [t, 'atom? and cdr', "(atom? (cdr '(Harry) ))", '#f'],
+    [t, 'atom?, car and cdr', "(atom? (car (cdr '(swing low sweet cherry oat) )))", '#t'],
+    [t, 'atom?, car and cdr', "(atom? (car (cdr '(swing (low sweet) cherry oat) )))", '#f'],
+    [f, 'nested atom?', "(atom? (atom? '()))", '#t'],
   ]);
 
   runSuite('eq?', [
-    [t, 'atoms', "(eq? 'Harry 'Harry)", 'true'],
-    [t, 'atoms', "(eq? 'margarine 'butter)", 'false'],
+    [t, 'atoms', "(eq? 'Harry 'Harry)", '#t'],
+    [t, 'atoms', "(eq? 'margarine 'butter)", '#f'],
     [t, 'lists', "(eq? '() '(strawberry))", { error: 'Parameter 0 of eq? cannot be a list' }],
     [f, 'lists', "(eq? '() '())", { error: 'Parameter 0 of eq? cannot be a list' }],
     [f, 'lists', "(eq? '(strawberry) '(strawberry))", { error: 'Parameter 0 of eq? cannot be a list' }],
     [f, 'numbers', "(eq? 6 6)", { error: 'Parameter 0 of eq? cannot be an integer atom' }],
     [f, 'number and string', "(eq? 'a 6)", { error: 'Parameter 1 of eq? cannot be an integer atom' }],
     [f, 'one parameter', "(eq? 'a)", { error: 'eq? requires 2 parameter(s), but received 1' }],
-    [t, 'eq? and car', "(eq? (car '(Mary had a little lamb chop)) 'Mary)", 'true'],
+    [t, 'eq? and car', "(eq? (car '(Mary had a little lamb chop)) 'Mary)", '#t'],
     [t, 'eq? and cdr', "(eq? (cdr '(soured milk)) 'milk)", { error: 'Parameter 0 of eq? cannot be a list' }],
-    [t, 'eq?, car and cdr', "(eq? (car '(beans beans we need jelly beans)) (car (cdr '(beans beans we need jelly beans))))", 'true'],
+    [t, 'eq?, car and cdr', "(eq? (car '(beans beans we need jelly beans)) (car (cdr '(beans beans we need jelly beans))))", '#t'],
   ]);
 
   runSuite('independent expressions', [
@@ -172,9 +172,9 @@ describe('run', () => {
       'a',
       '(b c)',
       '(a b c)',
-      'true',
-      'false',
-      'true',
+      '#t',
+      '#f',
+      '#t',
     ].join('\n')],
   ]);
 
