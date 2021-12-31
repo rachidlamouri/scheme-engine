@@ -12,6 +12,8 @@ COND: 'cond';
 
 ELSE: 'else';
 
+BOOLEAN: '#t' | '#f';
+
 STRING: ('A'..'z' | '*' | '$' | '?')+;
 
 IMPORT_PATH: (STRING | '/')+;

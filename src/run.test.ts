@@ -72,6 +72,9 @@ describe('run', () => {
     [f, 'mixed nested s-expressions', "'(or (atom turkey))", "(or (atom turkey))"],
     [t, 'empty list', "'()", "()"],
     [t, 'nested empty lists', "'(() () () ())", "(() () () ())"],
+    [f, 'true', '#t', 'true'],
+    [f, 'false', '#f', 'false'],
+    [f, 'list of booleans', "'(#t #f)", '(true false)'],
   ]);
 
   runSuite('car', [

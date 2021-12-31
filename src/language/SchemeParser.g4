@@ -48,7 +48,7 @@ lambdaDefinition:
   | LEFT_SEPARATOR LAMBDA LEFT_SEPARATOR RIGHT_SEPARATOR evaluable RIGHT_SEPARATOR
   ;
 
-literal: (QUOTE symbolicExpression) | integerAtom ;
+literal: (QUOTE symbolicExpression) | integerAtom | booleanAtom ;
 
 symbolicExpression: list | atom;
 
@@ -65,11 +65,14 @@ symbolicExpressionGroup:
 atom:
   stringAtom
   | integerAtom
+  | booleanAtom
   ;
 
 stringAtom: STRING;
 
 integerAtom: INTEGER;
+
+booleanAtom: BOOLEAN;
 
 referenceAtomGroup:
   referenceAtom referenceAtomGroup

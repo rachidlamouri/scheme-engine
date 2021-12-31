@@ -38,7 +38,7 @@ echo ci/example | npm run scheme -- -i -f
 
 For examples see [run.test.ts](./src/run.test.ts)
 
-- echo literal symbolic expressions
+- echo literal symbolic expressions (string, integer, boolean, list)
 - car
 - cdr
 - cons
