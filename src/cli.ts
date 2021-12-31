@@ -1,3 +1,4 @@
+import chalk from 'chalk';
 import fs from 'fs';
 import { run } from './run';
 
@@ -33,8 +34,21 @@ if (args.length === 0 || (!useStdin && isInputFilepath && !filepath)) {
 
 const onInput = (input: string) => {
   const code = isInputFilepath ? readFile(input) : input;
-  const result = run(code);
-  process.stdout.write(result);
+
+  try {
+    const result = run(code).serialize();
+    process.stdout.write(result);
+  } catch (error) {
+    if (error instanceof Error) {
+      const errorText = error.stack ?? '';
+      const [errorMessage, ...stackTrace] = errorText.split('\n');
+      const outputMessage = [chalk.red(errorMessage), ...stackTrace].join('\n');
+      process.stderr.write(`${outputMessage}\n`)
+      process.exit(1);
+    }
+
+    throw error;
+  }
 }
 
 if (useStdin) {

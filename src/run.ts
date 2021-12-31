@@ -1,7 +1,7 @@
 import { tokenize } from './tokenize';
 import { parse } from './parse';
 import { Evaluable } from './interpreterNodes/evaluable';
-import { interpret } from './interpret';
+import { interpret, InterpretedResult } from './interpret';
 
 const tokenizeAndParse = (code: string): Evaluable[] => {
   const tokens = tokenize(code);
@@ -18,7 +18,7 @@ const tokenizeAndParse = (code: string): Evaluable[] => {
   ];
 }
 
-export const run = (code: string): string => {
+export const run = (code: string): InterpretedResult => {
   const evaluables = tokenizeAndParse(code);
   const result = interpret(evaluables);
   return result;

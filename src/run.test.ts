@@ -33,7 +33,7 @@ const runTest = ([isFromBook, description, code, expectedOutput, config = { isOn
     if (isErrorTest) {
       expect(() => run(code)).toThrow(expectedOutput.error);
     } else {
-      expect(run(code)).toEqual(expectedOutput);
+      expect(run(code).serialize()).toEqual(expectedOutput);
     }
   });
 };

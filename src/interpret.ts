@@ -1,13 +1,18 @@
 import { Evaluable } from './interpreterNodes/evaluable';
 import { globalExecutionContext } from './interpreterNodes/executionContext';
+import { Serializeable } from './interpreterNodes/utils';
 
-export const interpret = (evaluables: Evaluable[]): string => {
+export class InterpretedResult implements Serializeable  {
+  constructor(public readonly evaluables: Evaluable[]) {}
+
+  serialize() {
+    return this.evaluables.map((e) => e.serialize()).join('\n');
+  }
+}
+
+export const interpret = (evaluables: Evaluable[]): InterpretedResult => {
   globalExecutionContext.reset();
-  return evaluables
-    .map((evaluable) => {
-      const result = evaluable.evaluate();
-      const serializedResult = result.serialize();
-      return serializedResult;
-    })
-    .join('\n');
+  return new InterpretedResult(
+    evaluables.map((e) => e.evaluate())
+  );
 }
