@@ -1,10 +1,9 @@
 import { Evaluable } from './evaluable';
 import { globalExecutionContext } from './executionContext';
+import { Primitive } from './utils';
 
-type Primitive = string | number | boolean;
-
-export abstract class Atom extends Evaluable {
-  constructor(public readonly value: Primitive) {
+export abstract class Atom<T extends Primitive> extends Evaluable {
+  constructor(public readonly value: T) {
     super();
   }
 
@@ -21,25 +20,25 @@ export abstract class Atom extends Evaluable {
   }
 }
 
-export class StringAtom extends Atom {
+export class StringAtom extends Atom<string> {
   constructor(value: string) {
     super(value);
   }
 }
 
-export class IntegerAtom extends Atom {
+export class IntegerAtom extends Atom<number> {
   constructor(value: number) {
     super(value);
   }
 }
 
-export class BooleanAtom extends Atom {
+export class BooleanAtom extends Atom<boolean> {
   constructor(value: boolean) {
     super(value);
   }
 }
 
-export class ReferenceAtom extends Atom {
+export class ReferenceAtom extends Atom<string> {
   constructor(public readonly name: string) {
     super(`&${name}`);
   }

@@ -1,4 +1,5 @@
 import { Atom, IntegerAtom, ReferenceAtom, StringAtom } from '../interpreterNodes/atom';
+import { Primitive } from '../interpreterNodes/utils';
 import { AtomContext, IntegerAtomContext, ReferenceAtomContext, ReferenceAtomGroupContext, StringAtomContext } from '../language/compiled/SchemeParser';
 import { buildRefineGroupContext, NormalizedGroupContext, UnhandledContextError } from './utils';
 
@@ -26,7 +27,7 @@ export const refineReferenceAtomGroupContext = buildRefineGroupContext<
   refineReferenceAtomContext,
 );
 
-export const refineAtomContext = (atomContext: AtomContext): Atom => {
+export const refineAtomContext = (atomContext: AtomContext): Atom<Primitive> => {
   const stringAtomContext = atomContext.stringAtom();
   const integerAtomContext = atomContext.integerAtom();
 

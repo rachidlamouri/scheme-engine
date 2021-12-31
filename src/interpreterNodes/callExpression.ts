@@ -4,6 +4,7 @@ import { Lambda } from './lambda';
 import { List } from './list';
 import { PredicateValuePair } from './predicateValuePair';
 import { SymbolicExpression } from './symbolicExpression';
+import { Primitive } from './utils';
 
 export enum BuiltInFunctionName {
   CAR = 'car',
@@ -188,7 +189,7 @@ export class ConsExpression extends TwoParameterExpression<SymbolicExpression, L
   }
 }
 
-export class IsEqualExpression extends TwoParameterExpression<Atom, Atom> {
+export class IsEqualExpression extends TwoParameterExpression<Atom<Primitive>, Atom<Primitive>> {
   constructor(unevaluatedParameters: Evaluable[]) {
     const validationConfig: ValidationConfig = {
       allowsAtoms: {
@@ -251,7 +252,7 @@ export class ConditionExpression extends CallExpression {
         throw Error(`cond condition ${index} did not return a boolean`);
       }
 
-      return conditionalValue.value as boolean;
+      return conditionalValue.value;
     })
 
     return pair !== undefined
