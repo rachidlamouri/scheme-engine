@@ -35,8 +35,8 @@ export class List extends Evaluable {
     return new BooleanAtom(this.isEmpty());
   }
 
-  toString(): string {
-    const contentsText = this.contents.map((item) => item.toString()).join(' ');
+  serialize(): string {
+    const contentsText = this.contents.map((item) => item.serialize()).join(' ');
     return `(${contentsText})`;
   }
 }

@@ -15,7 +15,7 @@ export abstract class Atom<T extends Primitive> extends Evaluable {
     return new BooleanAtom(true);
   }
 
-  toString(): string {
+  serialize(): string {
     return `${this.value}`;
   }
 }
@@ -37,7 +37,7 @@ export class BooleanAtom extends Atom<boolean> {
     super(value);
   }
 
-  toString() {
+  serialize() {
     return this.value ? '#t' : '#f';
   }
 }

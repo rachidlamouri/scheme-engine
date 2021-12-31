@@ -9,4 +9,8 @@ export class LambdaReferenceDefinition implements Evaluable {
     this.reference.register(this.lambda);
     return this.reference;
   }
+
+  serialize(): string {
+    throw Error('Not implemented');
+  }
 }

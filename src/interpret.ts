@@ -6,7 +6,7 @@ export const interpret = (evaluables: Evaluable[]): string => {
   return evaluables
     .map((evaluable) => {
       const result = evaluable.evaluate();
-      const serializedResult = result.toString();
+      const serializedResult = result.serialize();
       return serializedResult;
     })
     .join('\n');

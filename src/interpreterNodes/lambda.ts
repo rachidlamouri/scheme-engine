@@ -14,4 +14,8 @@ export class Lambda extends Evaluable {
 
     return this.body.evaluate();
   }
+
+  serialize(): string {
+    throw Error('Not implemented');
+  }
 }

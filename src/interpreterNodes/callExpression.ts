@@ -73,6 +73,10 @@ export abstract class CallExpression extends Evaluable {
 
     return evaluatedParameters;
   }
+
+  serialize(): string {
+    throw Error('Not implemented');
+  }
 }
 
 abstract class OneParameterExpression<T extends SymbolicExpression> extends CallExpression {
