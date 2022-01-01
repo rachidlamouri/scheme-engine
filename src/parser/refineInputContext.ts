@@ -1,7 +1,7 @@
 import { Input } from '../interpreterNodes/input';
 import { InputContext } from '../language/compiled/SchemeParser';
-import { refineEvaluableGroupContext } from './evaluable';
-import { refineImportDeclarationGroupContext } from './importDeclarationGroup';
+import { refineEvaluableGroupContext } from './refineEvaluableContext';
+import { refineImportDeclarationGroupContext } from './refineImportDeclarationGroupContext';
 
 export const refineInputContext = (inputContext: InputContext): Input => {
   const importDeclarationGroupContext = inputContext.importDeclarationGroup();

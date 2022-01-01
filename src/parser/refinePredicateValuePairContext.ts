@@ -1,7 +1,7 @@
 import { PredicateValuePair } from '../interpreterNodes/predicateValuePair';
 import { PredicateValuePairContext, PredicateValuePairGroupContext } from '../language/compiled/SchemeParser';
-import { refineCallExpressionContext } from './callExpression';
-import { refineEvaluableContext } from './evaluable';
+import { refineCallExpressionContext } from './refineCallExpressionContext';
+import { refineEvaluableContext } from './refineEvaluableContext';
 import { buildRefineGroupContext, NormalizedGroupContext } from './utils';
 
 const refinePredicateValuePairContext = (predicateValuePairContext: PredicateValuePairContext): PredicateValuePair => (

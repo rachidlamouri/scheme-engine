@@ -1,7 +1,7 @@
 import { LambdaReferenceDefinition } from '../interpreterNodes/lambdaReferenceDefinition';
 import { LambdaReferenceDefinitionContext } from '../language/compiled/SchemeParser';
-import { refineReferenceAtomContext } from './atom';
-import { refineLambdaDefinitionContext } from './lambda';
+import { refineReferenceAtomContext } from './refineAtomContext';
+import { refineLambdaDefinitionContext } from './refineLambdaContext';
 
 export const refineLambdaReferenceDefinitionContext = (lambdaReferenceDefintionContext: LambdaReferenceDefinitionContext): LambdaReferenceDefinition => (
   new LambdaReferenceDefinition(

@@ -1,7 +1,7 @@
 import { SymbolicExpression } from '../interpreterNodes/symbolicExpression';
 import { SymbolicExpressionContext, SymbolicExpressionGroupContext } from '../language/compiled/SchemeParser';
-import { refineAtomContext } from './atom';
-import { refineListContext } from './list';
+import { refineAtomContext } from './refineAtomContext';
+import { refineListContext } from './refineListContext';
 import { buildRefineGroupContext, NormalizedGroupContext, UnhandledContextError } from './utils';
 
 export const refineSymbolicExpressionContext = (symbolicExpressionContext: SymbolicExpressionContext): SymbolicExpression => {

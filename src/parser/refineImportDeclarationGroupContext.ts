@@ -1,6 +1,6 @@
 import { ImportDeclaration } from '../interpreterNodes/importDeclaration';
 import { ImportDeclarationGroupContext } from '../language/compiled/SchemeParser';
-import { refineImportPathGroup } from './importPath';
+import { refineImportPathGroup } from './refineImportContext';
 
 export const refineImportDeclarationGroupContext = (importDeclarationGroupContext: ImportDeclarationGroupContext): ImportDeclaration[] => (
   refineImportPathGroup(importDeclarationGroupContext.importPathGroup())

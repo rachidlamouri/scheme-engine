@@ -1,7 +1,7 @@
 import { SymbolicExpression } from '../interpreterNodes/symbolicExpression';
 import { LiteralContext } from '../language/compiled/SchemeParser';
-import { refineBooleanAtomContext, refineIntegerAtomContext } from './atom';
-import { refineSymbolicExpressionContext } from './symbolicExpression';
+import { refineBooleanAtomContext, refineIntegerAtomContext } from './refineAtomContext';
+import { refineSymbolicExpressionContext } from './refineSymbolicExpressionContext';
 import { UnhandledContextError } from './utils';
 
 export const refineLiteralContext = (literalContext: LiteralContext): SymbolicExpression => {

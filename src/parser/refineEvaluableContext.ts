@@ -1,9 +1,9 @@
 import { Evaluable } from '../interpreterNodes/evaluable';
 import { EvaluableContext, EvaluableGroupContext } from '../language/compiled/SchemeParser';
-import { refineReferenceAtomContext } from './atom';
-import { refineCallExpressionContext } from './callExpression';
-import { refineLambdaReferenceDefinitionContext } from './lambdaReferenceDefinition';
-import { refineLiteralContext } from './literal';
+import { refineReferenceAtomContext } from './refineAtomContext';
+import { refineCallExpressionContext } from './refineCallExpressionContext';
+import { refineLambdaReferenceDefinitionContext } from './refineLambdaReferenceDefinitionContext';
+import { refineLiteralContext } from './refineLiteralContext';
 import { buildRefineGroupContext, NormalizedGroupContext, UnhandledContextError } from './utils';
 
 export const refineEvaluableContext = (evaluableContext: EvaluableContext): Evaluable => {
