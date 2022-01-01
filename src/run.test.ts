@@ -76,6 +76,22 @@ const runSuite = (suiteName: string, tests: RunConfig[], config?: MochaConfig) =
   })
 };
 
+type SuiteSetup = {
+  prependCode: string;
+}
+
+const runSuiteWithSetup = (suiteName: string, setup: SuiteSetup, tests: RunConfig[], config?: MochaConfig) => {
+  tests.forEach((testConfig) => {
+    const codeTupleIndex = 2;
+    const code = testConfig[codeTupleIndex];
+    testConfig[codeTupleIndex] = `${setup.prependCode} ${code}`;
+
+    runTest(testConfig);
+  });
+
+  runSuite(suiteName, tests, config);
+}
+
 process.stdout.write(`${chalk.gray('*')}: denotes test from The Little Schemer`);
 
 describe('run', () => {
@@ -247,5 +263,17 @@ describe('run', () => {
     [f, 'multiple predicates that stop at elseif', "(cond ((null? '(1 2 3)) 'a) ((atom? '1) 'b) (else 'c))", 'b'],
     [f, 'multiple predicates that stop at else', "(cond ((null? '(1 2 3)) 'a) ((atom? '()) 'b) ((eq? 'x 'y) 'c) (else 'd))", 'd'],
     [f, 'invalid predicate', "(cond ((null? '(1 2 3)) 'a) ((car '(1 2 3)) 'b) (else 'c))", new ExpectedError('cond condition 1 did not return a boolean')],
+  ]);
+
+  runSuiteWithSetup('lat?', {
+    prependCode: '(import lat/lat)',
+  }, [
+    [t, 'list with only atoms', "(lat? '(Jack Sprat could eat no chicken fat))", '&lat?\n#t'],
+    [t, 'list with a list', "(lat? '((Jack) Sprat could eat no chicken fat))", '&lat?\n#f'],
+    [t, 'list with a list', "(lat? '(Jack (Sprat could) eat no chicken fat))", '&lat?\n#f'],
+    [t, 'empty list', "(lat? '())", '&lat?\n#t'],
+    [f, 'list with one atom', "(lat? '(a))", '&lat?\n#t'],
+    [f, 'list with one list', "(lat? '((a)))", '&lat?\n#f'],
+    [t, 'list with only atoms', "(lat? '(bacon and eggs))", '&lat?\n#t'],
   ]);
 });
