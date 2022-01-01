@@ -34,6 +34,8 @@ export class ExecutionContext {
   }
 
   register(reference: ReferenceAtom, evaluable: Evaluable) {
+    this.log(`Registering: ${reference.key} -> ${evaluable.constructor.name}`);
+
     if (this.lookupTable[reference.key] !== undefined) {
       throw Error(`Reference "${reference.key}" already exists`);
     }
