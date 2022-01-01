@@ -55,4 +55,11 @@ For examples see [run.test.ts](./src/run.test.ts)
 ```bash
 # Watches grammar and typescript files. Recompiles grammars when changed, and reruns tests on all file changes
 npm run dev -- --watch
+
+# The engine also accepts a SCHEME_DEBUG=true flag that logs execution info to debug/<current-datetime>
+echo \'turkey | (SCHEME_DEBUG=true npm run scheme -- -i)
+SCHEME_DEBUG=true npm run dev -- --watch
+
+# removes debug/
+npm run clean:debug
 ```

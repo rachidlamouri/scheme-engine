@@ -50,6 +50,10 @@ class ExecutionContext {
   }
 
   writeLog() {
+    if (process.env.SCHEME_DEBUG !== 'true') {
+      return;
+    }
+
     const debugDir = 'debug';
     if (!fs.existsSync(debugDir)) {
       fs.mkdirSync(debugDir);
