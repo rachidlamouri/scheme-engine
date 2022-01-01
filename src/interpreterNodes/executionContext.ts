@@ -1,7 +1,11 @@
 import { Evaluable } from './evaluable';
 
+type LookupTable = Record<string, Evaluable>;
+
+const createLookupTable = (): LookupTable => ({});
+
 class ExecutionContext {
-  private lookupTable: Record<string, Evaluable> = {};
+  private lookupTable: LookupTable = createLookupTable();
 
   debug() {
     const entries = Object.entries(this.lookupTable);
@@ -25,7 +29,7 @@ class ExecutionContext {
   }
 
   reset() {
-    this.lookupTable = {};
+    this.lookupTable = createLookupTable();
   }
 }
 
