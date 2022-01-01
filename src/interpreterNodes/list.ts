@@ -1,6 +1,7 @@
 import { SymbolicExpression } from './symbolicExpression';
 import { BooleanAtom } from './atom';
 import { Evaluable } from './evaluable';
+import { ExecutionContext } from './executionContext';
 
 export class List extends Evaluable {
   constructor(private contents: SymbolicExpression[]) {
@@ -19,8 +20,8 @@ export class List extends Evaluable {
     return new List([symbolicExpression, ...this.contents]);
   }
 
-  evaluate(): Evaluable {
-    super.logEvaluation();
+  evaluate(executionContext: ExecutionContext): Evaluable {
+    super.logEvaluation(executionContext);
     return this;
   }
 

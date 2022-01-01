@@ -1,5 +1,5 @@
 import { Evaluable } from './evaluable';
-import { globalExecutionContext } from './executionContext';
+import { ExecutionContext } from './executionContext';
 import { Primitive } from './utils';
 
 export abstract class Atom<T extends Primitive> extends Evaluable {
@@ -7,8 +7,8 @@ export abstract class Atom<T extends Primitive> extends Evaluable {
     super();
   }
 
-  evaluate(): Evaluable {
-    super.logEvaluation();
+  evaluate(executionContext: ExecutionContext): Evaluable {
+    super.logEvaluation(executionContext);
     return this;
   }
 
@@ -48,19 +48,15 @@ export class ReferenceAtom extends Atom<string> {
     super(`&${key}`);
   }
 
-  evaluate(): Evaluable {
-    super.logEvaluation();
+  evaluate(executionContext: ExecutionContext): Evaluable {
+    super.logEvaluation(executionContext);
 
-    const evaluable = globalExecutionContext.lookup(this.key)
+    const evaluable = executionContext.lookup(this.key)
 
     if (evaluable === undefined) {
       throw Error(`Invalid reference "${this.key}"`);
     }
 
     return evaluable;
-  }
-
-  register(value: Evaluable) {
-    globalExecutionContext.register(this.key, value);
   }
 }

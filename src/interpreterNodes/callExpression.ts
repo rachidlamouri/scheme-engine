@@ -1,5 +1,6 @@
 import { Atom, BooleanAtom, IntegerAtom, ReferenceAtom } from './atom';
 import { Evaluable } from './evaluable';
+import { ExecutionContext } from './executionContext';
 import { Lambda } from './lambda';
 import { List } from './list';
 import { PredicateValuePair } from './predicateValuePair';
@@ -38,15 +39,15 @@ export abstract class CallExpression extends Evaluable {
     super();
   }
 
-  abstract evaluate(): Evaluable;
+  abstract evaluate(executionContext: ExecutionContext): Evaluable;
 
-  protected evaluateParameters(parameterValidations: ValidationConfig[]): Evaluable[] {
+  protected evaluateParameters(executionContext: ExecutionContext, parameterValidations: ValidationConfig[]): Evaluable[] {
     const expectedParameterCount = parameterValidations.length;
     if (this.unevaluatedParameters.length !== expectedParameterCount) {
       throw Error(`${this.functionName} requires ${expectedParameterCount} parameter(s), but received ${this.unevaluatedParameters.length}`)
     }
 
-    const evaluatedParameters = this.unevaluatedParameters.map((parameter) => parameter.evaluate());
+    const evaluatedParameters = this.unevaluatedParameters.map((parameter) => parameter.evaluate(executionContext));
 
     parameterValidations.forEach((validationConfig, index) => {
       const parameter = evaluatedParameters[index];
@@ -88,8 +89,8 @@ abstract class OneParameterExpression<T extends SymbolicExpression> extends Call
     super(functionName, unevaluatedParameters);
   }
 
-  protected evaluateParameter(): T {
-    const [parameter] = super.evaluateParameters([this.validationConfig]);
+  protected evaluateParameter(executionContext: ExecutionContext): T {
+    const [parameter] = super.evaluateParameters(executionContext, [this.validationConfig]);
     return parameter as T;
   }
 }
@@ -103,10 +104,10 @@ export class CarExpression extends OneParameterExpression<List> {
     });
   }
 
-  evaluate(): Evaluable {
-    super.logEvaluation();
+  evaluate(executionContext: ExecutionContext): Evaluable {
+    super.logEvaluation(executionContext);
 
-    const parameter = super.evaluateParameter();
+    const parameter = super.evaluateParameter(executionContext);
     return parameter.car();
   }
 }
@@ -120,10 +121,10 @@ export class CdrExpression extends OneParameterExpression<List> {
     });
   }
 
-  evaluate(): Evaluable {
-    super.logEvaluation();
+  evaluate(executionContext: ExecutionContext): Evaluable {
+    super.logEvaluation(executionContext);
 
-    const parameter = super.evaluateParameter();
+    const parameter = super.evaluateParameter(executionContext);
     return parameter.cdr();
   }
 }
@@ -137,10 +138,10 @@ export class IsNullExpression extends OneParameterExpression<List> {
     });
   }
 
-  evaluate(): Evaluable {
-    super.logEvaluation();
+  evaluate(executionContext: ExecutionContext): Evaluable {
+    super.logEvaluation(executionContext);
 
-    const parameter = super.evaluateParameter();
+    const parameter = super.evaluateParameter(executionContext);
     return parameter.isNull();
   }
 }
@@ -154,10 +155,10 @@ export class IsAtomExpression extends OneParameterExpression<SymbolicExpression>
     });
   }
 
-  evaluate(): Evaluable {
-    super.logEvaluation();
+  evaluate(executionContext: ExecutionContext): Evaluable {
+    super.logEvaluation(executionContext);
 
-    const parameter = super.evaluateParameter();
+    const parameter = super.evaluateParameter(executionContext);
     return parameter.isAtom();
   }
 }
@@ -172,8 +173,8 @@ abstract class TwoParameterExpression<T0 extends SymbolicExpression, T1 extends 
     super(functionName, unevaluatedParameters);
   }
 
-  protected evaluateParameters(): [T0, T1] {
-    return super.evaluateParameters([this.validationConfig0, this.validationConfig1]) as [T0, T1];
+  protected evaluateParameters(executionContext: ExecutionContext): [T0, T1] {
+    return super.evaluateParameters(executionContext, [this.validationConfig0, this.validationConfig1]) as [T0, T1];
   }
 }
 
@@ -195,10 +196,10 @@ export class ConsExpression extends TwoParameterExpression<SymbolicExpression, L
     );
   }
 
-  evaluate(): Evaluable {
-    super.logEvaluation();
+  evaluate(executionContext: ExecutionContext): Evaluable {
+    super.logEvaluation(executionContext);
 
-    const [parameter0, parameter1] = this.evaluateParameters();
+    const [parameter0, parameter1] = this.evaluateParameters(executionContext);
     return parameter1.cons(parameter0);
   }
 }
@@ -222,10 +223,10 @@ export class IsEqualExpression extends TwoParameterExpression<Atom<Primitive>, A
     );
   }
 
-  evaluate(): Evaluable {
-    super.logEvaluation();
+  evaluate(executionContext: ExecutionContext): Evaluable {
+    super.logEvaluation(executionContext);
 
-    const [parameter0, parameter1] = this.evaluateParameters();
+    const [parameter0, parameter1] = this.evaluateParameters(executionContext);
     return new BooleanAtom(parameter0.value === parameter1.value);
   }
 }
@@ -238,10 +239,10 @@ export class ReferenceCallExpression extends CallExpression {
     )
   }
 
-  evaluate(): Evaluable {
-    super.logEvaluation();
+  evaluate(executionContext: ExecutionContext): Evaluable {
+    super.logEvaluation(executionContext);
 
-    const unknownValue = this.functionReference.evaluate();
+    const unknownValue = this.functionReference.evaluate(executionContext);
     if (!(unknownValue instanceof Lambda)) {
       throw Error(`"${this.functionReference.key}" is not callable`)
     }
@@ -252,8 +253,14 @@ export class ReferenceCallExpression extends CallExpression {
       allowsLists: true,
       allowsEmptyLists: true,
     }))
-    const parameters = this.evaluateParameters(validationConfigs);
-    return lambda.evaluate(parameters);
+    const parameters = this.evaluateParameters(executionContext, validationConfigs);
+
+    lambda.parameterReferences.forEach((reference, index) => {
+      const value = parameters[index];
+      executionContext.register(reference, value);
+    });
+
+    return lambda.evaluate(executionContext);
   }
 }
 
@@ -262,11 +269,11 @@ export class ConditionExpression extends CallExpression {
     super(BuiltInFunctionName.COND, []);
   }
 
-  evaluate(): Evaluable {
-    super.logEvaluation();
+  evaluate(executionContext: ExecutionContext): Evaluable {
+    super.logEvaluation(executionContext);
 
     const pair = this.predicateValuePairs.find((nextPair, index): boolean => {
-      const conditionalValue = nextPair.evaluatePredicate();
+      const conditionalValue = nextPair.evaluatePredicate(executionContext);
 
       if (!(conditionalValue instanceof BooleanAtom)) {
         throw Error(`cond condition ${index} did not return a boolean`);
@@ -276,7 +283,7 @@ export class ConditionExpression extends CallExpression {
     })
 
     return pair !== undefined
-      ? pair.evaluateValue()
-      : this.elseEvaluable.evaluate();
+      ? pair.evaluateValue(executionContext)
+      : this.elseEvaluable.evaluate(executionContext);
   }
 }

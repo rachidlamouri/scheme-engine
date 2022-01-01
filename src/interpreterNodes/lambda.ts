@@ -1,20 +1,18 @@
 import { ReferenceAtom } from './atom';
 import { Evaluable } from './evaluable';
+import { ExecutionContext } from './executionContext';
 
 export class Lambda extends Evaluable {
   constructor(public readonly parameterReferences: ReferenceAtom[], private body: Evaluable) {
     super();
   }
 
-  evaluate(parameters: Evaluable[]): Evaluable {
-    super.logEvaluation();
-
-    this.parameterReferences.forEach((reference, index) => {
-      const value = parameters[index];
-      reference.register(value);
-    });
-
-    return this.body.evaluate();
+  /**
+   * @param executionContext An ExecutionContext with with pre-bound parameter references
+   */
+  evaluate(executionContext: ExecutionContext): Evaluable {
+    super.logEvaluation(executionContext);
+    return this.body.evaluate(executionContext);
   }
 
   serialize(): string {

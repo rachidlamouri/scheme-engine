@@ -2,7 +2,7 @@ import { tokenize } from './tokenize';
 import { parse } from './parse';
 import { Evaluable } from './interpreterNodes/evaluable';
 import { interpret, InterpretedResult } from './interpret';
-import { globalExecutionContext } from './interpreterNodes/executionContext';
+import { ExecutionContext } from './interpreterNodes/executionContext';
 
 const tokenizeAndParse = (code: string): Evaluable[] => {
   const tokens = tokenize(code);
@@ -22,21 +22,21 @@ const tokenizeAndParse = (code: string): Evaluable[] => {
 export const run = (code: string): InterpretedResult => {
   const evaluables = tokenizeAndParse(code);
 
-  globalExecutionContext.reset();
-  globalExecutionContext.log(code);
-  globalExecutionContext.logNewline();
+  const executionContext = new ExecutionContext();
+  executionContext.log(code);
+  executionContext.logNewline();
 
   let result: InterpretedResult | null = null;
   let error: unknown;
   try {
-    result = interpret(evaluables)
+    result = interpret(executionContext, evaluables)
   } catch (e) {
-    globalExecutionContext.log('Error!');
+    executionContext.log('Error!');
     error = e;
   }
 
-  globalExecutionContext.dumpTableToLog();
-  globalExecutionContext.writeLog();
+  executionContext.dumpTableToLog();
+  executionContext.writeLog();
 
   if (result === null) {
     throw error;

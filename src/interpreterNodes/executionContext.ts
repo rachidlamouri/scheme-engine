@@ -1,17 +1,14 @@
 import fs from 'fs';
+import { ReferenceAtom } from './atom';
 import { Evaluable } from './evaluable';
 
 export const pluralize = (arg: any[], singular: string, plural: string) => `${arg.length} ${arg.length === 1 ? singular : plural}`;
 
 type LookupTable = Record<string, Evaluable>;
-type DebugLog = string[];
 
-const createLookupTable = (): LookupTable => ({});
-const createDebugLog = (): DebugLog => [];
-
-class ExecutionContext {
-  private lookupTable: LookupTable = createLookupTable();
-  private debugLog: string[] = createDebugLog();
+export class ExecutionContext {
+  private lookupTable: LookupTable = {};
+  private debugLog: string[] = [];
 
   dumpTableToLog() {
     const entries = Object.entries(this.lookupTable);
@@ -36,17 +33,12 @@ class ExecutionContext {
     return this.lookupTable[key];
   }
 
-  register(key: string, evaluable: Evaluable) {
-    if (this.lookupTable[key] !== undefined) {
-      throw Error(`Reference "${key}" already exists`);
+  register(reference: ReferenceAtom, evaluable: Evaluable) {
+    if (this.lookupTable[reference.key] !== undefined) {
+      throw Error(`Reference "${reference.key}" already exists`);
     }
 
-    this.lookupTable[key] = evaluable;
-  }
-
-  reset() {
-    this.lookupTable = createLookupTable();
-    this.debugLog = createDebugLog();
+    this.lookupTable[reference.key] = evaluable;
   }
 
   writeLog() {
@@ -66,5 +58,3 @@ class ExecutionContext {
     fs.writeFileSync(`${debugDir}/${filename}`, this.debugLog.join('\n'));
   }
 }
-
-export const globalExecutionContext = new ExecutionContext();

@@ -1,11 +1,11 @@
-import { globalExecutionContext } from './executionContext';
+import { ExecutionContext } from './executionContext';
 import { Serializeable } from './utils';
 
 export abstract class Evaluable implements Serializeable {
-  abstract evaluate(...args: any[]): Evaluable;
+  abstract evaluate(executionContext: ExecutionContext): Evaluable;
 
-  protected logEvaluation() {
-    globalExecutionContext.log(`Evaluating: ${this.constructor.name}`);
+  protected logEvaluation(executionContext: ExecutionContext) {
+    executionContext.log(`Evaluating: ${this.constructor.name}`);
   }
 
   abstract serialize(): string;

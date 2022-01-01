@@ -1,16 +1,17 @@
 import { Lambda } from './lambda';
 import { ReferenceAtom } from './atom';
 import { Evaluable } from './evaluable';
+import { ExecutionContext } from './executionContext';
 
 export class LambdaReferenceDefinition extends Evaluable {
   constructor(private reference: ReferenceAtom, private lambda: Lambda) {
     super();
   }
 
-  evaluate(): Evaluable {
-    super.logEvaluation();
+  evaluate(executionContext: ExecutionContext): Evaluable {
+    super.logEvaluation(executionContext);
 
-    this.reference.register(this.lambda);
+    executionContext.register(this.reference, this.lambda);
     return this.reference;
   }
 
