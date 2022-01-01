@@ -1,5 +1,5 @@
 (define exampleA
-  (lambda (listA)
-    (car listA)
+  (lambda (l)
+    (car l)
   )
 )

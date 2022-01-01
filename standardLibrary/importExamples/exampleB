@@ -1,5 +1,5 @@
 (define exampleB
-  (lambda (listB)
-    (cdr listB)
+  (lambda (l)
+    (cdr l)
   )
 )
