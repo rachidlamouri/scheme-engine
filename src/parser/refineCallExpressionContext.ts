@@ -14,7 +14,7 @@ export const refineCallExpressionContext = (callExpressionContext: CallExpressio
     const functionReference = refineReferenceAtomContext(functionReferenceContext);
     const parameters = evaluableGroupContext !== undefined ? refineEvaluableGroupContext(evaluableGroupContext): [];
 
-    switch (functionReference.name) {
+    switch (functionReference.key) {
       case BuiltInFunctionName.CAR:
           return new CarExpression(parameters);
       case BuiltInFunctionName.CDR:

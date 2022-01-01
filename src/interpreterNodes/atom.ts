@@ -43,21 +43,21 @@ export class BooleanAtom extends Atom<boolean> {
 }
 
 export class ReferenceAtom extends Atom<string> {
-  constructor(public readonly name: string) {
-    super(`&${name}`);
+  constructor(public readonly key: string) {
+    super(`&${key}`);
   }
 
   evaluate(): Evaluable {
-    const evaluable = globalExecutionContext.lookup(this.name)
+    const evaluable = globalExecutionContext.lookup(this.key)
 
     if (evaluable === undefined) {
-      throw Error(`Invalid reference "${this.name}"`);
+      throw Error(`Invalid reference "${this.key}"`);
     }
 
     return evaluable;
   }
 
   register(value: Evaluable) {
-    globalExecutionContext.register(this.name, value);
+    globalExecutionContext.register(this.key, value);
   }
 }

@@ -221,7 +221,7 @@ export class IsEqualExpression extends TwoParameterExpression<Atom<Primitive>, A
 export class ReferenceCallExpression extends CallExpression {
   constructor(private functionReference: ReferenceAtom, unevaluatedParameters: Evaluable[]) {
     super(
-      functionReference.name,
+      functionReference.key,
       unevaluatedParameters,
     )
   }
@@ -229,7 +229,7 @@ export class ReferenceCallExpression extends CallExpression {
   evaluate(): Evaluable {
     const unknownValue = this.functionReference.evaluate();
     if (!(unknownValue instanceof Lambda)) {
-      throw Error(`"${this.functionReference.name}" is not callable`)
+      throw Error(`"${this.functionReference.key}" is not callable`)
     }
 
     const lambda = unknownValue;
