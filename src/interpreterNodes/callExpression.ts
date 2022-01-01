@@ -282,8 +282,11 @@ export class ConditionExpression extends CallExpression {
       return conditionalValue.value;
     })
 
-    return pair !== undefined
-      ? pair.evaluateValue(executionContext)
-      : this.elseEvaluable.evaluate(executionContext);
+    if (pair !== undefined) {
+      return pair.evaluateValue(executionContext);
+    }
+
+    executionContext.log('Evaluating: Else');
+    return this.elseEvaluable.evaluate(executionContext);
   }
 }
