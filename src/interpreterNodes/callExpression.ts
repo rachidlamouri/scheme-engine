@@ -104,6 +104,8 @@ export class CarExpression extends OneParameterExpression<List> {
   }
 
   evaluate(): Evaluable {
+    super.logEvaluation();
+
     const parameter = super.evaluateParameter();
     return parameter.car();
   }
@@ -119,6 +121,8 @@ export class CdrExpression extends OneParameterExpression<List> {
   }
 
   evaluate(): Evaluable {
+    super.logEvaluation();
+
     const parameter = super.evaluateParameter();
     return parameter.cdr();
   }
@@ -134,6 +138,8 @@ export class IsNullExpression extends OneParameterExpression<List> {
   }
 
   evaluate(): Evaluable {
+    super.logEvaluation();
+
     const parameter = super.evaluateParameter();
     return parameter.isNull();
   }
@@ -149,6 +155,8 @@ export class IsAtomExpression extends OneParameterExpression<SymbolicExpression>
   }
 
   evaluate(): Evaluable {
+    super.logEvaluation();
+
     const parameter = super.evaluateParameter();
     return parameter.isAtom();
   }
@@ -188,6 +196,8 @@ export class ConsExpression extends TwoParameterExpression<SymbolicExpression, L
   }
 
   evaluate(): Evaluable {
+    super.logEvaluation();
+
     const [parameter0, parameter1] = this.evaluateParameters();
     return parameter1.cons(parameter0);
   }
@@ -213,6 +223,8 @@ export class IsEqualExpression extends TwoParameterExpression<Atom<Primitive>, A
   }
 
   evaluate(): Evaluable {
+    super.logEvaluation();
+
     const [parameter0, parameter1] = this.evaluateParameters();
     return new BooleanAtom(parameter0.value === parameter1.value);
   }
@@ -227,6 +239,8 @@ export class ReferenceCallExpression extends CallExpression {
   }
 
   evaluate(): Evaluable {
+    super.logEvaluation();
+
     const unknownValue = this.functionReference.evaluate();
     if (!(unknownValue instanceof Lambda)) {
       throw Error(`"${this.functionReference.key}" is not callable`)
@@ -249,6 +263,8 @@ export class ConditionExpression extends CallExpression {
   }
 
   evaluate(): Evaluable {
+    super.logEvaluation();
+
     const pair = this.predicateValuePairs.find((nextPair, index): boolean => {
       const conditionalValue = nextPair.evaluatePredicate();
 

@@ -1,5 +1,4 @@
 import { Evaluable } from './interpreterNodes/evaluable';
-import { globalExecutionContext } from './interpreterNodes/executionContext';
 import { Serializeable } from './interpreterNodes/utils';
 
 export class InterpretedResult implements Serializeable  {
@@ -10,9 +9,8 @@ export class InterpretedResult implements Serializeable  {
   }
 }
 
-export const interpret = (evaluables: Evaluable[]): InterpretedResult => {
-  globalExecutionContext.reset();
-  return new InterpretedResult(
+export const interpret = (evaluables: Evaluable[]): InterpretedResult => (
+  new InterpretedResult(
     evaluables.map((e) => e.evaluate())
-  );
-}
+  )
+);

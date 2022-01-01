@@ -20,6 +20,7 @@ export class List extends Evaluable {
   }
 
   evaluate(): Evaluable {
+    super.logEvaluation();
     return this;
   }
 

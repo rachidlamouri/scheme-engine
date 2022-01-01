@@ -8,6 +8,7 @@ export abstract class Atom<T extends Primitive> extends Evaluable {
   }
 
   evaluate(): Evaluable {
+    super.logEvaluation();
     return this;
   }
 
@@ -48,6 +49,8 @@ export class ReferenceAtom extends Atom<string> {
   }
 
   evaluate(): Evaluable {
+    super.logEvaluation();
+
     const evaluable = globalExecutionContext.lookup(this.key)
 
     if (evaluable === undefined) {

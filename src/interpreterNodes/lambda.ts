@@ -7,6 +7,8 @@ export class Lambda extends Evaluable {
   }
 
   evaluate(parameters: Evaluable[]): Evaluable {
+    super.logEvaluation();
+
     this.parameterReferences.forEach((reference, index) => {
       const value = parameters[index];
       reference.register(value);

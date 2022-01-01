@@ -1,6 +1,8 @@
 {
   "scripts": {
-    "clean": "rm -rf src/language/compiled",
+    "clean": "npm run clean:language && npm run clean:debug",
+    "clean:language": "rm -rf src/language/compiled",
+    "clean:debug": "rm -rf debug/",
     "compile:grammar": "antlr4ts -visitor -Xexact-output-dir -o src/language/compiled/ src/language/SchemeLexer.g4 src/language/SchemeParser.g4",
     "dev": "ts-node dev.ts",
     "scheme": "ts-node src/cli",

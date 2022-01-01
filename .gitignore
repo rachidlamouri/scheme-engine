@@ -1,4 +1,5 @@
 .antlr/
 
+/debug/
 /node_modules/
 /src/language/compiled/
