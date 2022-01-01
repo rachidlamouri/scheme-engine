@@ -9,7 +9,7 @@ const debug = (...data: any[]) => {
 }
 
 const watchDirs = [
-  'schemeLibrary/**/*',
+  'standardLibrary/**/*',
   'src/**/*',
 ]
 
