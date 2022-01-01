@@ -17,7 +17,6 @@ class ExpectedError {
   constructor(public readonly message: string) {}
 }
 
-
 // "expectedEvaluables" is used to verify the data types of the output when necessary
 type RunConfig =
   | [isFromBook: boolean, description: string, code: string, expectedOutput: ExpectedError, expectedEvaluables?: null]
