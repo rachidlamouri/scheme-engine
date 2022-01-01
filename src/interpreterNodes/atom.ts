@@ -49,7 +49,7 @@ export class ReferenceAtom extends Atom<string> {
   }
 
   evaluate(executionContext: ExecutionContext): Evaluable {
-    super.logEvaluation(executionContext);
+    super.logEvaluation(executionContext, this.key);
 
     const evaluable = executionContext.lookup(this.key)
 
