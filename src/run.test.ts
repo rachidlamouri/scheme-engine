@@ -220,6 +220,16 @@ describe('run', () => {
     [f, 'execution with invalid number of arguments', "(define echoLiterals (lambda (a b) (cons a b))) (echoLiterals 'a)", new ExpectedError('echoLiterals requires 2 parameter(s), but received 1')],
     [f, 'invalid reference', "(abc)", new ExpectedError('Invalid reference "abc"')],
     [f, 'invalid execution', "(define invokeInvalid (lambda (abc) (abc))) (invokeInvalid 'a)", new ExpectedError('"abc" is not callable')],
+    [f, 'recursive lambda', "(define iterate (lambda (l) (cond ((null? l) 'done) (else (iterate (cdr l)))))) (iterate '(a b))", '&iterate\ndone'],
+    [f, 'same lambda multiple times', "(define echo (lambda (l) l)) (echo 'a) (echo 'b)", '&echo\na\nb'],
+    [f, 'independent similarly named references', "(define echoA (lambda (l) l)) (define echoB (lambda (l) l)) (echoA 'a) (echoB '())", '&echoA\n&echoB\na\n()']
+  ]);
+
+  runSuite('variable scope', [
+    [f, 'outside of current stack frame (fnB calls fnA)', "(define fnA (lambda (a) a)) (define fnB (lambda (b) (fnA b))) (fnB 'c)", '&fnA\n&fnB\nc', null],
+    [f, 'outside of closure (a is not in fnB)', "(define fnA (lambda (a) a)) (define fnB (lambda (b) (cons a b))) (fnB '(d))", new ExpectedError('Invalid reference "a"')],
+    [f, 'outside of closure (fnA cannot access fnB)', "(define fnA (lambda (a) (fnB a))) (define fnB (lambda (b) b)) (fnA 'c)", new ExpectedError('Invalid reference "fnB"')],
+    [f, 'same reference key in different stack frame (two fnA keys)', "(define fnA (lambda (a) a)) (define fnB (lambda (fnA) (car fnA))) (fnB '(c))", '&fnA\n&fnB\nc'],
   ]);
 
   runSuite('import', [

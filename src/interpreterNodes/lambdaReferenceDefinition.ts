@@ -11,7 +11,8 @@ export class LambdaReferenceDefinition extends Evaluable {
   evaluate(executionContext: ExecutionContext): Evaluable {
     super.logEvaluation(executionContext);
 
-    executionContext.register(this.reference, this.lambda);
+    executionContext.createAndRegisterClosure(this.reference, this.lambda);
+
     return this.reference;
   }
 

@@ -1,7 +1,6 @@
 import { Atom, BooleanAtom, IntegerAtom, ReferenceAtom } from './atom';
 import { Evaluable } from './evaluable';
-import { ExecutionContext } from './executionContext';
-import { Lambda } from './lambda';
+import { Closure, ExecutionContext } from './executionContext';
 import { List } from './list';
 import { PredicateValuePair } from './predicateValuePair';
 import { SymbolicExpression } from './symbolicExpression';
@@ -243,24 +242,19 @@ export class ReferenceCallExpression extends CallExpression {
     super.logEvaluation(executionContext);
 
     const unknownValue = this.functionReference.evaluate(executionContext);
-    if (!(unknownValue instanceof Lambda)) {
+    if (!(unknownValue instanceof Closure)) {
       throw Error(`"${this.functionReference.key}" is not callable`)
     }
 
-    const lambda = unknownValue;
-    const validationConfigs: ValidationConfig[] = lambda.parameterReferences.map(() => ({
+    const closure = unknownValue;
+    const validationConfigs: ValidationConfig[] = closure.lambda.parameterReferences.map(() => ({
       allowsAtoms: true,
       allowsLists: true,
       allowsEmptyLists: true,
     }))
     const parameters = this.evaluateParameters(executionContext, validationConfigs);
 
-    lambda.parameterReferences.forEach((reference, index) => {
-      const value = parameters[index];
-      executionContext.register(reference, value);
-    });
-
-    return lambda.evaluate(executionContext);
+    return closure.evaluate(executionContext, parameters);
   }
 }
 

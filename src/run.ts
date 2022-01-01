@@ -35,7 +35,7 @@ export const run = (code: string): InterpretedResult => {
     error = e;
   }
 
-  executionContext.dumpTableToLog();
+  executionContext.dumpCallStackToLog();
   executionContext.writeLog();
 
   if (result === null) {
