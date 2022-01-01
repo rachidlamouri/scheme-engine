@@ -31,7 +31,7 @@ export const run = (code: string): InterpretedResult => {
   try {
     result = interpret(executionContext, evaluables)
   } catch (e) {
-    executionContext.log('Error!');
+    executionContext.log(`Error: ${e instanceof Error ? e.message : '?'}`);
     error = e;
   }
 
