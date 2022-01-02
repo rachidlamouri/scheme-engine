@@ -36,9 +36,15 @@ echo ci/example | npm run scheme -- -i -f
 
 ### Supported Features
 
-For examples see [run.test.ts](./src/run.test.ts)
+For examples see [run.test.ts](./src/run.test.ts). For standard library functions see [standardLibrary/](./standardLibrary/).
 
-- echo literal symbolic expressions (string, integer, boolean, list)
+- literal symbolic expressions
+  - string: `'example`
+  - integer: `123`
+  - boolean true: `#t`
+  - boolean false: `#f`
+  - null list: `'()`
+  - list: `'(a b c)`
 - car
 - cdr
 - cons
@@ -49,8 +55,9 @@ For examples see [run.test.ts](./src/run.test.ts)
 - lambda executions
 - cond
 - standard library imports
-  - lat?
-  - or
+  - list/lat -> lat?
+  - list/member -> member?
+  - logic/or -> or
 
 ## Development
 
