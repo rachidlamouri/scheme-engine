@@ -2,7 +2,7 @@ import { Atom, BooleanAtom, IntegerAtom, ReferenceAtom } from './atom';
 import { Evaluable } from './evaluable';
 import { Closure, ExecutionContext } from './executionContext';
 import { List } from './list';
-import { PredicateValuePair } from './predicateValuePair';
+import { ConditionValuePair } from './conditionValuePair';
 import { SymbolicExpression } from './symbolicExpression';
 import { Primitive } from './utils';
 
@@ -259,21 +259,21 @@ export class ReferenceCallExpression extends CallExpression {
 }
 
 export class ConditionExpression extends CallExpression {
-  constructor(private predicateValuePairs: PredicateValuePair[], private elseEvaluable: Evaluable) {
+  constructor(private conditionValuePairs: ConditionValuePair[], private elseEvaluable: Evaluable) {
     super(BuiltInFunctionName.COND, []);
   }
 
   evaluate(executionContext: ExecutionContext): Evaluable {
     super.logEvaluation(executionContext);
 
-    const pair = this.predicateValuePairs.find((nextPair, index): boolean => {
-      const conditionalValue = nextPair.evaluatePredicate(executionContext);
+    const pair = this.conditionValuePairs.find((nextPair, index): boolean => {
+      const conditionValue = nextPair.evaluateCondition(executionContext);
 
-      if (!(conditionalValue instanceof BooleanAtom)) {
+      if (!(conditionValue instanceof BooleanAtom)) {
         throw Error(`cond condition ${index} did not return a boolean`);
       }
 
-      return conditionalValue.value;
+      return conditionValue.value;
     })
 
     if (pair !== undefined) {

@@ -1,13 +1,16 @@
+import { BooleanAtom, ReferenceAtom } from './atom';
 import { CallExpression } from './callExpression';
 import { Evaluable } from './evaluable';
 import { ExecutionContext } from './executionContext';
 
-export class PredicateValuePair {
-  constructor(private predicate: CallExpression, private evaluable: Evaluable) {}
+export type Condition = CallExpression | ReferenceAtom | BooleanAtom;
 
-  evaluatePredicate(executionContext: ExecutionContext): Evaluable {
+export class ConditionValuePair {
+  constructor(private condition: Condition, private evaluable: Evaluable) {}
+
+  evaluateCondition(executionContext: ExecutionContext): Evaluable {
     executionContext.log(`Evaluating: ${this.constructor.name}`);
-    return this.predicate.evaluate(executionContext);
+    return this.condition.evaluate(executionContext);
   }
 
   evaluateValue(executionContext: ExecutionContext): Evaluable {

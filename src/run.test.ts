@@ -284,12 +284,17 @@ describe('run', () => {
   ]);
 
   runSuite('cond', {}, [
+    [f, 'true literal', "(cond (#t 'a) (else 'b))", 'a'],
+    [f, 'false literal', "(cond (#f 'a) (else 'b))", 'b'],
     [f, 'one predicate that stops at if', "(cond ((null? '()) 'a) (else 'b))", 'a'],
     [f, 'one predicate that reaches else', "(cond ((null? '(1 2 3)) 'a) (else 'b))", 'b'],
     [f, 'multiple predicates that stop at if', "(cond ((null? '()) 'a) ((atom? '()) 'b) (else 'c))", 'a'],
     [f, 'multiple predicates that stop at elseif', "(cond ((null? '(1 2 3)) 'a) ((atom? '1) 'b) (else 'c))", 'b'],
     [f, 'multiple predicates that stop at else', "(cond ((null? '(1 2 3)) 'a) ((atom? '()) 'b) ((eq? 'x 'y) 'c) (else 'd))", 'd'],
     [f, 'invalid predicate', "(cond ((null? '(1 2 3)) 'a) ((car '(1 2 3)) 'b) (else 'c))", new ExpectedError('cond condition 1 did not return a boolean')],
+    [f, 'true boolean referenced in lambda', "(define fnA (lambda (b) (cond (b 'c) (else 'd)))) (fnA #t)", 'c'],
+    [f, 'false boolean referenced in lambda', "(define fnA (lambda (b) (cond (b 'c) (else 'd)))) (fnA #f)", 'd'],
+    [f, 'non-boolean referenced in lambda', "(define fnA (lambda (b) (cond (b 'c) (else 'd)))) (fnA 'abc)", new ExpectedError('cond condition 0 did not return a boolean')],
   ]);
 
   runSuite('lat?', {

@@ -30,14 +30,14 @@ callExpression:
   | LEFT_SEPARATOR conditionExpression RIGHT_SEPARATOR
   ;
 
-conditionExpression: COND predicateValuePairGroup elseExpression;
+conditionExpression: COND conditionValuePairGroup elseExpression;
 
-predicateValuePairGroup:
-  predicateValuePair predicateValuePairGroup
-  | predicateValuePair
+conditionValuePairGroup:
+  conditionValuePair conditionValuePairGroup
+  | conditionValuePair
   ;
 
-predicateValuePair: LEFT_SEPARATOR callExpression evaluable RIGHT_SEPARATOR;
+conditionValuePair: LEFT_SEPARATOR (callExpression | booleanAtom | referenceAtom) evaluable RIGHT_SEPARATOR;
 
 elseExpression: LEFT_SEPARATOR ELSE evaluable RIGHT_SEPARATOR;
 

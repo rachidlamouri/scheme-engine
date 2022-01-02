@@ -3,7 +3,7 @@ import { BuiltInFunctionName, CallExpression, CarExpression, CdrExpression, Cond
 import { refineReferenceAtomContext } from './refineAtomContext';
 import { refineEvaluableContext, refineEvaluableGroupContext } from './refineEvaluableContext';
 import { UnhandledContextError } from './utils';
-import { refinePredicateValuePairGroupContext } from './refinePredicateValuePairContext';
+import { refineConditionValuePairGroupContext } from './refineConditionValuePairContext';
 
 export const refineCallExpressionContext = (callExpressionContext: CallExpressionContext): CallExpression => {
   const functionReferenceContext = callExpressionContext.referenceAtom();
@@ -31,10 +31,10 @@ export const refineCallExpressionContext = (callExpressionContext: CallExpressio
 
     return new ReferenceCallExpression(functionReference, parameters);
   } else if (conditionExpressionContext !== undefined) {
-    const predicateValuePairs = refinePredicateValuePairGroupContext(conditionExpressionContext.predicateValuePairGroup());
+    const conditionValuePairs = refineConditionValuePairGroupContext(conditionExpressionContext.conditionValuePairGroup());
     const elseEvaluable = refineEvaluableContext(conditionExpressionContext.elseExpression().evaluable());
 
-    return new ConditionExpression(predicateValuePairs, elseEvaluable);
+    return new ConditionExpression(conditionValuePairs, elseEvaluable);
   }
 
   throw new UnhandledContextError(callExpressionContext);
