@@ -1,0 +1,9 @@
+(define or
+  (lambda (a b)
+    (cond
+      (a #t)
+      (b #t)
+      (else #f)
+    )
+  )
+)

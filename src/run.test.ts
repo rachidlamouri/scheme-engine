@@ -310,4 +310,16 @@ describe('run', () => {
     [t, 'list with only atoms', "(lat? '(bacon and eggs))", '#t'],
     [t, 'list with a list', "(lat? '(bacon (and eggs)))", '#f'],
   ]);
+
+  runSuite('or', {
+    prependCode: '(import logic/or)',
+  }, [
+    [f, 'or true true', "(or #t #t)", '#t'],
+    [f, 'or true false', "(or #t #f)", '#t'],
+    [f, 'or false true', "(or #f #t)", '#t'],
+    [f, 'or false false', "(or #f #f)", '#f'],
+    [t, 'with call expressions', "(or (null? '()) (atom? '(d e f g)))", '#t'],
+    [t, 'with call expressions', "(or (null? '(a b c)) (null? '()))", '#t'],
+    [t, 'with call expressions', "(or (null? '(a b c)) (null? '(atom)))", '#f'],
+  ]);
 });

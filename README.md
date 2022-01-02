@@ -50,6 +50,7 @@ For examples see [run.test.ts](./src/run.test.ts)
 - cond
 - standard library imports
   - lat?
+  - or
 
 ## Development
 
