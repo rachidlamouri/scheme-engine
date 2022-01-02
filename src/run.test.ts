@@ -322,4 +322,14 @@ describe('run', () => {
     [t, 'with call expressions', "(or (null? '(a b c)) (null? '()))", '#t'],
     [t, 'with call expressions', "(or (null? '(a b c)) (null? '(atom)))", '#f'],
   ]);
+
+  runSuite('member?', {
+    prependCode: '(import list/member)',
+  }, [
+    [t, 'atom is member of list', "(member? 'tea '(cofee tea or milk))", '#t'],
+    [t, 'atom is not member of list', "(member? 'poached '(fried eggs and scrambled eggs))", '#f'],
+    [f, 'atom is first member', "(member? 'a '(a b c))", '#t'],
+    [t, 'book example', "(member? 'meat '(mashed potatoes and meat gravy))", '#t'],
+    [t, 'book example', "(member? 'liver '(bagels and lox))", '#f'],
+  ]);
 });
