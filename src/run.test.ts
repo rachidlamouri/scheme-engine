@@ -5,13 +5,18 @@ import { Evaluable } from './interpreterNodes/evaluable';
 import { BooleanAtom, IntegerAtom, ReferenceAtom, StringAtom } from './interpreterNodes/atom';
 import { List } from './interpreterNodes/list';
 
-type MochaConfig = {
+type InputMochaConfig = {
   isOnly?: boolean;
-  isSkipped?: never;
-} | {
-  isOnly?: never;
   isSkipped?: boolean;
-}
+};
+
+type InputTestConfig =
+  InputMochaConfig
+  & {
+    prependCode?: string;
+  }
+
+type TestConfig = Required<InputTestConfig>;
 
 class ExpectedError {
   constructor(public readonly message: string) {}
@@ -20,16 +25,33 @@ class ExpectedError {
 // "expectedEvaluables" is used to verify the data types of the output when necessary
 type RunConfig =
   | [isFromBook: boolean, description: string, code: string, expectedOutput: ExpectedError, expectedEvaluables?: null]
-  | [isFromBook: boolean, description: string, code: string, expectedOutput: ExpectedError, expectedEvaluables?: null, config?: MochaConfig]
+  | [isFromBook: boolean, description: string, code: string, expectedOutput: ExpectedError, expectedEvaluables?: null, testConfig?: TestConfig]
   | [isFromBook: boolean, description: string, code: string, expectedOutput: string, expectedEvaluables?: Evaluable[] | null]
-  | [isFromBook: boolean, description: string, code: string, expectedOutput: string, expectedEvaluables?: Evaluable[] | null, config?: MochaConfig];
+  | [isFromBook: boolean, description: string, code: string, expectedOutput: string, expectedEvaluables?: Evaluable[] | null, testConfig?: TestConfig];
 
 const t = true;
 const f = false;
 
-const runTest = ([isFromBook, description, code, expectedOutput, expectedEvaluables = null, config = { isOnly: false }]: RunConfig) => {
-  const method = config.isOnly ? it.only : it;
-  const prefix = isFromBook ? '*' : ' ';
+const runTest = (
+  isFromBook: boolean,
+  description: string,
+  code: string,
+  expectedOutput: string | ExpectedError,
+  expectedEvaluables: Evaluable[] | null,
+  testConfig: TestConfig
+) => {
+  let method: Mocha.TestFunction | Mocha.ExclusiveTestFunction | Mocha.PendingTestFunction;
+  if (testConfig.isOnly) {
+    method = it.only;
+  } else if (testConfig.isSkipped) {
+    method = it.skip;
+  } else {
+    method = it;
+  }
+
+  const inputCode = testConfig.prependCode === ''
+    ? code
+    : `${testConfig.prependCode} ${code}`;
 
   let outputDescription: string;
   let evaluateResult: () => void;
@@ -38,7 +60,7 @@ const runTest = ([isFromBook, description, code, expectedOutput, expectedEvaluab
     outputDescription = chalk.red(expectedOutput.message)
 
     evaluateResult = () => {
-      expect(() => run(code)).toThrow(expectedOutput.message);
+      expect(() => run(inputCode)).toThrow(expectedOutput.message);
     };
   } else {
     outputDescription =
@@ -47,7 +69,7 @@ const runTest = ([isFromBook, description, code, expectedOutput, expectedEvaluab
         .join(chalk.cyan('\\n'));
 
     evaluateResult = () => {
-      const result = run(code);
+      const result = run(inputCode);
 
       expect(result.serialize()).toEqual(expectedOutput);
 
@@ -57,44 +79,44 @@ const runTest = ([isFromBook, description, code, expectedOutput, expectedEvaluab
     };
   }
 
+  const prefix = isFromBook ? '*' : ' ';
   method(`${prefix} ${chalk.cyan(description)}: ${chalk.blue(code)} -> ${outputDescription}`, evaluateResult);
 };
 
-const runSuite = (suiteName: string, tests: RunConfig[], config?: MochaConfig) => {
+const runSuite = (suiteName: string, suiteConfig: InputTestConfig, tests: RunConfig[]) => {
   let method: Mocha.SuiteFunction | Mocha.ExclusiveSuiteFunction | Mocha.PendingSuiteFunction;
-  if (config !== undefined && config.isOnly) {
+  if (suiteConfig !== undefined && suiteConfig.isOnly) {
     method = describe.only;
-  } else if (config !== undefined && config.isSkipped) {
+  } else if (suiteConfig !== undefined && suiteConfig.isSkipped) {
     method = describe.skip;
   } else {
     method = describe;
   }
 
   method(suiteName, () => {
-    tests.forEach(runTest);
+    tests.forEach(([isFromBook, description, code, expectedOutput, expectedEvaluables = null, testConfig]) => {
+      runTest(
+        isFromBook,
+        description,
+        code,
+        expectedOutput,
+        expectedEvaluables,
+        {
+          isOnly: false,
+          isSkipped: false,
+          prependCode: '',
+          ...suiteConfig,
+          ...testConfig,
+        }
+      );
+    });
   })
 };
-
-type SuiteSetup = {
-  prependCode: string;
-}
-
-const runSuiteWithSetup = (suiteName: string, setup: SuiteSetup, tests: RunConfig[], config?: MochaConfig) => {
-  tests.forEach((testConfig) => {
-    const codeTupleIndex = 2;
-    const code = testConfig[codeTupleIndex];
-    testConfig[codeTupleIndex] = `${setup.prependCode} ${code}`;
-
-    runTest(testConfig);
-  });
-
-  runSuite(suiteName, tests, config);
-}
 
 process.stdout.write(`${chalk.gray('*')}: denotes test from The Little Schemer`);
 
 describe('run', () => {
-  runSuite('literals', [
+  runSuite('literals', {}, [
     [t, 'string', "'atom", 'atom', [new StringAtom('atom')]],
     [t, 'string', "'turkey", 'turkey'],
     [f, 'uppercase string', "'TURKEY", 'TURKEY'],
@@ -120,7 +142,7 @@ describe('run', () => {
     ]],
   ]);
 
-  runSuite('car', [
+  runSuite('car', {}, [
     [f, 'list of length 1', "(car '(a))", 'a'],
     [f, 'list of  length 2', "(car '(a b))", 'a'],
     [t, 'list of  length 3', "(car '(a b c))", 'a'],
@@ -136,7 +158,7 @@ describe('run', () => {
     [f, 'wrong number of parameters', "(car '(a) '(a))", new ExpectedError('car requires 1 parameter(s), but received 2')],
   ]);
 
-  runSuite('cdr', [
+  runSuite('cdr', {}, [
     [t, 'list', "(cdr '(a b c))", '(b c)'],
     [t, 'car of list is list', "(cdr '((a b c) x y z))", '(x y z)'],
     [t, 'list with one atom', "(cdr '(hamburger))", '()'],
@@ -150,7 +172,7 @@ describe('run', () => {
     [t, 'nested cdr and car', "(cdr (car '(a (b (c)) d) ))", new ExpectedError('Parameter 0 of cdr cannot be an atom')],
   ]);
 
-  runSuite('cons', [
+  runSuite('cons', {}, [
     [t, 'atom and list', "(cons 'peanut '(butter and jelly))", '(peanut butter and jelly)'],
     [t, 'list and list', "(cons '(banana and) '(peanut butter and jelly))", '((banana and) peanut butter and jelly)'],
     [t, 'list and list', "(cons '((help) this) '(is very ((hard) to learn)) )", '(((help) this) is very ((hard) to learn))'],
@@ -163,7 +185,7 @@ describe('run', () => {
     [t, 'cons of cdr', "(cons 'a (cdr '((b) c d) ))", '(a c d)'],
   ]);
 
-  runSuite('null?', [
+  runSuite('null?', {}, [
     [t, 'empty list', "(null? '())", '#t', [new BooleanAtom(true)]],
     [t, 'non empty list', "(null? '(a b c))", '#f', [new BooleanAtom(false)]],
     [t, 'atom', "(null? 'a)", new ExpectedError('Parameter 0 of null? cannot be an atom')],
@@ -177,7 +199,7 @@ describe('run', () => {
     [f, 'cons and null?', "(cons 'a (null? '()))", new ExpectedError('Parameter 1 of cons cannot be an atom')],
   ]);
 
-  runSuite('atom?', [
+  runSuite('atom?', {}, [
     [t, 'atom', "(atom? 'Harry)", '#t', [new BooleanAtom(true)]],
     [f, 'integer atom', "(atom? 1234)", '#t', [new BooleanAtom(true)]],
     [t, 'list', "(atom? '(Harry had a heap of apples))", '#f', [new BooleanAtom(false)]],
@@ -190,7 +212,7 @@ describe('run', () => {
     [f, 'nested atom?', "(atom? (atom? '()))", '#t'],
   ]);
 
-  runSuite('eq?', [
+  runSuite('eq?', {}, [
     [t, 'atoms', "(eq? 'Harry 'Harry)", '#t'],
     [t, 'atoms', "(eq? 'margarine 'butter)", '#f'],
     [t, 'lists', "(eq? '() '(strawberry))", new ExpectedError('Parameter 0 of eq? cannot be a list')],
@@ -204,7 +226,7 @@ describe('run', () => {
     [t, 'eq?, car and cdr', "(eq? (car '(beans beans we need jelly beans)) (car (cdr '(beans beans we need jelly beans))))", '#t'],
   ]);
 
-  runSuite('independent expressions', [
+  runSuite('independent expressions', {}, [
     [f, 'atom literals', "'atom 'turkey", 'atom\nturkey'],
     [f, 'list literals', "'() '(a b c)", '()\n(a b c)'],
     [f, 'expressions', "(car '(a)) (cdr '(a b c))", 'a\n(b c)'],
@@ -221,14 +243,14 @@ describe('run', () => {
     ].join('\n')],
   ]);
 
-  runSuite('lambda definitions', [
+  runSuite('lambda definitions', {}, [
     [f, 'basic definition', "(define myLambda (lambda () 'atom))", '&myLambda', [new ReferenceAtom('myLambda')]],
     [f, 'definition with one argument', '(define echoLiteral (lambda (a) a))', '&echoLiteral'],
     [f, 'definition with multiple arguments', '(define echoLiterals (lambda (a b) (cons a b)))', '&echoLiterals'],
     [f, 'repeated references', "(define abc (lambda () 'a)) (define abc (lambda () 'b))", new ExpectedError('Reference "abc" already exists')],
   ]);
 
-  runSuite('lambda executions', [
+  runSuite('lambda executions', {}, [
     [f, 'basic execution', "(define myLambda (lambda () 'atom)) (myLambda)", '&myLambda\natom'],
     [f, 'execution with one argument', "(define echoLiteral (lambda (a) a)) (echoLiteral 'turkey)", '&echoLiteral\nturkey'],
     [f, 'execution with multiple arguments', "(define echoLiterals (lambda (a b) (cons a b))) (echoLiterals 'I '(like cookies))", '&echoLiterals\n(I like cookies)'],
@@ -240,14 +262,14 @@ describe('run', () => {
     [f, 'independent similarly named references', "(define echoA (lambda (l) l)) (define echoB (lambda (l) l)) (echoA 'a) (echoB '())", '&echoA\n&echoB\na\n()']
   ]);
 
-  runSuite('variable scope', [
+  runSuite('variable scope', {}, [
     [f, 'outside of current stack frame (fnB calls fnA)', "(define fnA (lambda (a) a)) (define fnB (lambda (b) (fnA b))) (fnB 'c)", '&fnA\n&fnB\nc', null],
     [f, 'outside of closure (a is not in fnB)', "(define fnA (lambda (a) a)) (define fnB (lambda (b) (cons a b))) (fnB '(d))", new ExpectedError('Invalid reference "a"')],
     [f, 'outside of closure (fnA cannot access fnB)', "(define fnA (lambda (a) (fnB a))) (define fnB (lambda (b) b)) (fnA 'c)", new ExpectedError('Invalid reference "fnB"')],
     [f, 'same reference key in different stack frame (two fnA keys)', "(define fnA (lambda (a) a)) (define fnB (lambda (fnA) (car fnA))) (fnB '(c))", '&fnA\n&fnB\nc'],
   ]);
 
-  runSuite('import', [
+  runSuite('import', {}, [
     [f, 'single import', "(import importExamples/exampleA)", '&exampleA'],
     [f, 'single import and execute', "(import importExamples/exampleA) (exampleA '(a b c))", '&exampleA\na'],
     [f, 'multiple import', "(import importExamples/exampleA importExamples/exampleB)", '&exampleA\n&exampleB'],
@@ -255,7 +277,7 @@ describe('run', () => {
     [f, 'invalid import', "(import importExamples/exampleABC)", new ExpectedError('Standard library "standardLibrary/importExamples/exampleABC" does not exist')],
   ]);
 
-  runSuite('cond', [
+  runSuite('cond', {}, [
     [f, 'one predicate that stops at if', "(cond ((null? '()) 'a) (else 'b))", 'a'],
     [f, 'one predicate that reaches else', "(cond ((null? '(1 2 3)) 'a) (else 'b))", 'b'],
     [f, 'multiple predicates that stop at if', "(cond ((null? '()) 'a) ((atom? '()) 'b) (else 'c))", 'a'],
@@ -264,7 +286,7 @@ describe('run', () => {
     [f, 'invalid predicate', "(cond ((null? '(1 2 3)) 'a) ((car '(1 2 3)) 'b) (else 'c))", new ExpectedError('cond condition 1 did not return a boolean')],
   ]);
 
-  runSuiteWithSetup('lat?', {
+  runSuite('lat?', {
     prependCode: '(import lat/lat)',
   }, [
     [t, 'list with only atoms', "(lat? '(Jack Sprat could eat no chicken fat))", '&lat?\n#t'],
