@@ -274,5 +274,7 @@ describe('run', () => {
     [f, 'list with one atom', "(lat? '(a))", '&lat?\n#t'],
     [f, 'list with one list', "(lat? '((a)))", '&lat?\n#f'],
     [t, 'list with only atoms', "(lat? '(bacon and eggs))", '&lat?\n#t'],
+    [t, 'list with only atoms', "(lat? '(bacon and eggs))", '&lat?\n#t'],
+    [t, 'list with a list', "(lat? '(bacon (and eggs)))", '&lat?\n#f'],
   ]);
 });
