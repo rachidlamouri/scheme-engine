@@ -13,6 +13,7 @@ type InputMochaConfig = {
 type InputTestConfig =
   InputMochaConfig
   & {
+    includeReferenceOutput?: boolean;
     prependCode?: string;
   }
 
@@ -71,7 +72,7 @@ const runTest = (
     evaluateResult = () => {
       const result = run(inputCode);
 
-      expect(result.serialize()).toEqual(expectedOutput);
+      expect(result.serialize(testConfig.includeReferenceOutput)).toEqual(expectedOutput);
 
       if (expectedEvaluables !== null) {
         expect(result.evaluables).toEqual(expectedEvaluables);
@@ -104,6 +105,7 @@ const runSuite = (suiteName: string, suiteConfig: InputTestConfig, tests: RunCon
         {
           isOnly: false,
           isSkipped: false,
+          includeReferenceOutput: false,
           prependCode: '',
           ...suiteConfig,
           ...testConfig,
@@ -243,7 +245,9 @@ describe('run', () => {
     ].join('\n')],
   ]);
 
-  runSuite('lambda definitions', {}, [
+  runSuite('lambda definitions', {
+    includeReferenceOutput: true,
+  }, [
     [f, 'basic definition', "(define myLambda (lambda () 'atom))", '&myLambda', [new ReferenceAtom('myLambda')]],
     [f, 'definition with one argument', '(define echoLiteral (lambda (a) a))', '&echoLiteral'],
     [f, 'definition with multiple arguments', '(define echoLiterals (lambda (a b) (cons a b)))', '&echoLiterals'],
@@ -251,25 +255,27 @@ describe('run', () => {
   ]);
 
   runSuite('lambda executions', {}, [
-    [f, 'basic execution', "(define myLambda (lambda () 'atom)) (myLambda)", '&myLambda\natom'],
-    [f, 'execution with one argument', "(define echoLiteral (lambda (a) a)) (echoLiteral 'turkey)", '&echoLiteral\nturkey'],
-    [f, 'execution with multiple arguments', "(define echoLiterals (lambda (a b) (cons a b))) (echoLiterals 'I '(like cookies))", '&echoLiterals\n(I like cookies)'],
+    [f, 'basic execution', "(define myLambda (lambda () 'atom)) (myLambda)", 'atom'],
+    [f, 'execution with one argument', "(define echoLiteral (lambda (a) a)) (echoLiteral 'turkey)", 'turkey'],
+    [f, 'execution with multiple arguments', "(define echoLiterals (lambda (a b) (cons a b))) (echoLiterals 'I '(like cookies))", '(I like cookies)'],
     [f, 'execution with invalid number of arguments', "(define echoLiterals (lambda (a b) (cons a b))) (echoLiterals 'a)", new ExpectedError('echoLiterals requires 2 parameter(s), but received 1')],
     [f, 'invalid reference', "(abc)", new ExpectedError('Invalid reference "abc"')],
     [f, 'invalid execution', "(define invokeInvalid (lambda (abc) (abc))) (invokeInvalid 'a)", new ExpectedError('"abc" is not callable')],
-    [f, 'recursive lambda', "(define iterate (lambda (l) (cond ((null? l) 'done) (else (iterate (cdr l)))))) (iterate '(a b))", '&iterate\ndone'],
-    [f, 'same lambda multiple times', "(define echo (lambda (l) l)) (echo 'a) (echo 'b)", '&echo\na\nb'],
-    [f, 'independent similarly named references', "(define echoA (lambda (l) l)) (define echoB (lambda (l) l)) (echoA 'a) (echoB '())", '&echoA\n&echoB\na\n()']
+    [f, 'recursive lambda', "(define iterate (lambda (l) (cond ((null? l) 'done) (else (iterate (cdr l)))))) (iterate '(a b))", 'done'],
+    [f, 'same lambda multiple times', "(define echo (lambda (l) l)) (echo 'a) (echo 'b)", 'a\nb'],
+    [f, 'independent similarly named references', "(define echoA (lambda (l) l)) (define echoB (lambda (l) l)) (echoA 'a) (echoB '())", 'a\n()']
   ]);
 
   runSuite('variable scope', {}, [
-    [f, 'outside of current stack frame (fnB calls fnA)', "(define fnA (lambda (a) a)) (define fnB (lambda (b) (fnA b))) (fnB 'c)", '&fnA\n&fnB\nc', null],
+    [f, 'outside of current stack frame (fnB calls fnA)', "(define fnA (lambda (a) a)) (define fnB (lambda (b) (fnA b))) (fnB 'c)", 'c', null],
     [f, 'outside of closure (a is not in fnB)', "(define fnA (lambda (a) a)) (define fnB (lambda (b) (cons a b))) (fnB '(d))", new ExpectedError('Invalid reference "a"')],
     [f, 'outside of closure (fnA cannot access fnB)', "(define fnA (lambda (a) (fnB a))) (define fnB (lambda (b) b)) (fnA 'c)", new ExpectedError('Invalid reference "fnB"')],
-    [f, 'same reference key in different stack frame (two fnA keys)', "(define fnA (lambda (a) a)) (define fnB (lambda (fnA) (car fnA))) (fnB '(c))", '&fnA\n&fnB\nc'],
+    [f, 'same reference key in different stack frame (two fnA keys)', "(define fnA (lambda (a) a)) (define fnB (lambda (fnA) (car fnA))) (fnB '(c))", 'c'],
   ]);
 
-  runSuite('import', {}, [
+  runSuite('import', {
+    includeReferenceOutput: true,
+  }, [
     [f, 'single import', "(import importExamples/exampleA)", '&exampleA'],
     [f, 'single import and execute', "(import importExamples/exampleA) (exampleA '(a b c))", '&exampleA\na'],
     [f, 'multiple import', "(import importExamples/exampleA importExamples/exampleB)", '&exampleA\n&exampleB'],
@@ -289,14 +295,14 @@ describe('run', () => {
   runSuite('lat?', {
     prependCode: '(import lat/lat)',
   }, [
-    [t, 'list with only atoms', "(lat? '(Jack Sprat could eat no chicken fat))", '&lat?\n#t'],
-    [t, 'list with a list', "(lat? '((Jack) Sprat could eat no chicken fat))", '&lat?\n#f'],
-    [t, 'list with a list', "(lat? '(Jack (Sprat could) eat no chicken fat))", '&lat?\n#f'],
-    [t, 'empty list', "(lat? '())", '&lat?\n#t'],
-    [f, 'list with one atom', "(lat? '(a))", '&lat?\n#t'],
-    [f, 'list with one list', "(lat? '((a)))", '&lat?\n#f'],
-    [t, 'list with only atoms', "(lat? '(bacon and eggs))", '&lat?\n#t'],
-    [t, 'list with only atoms', "(lat? '(bacon and eggs))", '&lat?\n#t'],
-    [t, 'list with a list', "(lat? '(bacon (and eggs)))", '&lat?\n#f'],
+    [t, 'list with only atoms', "(lat? '(Jack Sprat could eat no chicken fat))", '#t'],
+    [t, 'list with a list', "(lat? '((Jack) Sprat could eat no chicken fat))", '#f'],
+    [t, 'list with a list', "(lat? '(Jack (Sprat could) eat no chicken fat))", '#f'],
+    [t, 'empty list', "(lat? '())", '#t'],
+    [f, 'list with one atom', "(lat? '(a))", '#t'],
+    [f, 'list with one list', "(lat? '((a)))", '#f'],
+    [t, 'list with only atoms', "(lat? '(bacon and eggs))", '#t'],
+    [t, 'list with only atoms', "(lat? '(bacon and eggs))", '#t'],
+    [t, 'list with a list', "(lat? '(bacon (and eggs)))", '#f'],
   ]);
 });
