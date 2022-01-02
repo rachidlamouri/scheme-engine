@@ -293,7 +293,7 @@ describe('run', () => {
   ]);
 
   runSuite('lat?', {
-    prependCode: '(import lat/lat)',
+    prependCode: '(import list/lat)',
   }, [
     [t, 'list with only atoms', "(lat? '(Jack Sprat could eat no chicken fat))", '#t'],
     [t, 'list with a list', "(lat? '((Jack) Sprat could eat no chicken fat))", '#f'],
