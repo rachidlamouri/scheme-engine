@@ -61,6 +61,9 @@ For examples see [run.test.ts](./src/run.test.ts). For standard library function
   - list/lat -> lat?
   - list/member -> member?
   - list/multiRember -> multiRember
+  - list/multiInsertL -> multiInsertL
+  - list/multiInsertR -> multiInsertR
+  - list/multiSubst -> multiSubst
   - list/rember -> rember
   - list/subst -> subst
   - logic/or -> or

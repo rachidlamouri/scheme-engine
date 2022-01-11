@@ -1,0 +1,21 @@
+(define multiSubst
+  (lambda (new old l)
+    (cond
+      ((null? l) '())
+      (
+        (eq? (car l) old)
+        (cons
+          new
+          (multiSubst new old (cdr l))
+        )
+      )
+      (
+        else
+        (cons
+          (car l)
+          (multiSubst new old (cdr l))
+        )
+      )
+    )
+  )
+)

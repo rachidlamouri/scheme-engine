@@ -1,0 +1,24 @@
+(define multiInsertL
+  (lambda (new old l)
+    (cond
+      ((null? l) '())
+      (
+        (eq? (car l) old)
+        (cons
+          new
+          (cons
+            (car l)
+            (multiInsertL new old (cdr l))
+          )
+        )
+      )
+      (
+        else
+        (cons
+          (car l)
+          (multiInsertL new old (cdr l))
+        )
+      )
+    )
+  )
+)
