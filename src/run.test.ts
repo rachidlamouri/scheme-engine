@@ -342,4 +342,13 @@ describe('run', () => {
     [t, 'atom is in list multiple times', "(rember 'cup '(coffee cup tea cup and hick cup))", '(coffee tea cup and hick cup)'],
     [f, 'when the list is empty', "(rember 'abc '())", '()'],
   ])
+
+  runSuite('firsts', {
+    prependCode: '(import list/firsts)',
+  }, [
+    [t, 'list with lists', "(firsts '((a b) (c d) (e f)))", '(a c e)'],
+    [t, 'list with no lists', "(firsts '())", '()'],
+    [f, 'list with single atom lists', "(firsts '((a) (b)))", '(a b)'],
+    [f, 'list with one list', "(firsts '((a)))", '(a)'],
+  ]);
 });

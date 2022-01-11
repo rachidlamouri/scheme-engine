@@ -55,6 +55,7 @@ For examples see [run.test.ts](./src/run.test.ts). For standard library function
 - lambda executions
 - cond
 - standard library imports
+  - list/firsts -> firsts
   - list/lat -> lat?
   - list/member -> member?
   - list/rember -> rember
