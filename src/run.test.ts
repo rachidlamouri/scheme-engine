@@ -351,4 +351,28 @@ describe('run', () => {
     [f, 'list with single atom lists', "(firsts '((a) (b)))", '(a b)'],
     [f, 'list with one list', "(firsts '((a)))", '(a)'],
   ]);
+
+  runSuite('insertR', {
+    prependCode: '(import list/insertR)',
+  }, [
+    [t, 'when the old atom exists once', "(insertR 'topping 'fudge '(ice cream with fudge for dessert))", '(ice cream with fudge topping for dessert)'],
+    [t, 'when the old atom exists twice', "(insertR 'e 'd '(a b c d f g d h))", '(a b c d e f g d h)'],
+    [t, 'when the old atom does not exist', "(insertR 'a 'g '(a b c))", '(a b c)'],
+  ]);
+
+  runSuite('insertL', {
+    prependCode: '(import list/insertL)',
+  }, [
+    [t, 'when the old atom exists once', "(insertL 'topping 'fudge '(ice cream with fudge for dessert))", '(ice cream with topping fudge for dessert)'],
+    [t, 'when the old atom exists twice', "(insertL 'e 'd '(a b c d f g d h))", '(a b c e d f g d h)'],
+    [t, 'when the old atom does not exist', "(insertL 'a 'g '(a b c))", '(a b c)'],
+  ]);
+
+  runSuite('subst', {
+    prependCode: '(import list/subst)',
+  }, [
+    [t, 'when the old atom exists once', "(subst 'topping 'fudge '(ice cream with fudge for dessert))", '(ice cream with topping for dessert)'],
+    [t, 'when the old atom exists twice', "(subst 'e 'd '(a b c d f g d h))", '(a b c e f g d h)'],
+    [t, 'when the old atom does not exist', "(subst 'a 'g '(a b c))", '(a b c)'],
+  ]);
 });

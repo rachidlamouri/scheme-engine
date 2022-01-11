@@ -1,0 +1,18 @@
+(define subst
+  (lambda (new old l)
+    (cond
+      ((null? l) '())
+      (
+        (eq? (car l) old)
+        (cons new (cdr l))
+      )
+      (
+        else
+        (cons
+          (car l)
+          (subst new old (cdr l))
+        )
+      )
+    )
+  )
+)

@@ -56,9 +56,12 @@ For examples see [run.test.ts](./src/run.test.ts). For standard library function
 - cond
 - standard library imports
   - list/firsts -> firsts
+  - list/insertL -> insertL
+  - list/insertR -> insertR
   - list/lat -> lat?
   - list/member -> member?
   - list/rember -> rember
+  - list/subst -> subst
   - logic/or -> or
 
 ## Development

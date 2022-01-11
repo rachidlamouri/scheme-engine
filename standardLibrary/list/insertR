@@ -1,0 +1,24 @@
+(define insertR
+  (lambda (new old l)
+    (cond
+      ((null? l) '())
+      (
+        (eq? (car l) old)
+        (cons
+          (car l)
+          (cons
+            new
+            (cdr l)
+          )
+        )
+      )
+      (
+        else
+        (cons
+          (car l)
+          (insertR new old (cdr l))
+        )
+      )
+    )
+  )
+)
