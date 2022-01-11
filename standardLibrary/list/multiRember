@@ -1,16 +1,16 @@
-(define multirember
+(define multiRember
   (lambda (a l)
     (cond
       ((null? l) '())
       (
         (eq? (car l) a)
-        (multirember a (cdr l))
+        (multiRember a (cdr l))
       )
       (
         else
         (cons
           (car l)
-          (multirember a (cdr l))
+          (multiRember a (cdr l))
         )
       )
     )
