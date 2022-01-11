@@ -1,0 +1,18 @@
+(define multirember
+  (lambda (a l)
+    (cond
+      ((null? l) '())
+      (
+        (eq? (car l) a)
+        (multirember a (cdr l))
+      )
+      (
+        else
+        (cons
+          (car l)
+          (multirember a (cdr l))
+        )
+      )
+    )
+  )
+)

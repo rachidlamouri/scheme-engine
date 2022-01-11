@@ -343,6 +343,15 @@ describe('run', () => {
     [f, 'when the list is empty', "(rember 'abc '())", '()'],
   ])
 
+  runSuite('multiRember', {
+    prependCode: '(import list/multiRember)',
+  }, [
+    [f, 'atom is in list once', "(multiRember 'mint '(lamb chops and mint jelly))", '(lamb chops and jelly)'],
+    [t, 'atom is in list multiple times', "(multiRember 'cup '(coffee cup tea cup and hick cup))", '(coffee tea and hick)'],
+    [f, 'atom is not in list', "(multiRember 'toast '(bacon lettuce and tomato))", '(bacon lettuce and tomato)'],
+    [f, 'list is empty', "(multiRember 'abc '())", '()'],
+  ]);
+
   runSuite('firsts', {
     prependCode: '(import list/firsts)',
   }, [
