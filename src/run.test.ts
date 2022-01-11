@@ -332,4 +332,14 @@ describe('run', () => {
     [t, 'book example', "(member? 'meat '(mashed potatoes and meat gravy))", '#t'],
     [t, 'book example', "(member? 'liver '(bagels and lox))", '#f'],
   ]);
+
+  runSuite('rember', {
+    prependCode: '(import list/rember)',
+  }, [
+    [t, 'atom is in list', "(rember 'mint '(lamb chops and mint jelly))", '(lamb chops and jelly)'],
+    [t, 'atom is in list multiple times', "(rember 'mint '(lamb chops and mint flavored mint jelly))", '(lamb chops and flavored mint jelly)'],
+    [t, 'atom is not in list', "(rember 'toast '(bacon lettuce and tomato))", '(bacon lettuce and tomato)'],
+    [t, 'atom is in list multiple times', "(rember 'cup '(coffee cup tea cup and hick cup))", '(coffee tea cup and hick cup)'],
+    [f, 'when the list is empty', "(rember 'abc '())", '()'],
+  ])
 });

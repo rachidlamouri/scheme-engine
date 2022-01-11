@@ -57,6 +57,7 @@ For examples see [run.test.ts](./src/run.test.ts). For standard library function
 - standard library imports
   - list/lat -> lat?
   - list/member -> member?
+  - list/rember -> rember
   - logic/or -> or
 
 ## Development

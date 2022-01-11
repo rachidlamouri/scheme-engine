@@ -1,0 +1,20 @@
+(define rember
+  (lambda (a l)
+    (cond
+      ((null? l) '())
+      (
+        (eq? a (car l))
+        (cdr l)
+      )
+      (else
+        (cons
+          (car l)
+          (rember
+            a
+            (cdr l)
+          )
+        )
+      )
+    )
+  )
+)
