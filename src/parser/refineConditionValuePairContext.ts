@@ -1,24 +1,24 @@
 import { Condition, ConditionValuePair } from '../interpreterNodes/conditionValuePair';
 import { ConditionValuePairContext, ConditionValuePairGroupContext } from '../language/compiled/SchemeParser';
-import { refineBooleanAtomContext, refineReferenceAtomContext } from './refineAtomContext';
+import { refineBooleanLiteralContext, refineReferenceLiteralContext } from './refineAtomContext';
 import { refineCallExpressionContext } from './refineCallExpressionContext';
 import { refineEvaluableContext } from './refineEvaluableContext';
 import { buildRefineGroupContext, NormalizedGroupContext, UnhandledContextError } from './utils';
 
 const refineConditionValuePairContext = (conditionValuePairContext: ConditionValuePairContext): ConditionValuePair => {
   const callExpressionContext = conditionValuePairContext.callExpression();
-  const booleanAtomContext = conditionValuePairContext.booleanAtom();
-  const referenceAtomContext = conditionValuePairContext.referenceAtom();
+  const booleanLiteralContext = conditionValuePairContext.booleanLiteral();
+  const referenceLiteralContext = conditionValuePairContext.referenceLiteral();
   const evaluableContext = conditionValuePairContext.evaluable();
 
   let condition: Condition | null = null;
 
   if (callExpressionContext !== undefined) {
     condition = refineCallExpressionContext(callExpressionContext);
-  } else if (booleanAtomContext !== undefined) {
-    condition = refineBooleanAtomContext(booleanAtomContext);
-  } else if (referenceAtomContext !== undefined) {
-    condition = refineReferenceAtomContext(referenceAtomContext);
+  } else if (booleanLiteralContext !== undefined) {
+    condition = refineBooleanLiteralContext(booleanLiteralContext, false);
+  } else if (referenceLiteralContext !== undefined) {
+    condition = refineReferenceLiteralContext(referenceLiteralContext);
   }
 
   if (condition !== null) {

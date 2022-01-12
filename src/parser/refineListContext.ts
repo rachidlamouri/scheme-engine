@@ -1,13 +1,13 @@
 import { List } from '../interpreterNodes/list';
 import { ListContext } from '../language/compiled/SchemeParser';
-import { refineSymbolicExpressionGroupContext } from './refineSymbolicExpressionContext';
+import { refineLiteralGroupContext } from './refineLiteralContext';
 
 export const refineListContext = (listContext: ListContext): List => {
-  const symbolicExpressionGroupContext = listContext.symbolicExpressionGroup();
+  const literalGroupContext = listContext.literalGroup();
 
   return new List(
-    symbolicExpressionGroupContext !== undefined
-      ? refineSymbolicExpressionGroupContext(symbolicExpressionGroupContext)
+    literalGroupContext !== undefined
+      ? refineLiteralGroupContext(literalGroupContext)
       : []
   );
 }

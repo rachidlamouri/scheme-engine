@@ -1,17 +1,17 @@
 import { CallExpressionContext } from '../language/compiled/SchemeParser';
 import { BuiltInFunctionName, CallExpression, CarExpression, CdrExpression, ConditionExpression, ConsExpression, IsAtomExpression, IsEqualExpression, IsNullExpression, ReferenceCallExpression } from '../interpreterNodes/callExpression';
-import { refineReferenceAtomContext } from './refineAtomContext';
+import { refineReferenceLiteralContext } from './refineAtomContext';
 import { refineEvaluableContext, refineEvaluableGroupContext } from './refineEvaluableContext';
 import { UnhandledContextError } from './utils';
 import { refineConditionValuePairGroupContext } from './refineConditionValuePairContext';
 
 export const refineCallExpressionContext = (callExpressionContext: CallExpressionContext): CallExpression => {
-  const functionReferenceContext = callExpressionContext.referenceAtom();
+  const functionReferenceContext = callExpressionContext.referenceLiteral();
   const evaluableGroupContext = callExpressionContext.evaluableGroup();
   const conditionExpressionContext = callExpressionContext.conditionExpression();
 
   if (functionReferenceContext !== undefined) {
-    const functionReference = refineReferenceAtomContext(functionReferenceContext);
+    const functionReference = refineReferenceLiteralContext(functionReferenceContext);
     const parameters = evaluableGroupContext !== undefined ? refineEvaluableGroupContext(evaluableGroupContext): [];
 
     switch (functionReference.key) {

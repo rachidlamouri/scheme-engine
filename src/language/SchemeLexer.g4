@@ -18,7 +18,7 @@ STRING: ('A'..'z' | '*' | '$' | '?')+;
 
 IMPORT_PATH: STRING ('/' STRING)+;
 
-INTEGER: '1'..'9'+ '0'..'9'*;
+INTEGER: '0' | '-'?'1'..'9'+ '0'..'9'*;
 
 LEFT_SEPARATOR: '(';
 

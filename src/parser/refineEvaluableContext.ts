@@ -1,25 +1,25 @@
 import { Evaluable } from '../interpreterNodes/evaluable';
 import { EvaluableContext, EvaluableGroupContext } from '../language/compiled/SchemeParser';
-import { refineReferenceAtomContext } from './refineAtomContext';
+import { refineReferenceLiteralContext } from './refineAtomContext';
 import { refineCallExpressionContext } from './refineCallExpressionContext';
+import { refineExplicitLiteralContext } from './refineExplicitLiteralContext';
 import { refineLambdaReferenceDefinitionContext } from './refineLambdaReferenceDefinitionContext';
-import { refineLiteralContext } from './refineLiteralContext';
 import { buildRefineGroupContext, NormalizedGroupContext, UnhandledContextError } from './utils';
 
 export const refineEvaluableContext = (evaluableContext: EvaluableContext): Evaluable => {
   const callExpressionContext = evaluableContext.callExpression();
   const lambdaReferenceDefinitionContext = evaluableContext.lambdaReferenceDefinition();
-  const referenceAtomContext = evaluableContext.referenceAtom();
-  const literalContext = evaluableContext.literal();
+  const referenceLiteralContext = evaluableContext.referenceLiteral();
+  const explicitLiteralContext = evaluableContext.explicitLiteral();
 
   if (callExpressionContext !== undefined) {
     return refineCallExpressionContext(callExpressionContext);
   } else if (lambdaReferenceDefinitionContext !== undefined) {
     return refineLambdaReferenceDefinitionContext(lambdaReferenceDefinitionContext);
-  } else if (referenceAtomContext !== undefined) {
-    return refineReferenceAtomContext(referenceAtomContext);
-  } else if (literalContext !== undefined) {
-    return refineLiteralContext(literalContext);
+  } else if (referenceLiteralContext !== undefined) {
+    return refineReferenceLiteralContext(referenceLiteralContext);
+  } else if (explicitLiteralContext !== undefined) {
+    return refineExplicitLiteralContext(explicitLiteralContext);
   }
 
   throw new UnhandledContextError(evaluableContext);

@@ -1,21 +1,30 @@
 import { SymbolicExpression } from '../interpreterNodes/symbolicExpression';
-import { LiteralContext } from '../language/compiled/SchemeParser';
-import { refineBooleanAtomContext, refineIntegerAtomContext } from './refineAtomContext';
-import { refineSymbolicExpressionContext } from './refineSymbolicExpressionContext';
-import { UnhandledContextError } from './utils';
+import { LiteralContext, LiteralGroupContext } from '../language/compiled/SchemeParser';
+import { refineExplicitLiteralContext } from './refineExplicitLiteralContext';
+import { refineImplicitLiteralContext } from './refineImplicitLiteralContext';
+import { buildRefineGroupContext, NormalizedGroupContext, UnhandledContextError } from './utils';
 
 export const refineLiteralContext = (literalContext: LiteralContext): SymbolicExpression => {
-  const symbolicExpressionContext = literalContext.symbolicExpression();
-  const integerAtomContext = literalContext.integerAtom();
-  const booleanAtomContext = literalContext.booleanAtom();
+  const explicitLiteralContext = literalContext.explicitLiteral();
+  const implicitLiteralContext = literalContext.implicitLiteral();
 
-  if (symbolicExpressionContext !== undefined) {
-    return refineSymbolicExpressionContext(symbolicExpressionContext);
-  } else if (integerAtomContext !== undefined) {
-    return refineIntegerAtomContext(integerAtomContext);
-  } else if (booleanAtomContext !== undefined) {
-    return refineBooleanAtomContext(booleanAtomContext);
+  if (explicitLiteralContext !== undefined) {
+    return refineExplicitLiteralContext(explicitLiteralContext);
+  } else if (implicitLiteralContext !== undefined) {
+    return refineImplicitLiteralContext(implicitLiteralContext, false);
   }
 
   throw new UnhandledContextError(literalContext);
 };
+
+export const refineLiteralGroupContext = buildRefineGroupContext<
+  LiteralContext,
+  LiteralGroupContext,
+  SymbolicExpression
+>(
+  (literalGroupContext: LiteralGroupContext): NormalizedGroupContext<LiteralContext, LiteralGroupContext> => ({
+    elementContext: literalGroupContext.literal(),
+    groupContext: literalGroupContext.literalGroup(),
+  }),
+  refineLiteralContext,
+);

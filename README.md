@@ -39,12 +39,25 @@ echo ci/example | npm run scheme -- -i -f
 For examples see [run.test.ts](./src/run.test.ts). For standard library functions see [standardLibrary/](./standardLibrary/).
 
 - literal symbolic expressions
-  - string: `'example`
-  - integer: `123`
-  - boolean true: `#t`
-  - boolean false: `#f`
-  - null list: `'()`
-  - list: `'(a b c)`
+  - string:
+    - `'example`
+    - `'123`
+    - `'-123`
+    - `'#t`
+    - `'#f`
+  - integer:
+    - `123`
+    - `-123`
+  - boolean:
+    - `#t`
+    - `#f`
+  - list:
+    - null: `'()`
+    - list of strings: `'(a b c '123 '#t '#f)`
+    - list of integers: `'(123 -123)`
+    - list of booleans: `'(#t #f)`
+    - list of lists: `'((a b c) '(d e f))`
+    - mixed list: `'(a (b 123) ('#t #t))`
 - car
 - cdr
 - cons

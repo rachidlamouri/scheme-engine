@@ -22,11 +22,11 @@ evaluableGroup:
   | evaluable
   ;
 
-evaluable: callExpression | lambdaReferenceDefinition | referenceAtom | literal;
+evaluable: callExpression | lambdaReferenceDefinition | referenceLiteral | explicitLiteral;
 
 callExpression:
-  LEFT_SEPARATOR referenceAtom evaluableGroup RIGHT_SEPARATOR
-  | LEFT_SEPARATOR referenceAtom RIGHT_SEPARATOR
+  LEFT_SEPARATOR referenceLiteral evaluableGroup RIGHT_SEPARATOR
+  | LEFT_SEPARATOR referenceLiteral RIGHT_SEPARATOR
   | LEFT_SEPARATOR conditionExpression RIGHT_SEPARATOR
   ;
 
@@ -37,46 +37,51 @@ conditionValuePairGroup:
   | conditionValuePair
   ;
 
-conditionValuePair: LEFT_SEPARATOR (callExpression | booleanAtom | referenceAtom) evaluable RIGHT_SEPARATOR;
+conditionValuePair: LEFT_SEPARATOR (callExpression | booleanLiteral | referenceLiteral) evaluable RIGHT_SEPARATOR;
 
 elseExpression: LEFT_SEPARATOR ELSE evaluable RIGHT_SEPARATOR;
 
-lambdaReferenceDefinition: LEFT_SEPARATOR DEFINE referenceAtom lambdaDefinition RIGHT_SEPARATOR;
+lambdaReferenceDefinition: LEFT_SEPARATOR DEFINE referenceLiteral lambdaDefinition RIGHT_SEPARATOR;
 
 lambdaDefinition:
-  LEFT_SEPARATOR LAMBDA LEFT_SEPARATOR referenceAtomGroup RIGHT_SEPARATOR evaluable RIGHT_SEPARATOR
+  LEFT_SEPARATOR LAMBDA LEFT_SEPARATOR referenceLiteralGroup RIGHT_SEPARATOR evaluable RIGHT_SEPARATOR
   | LEFT_SEPARATOR LAMBDA LEFT_SEPARATOR RIGHT_SEPARATOR evaluable RIGHT_SEPARATOR
   ;
 
-literal: (QUOTE symbolicExpression) | integerAtom | booleanAtom ;
+explicitLiteral:
+  QUOTE implicitLiteral
+  | integerLiteral
+  | booleanLiteral
+  ;
 
-symbolicExpression: list | atom;
+implicitLiteral:
+  list
+  | stringLiteral
+  | integerLiteral
+  | booleanLiteral
+  ;
 
 list:
-  LEFT_SEPARATOR symbolicExpressionGroup RIGHT_SEPARATOR
+  LEFT_SEPARATOR literalGroup RIGHT_SEPARATOR
   | LEFT_SEPARATOR RIGHT_SEPARATOR
   ;
 
-symbolicExpressionGroup:
-  symbolicExpression symbolicExpressionGroup
-  | symbolicExpression
+literalGroup:
+  literal literalGroup
+  | literal
   ;
 
-atom:
-  stringAtom
-  | integerAtom
-  | booleanAtom
+literal: explicitLiteral | implicitLiteral;
+
+stringLiteral: STRING;
+
+integerLiteral: INTEGER;
+
+booleanLiteral: BOOLEAN;
+
+referenceLiteralGroup:
+  referenceLiteral referenceLiteralGroup
+  | referenceLiteral
   ;
 
-stringAtom: STRING;
-
-integerAtom: INTEGER;
-
-booleanAtom: BOOLEAN;
-
-referenceAtomGroup:
-  referenceAtom referenceAtomGroup
-  | referenceAtom
-  ;
-
-referenceAtom: STRING;
+referenceLiteral: STRING;

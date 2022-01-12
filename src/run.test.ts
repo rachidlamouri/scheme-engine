@@ -122,8 +122,11 @@ describe('run', () => {
     [t, 'string', "'atom", 'atom', [new StringAtom('atom')]],
     [t, 'string', "'turkey", 'turkey'],
     [f, 'uppercase string', "'TURKEY", 'TURKEY'],
-    [t, 'integer', "'1492", '1492', [new IntegerAtom(1492)]],
+    [t, 'quoted integer', "'1492", '1492', [new StringAtom('1492')]],
+    [f, 'quoted negative integer', "'-1492", '-1492', [new StringAtom('-1492')]],
     [f, 'unquoted integer', "1492", '1492', [new IntegerAtom(1492)]],
+    [f, 'unquoted negative integer', "-1492", '-1492', [new IntegerAtom(-1492)]],
+    [f, 'zero', '0', '0', [new IntegerAtom(0)]],
     [t, 'single character', "'u", 'u'],
     [t, 'special characters', "'*abc$", '*abc$'],
     [t, 'list', "'(atom)", '(atom)', [new List([new StringAtom('atom')])]],
@@ -142,6 +145,39 @@ describe('run', () => {
         new BooleanAtom(false),
       ]),
     ]],
+    [f, 'list of integers', "'(1234 4567 -1234)", '(1234 4567 -1234)', [
+      new List([
+        new IntegerAtom(1234),
+        new IntegerAtom(4567),
+        new IntegerAtom(-1234),
+      ]),
+    ]],
+    [f, 'various literals', "'(abc 'def '123 '-123 123 -123 '#t #t #f (abc 'def '123 '-123) '(123 -123 '#t #t #f))", '(abc def 123 -123 123 -123 #t #t #f (abc def 123 -123) (123 -123 #t #t #f))', [
+      new List([
+        new StringAtom('abc'),
+        new StringAtom('def'),
+        new StringAtom('123'),
+        new StringAtom('-123'),
+        new IntegerAtom(123),
+        new IntegerAtom(-123),
+        new StringAtom('#t'),
+        new BooleanAtom(true),
+        new BooleanAtom(false),
+        new List([
+          new StringAtom('abc'),
+          new StringAtom('def'),
+          new StringAtom('123'),
+          new StringAtom('-123'),
+        ]),
+        new List([
+          new IntegerAtom(123),
+          new IntegerAtom(-123),
+          new StringAtom('#t'),
+          new BooleanAtom(true),
+          new BooleanAtom(false),
+        ])
+      ])
+    ]]
   ]);
 
   runSuite('car', {}, [
