@@ -366,7 +366,7 @@ describe('run', () => {
   }, [
     [t, 'when the old atom exists once', "(insertR 'topping 'fudge '(ice cream with fudge for dessert))", '(ice cream with fudge topping for dessert)'],
     [t, 'when the old atom exists twice', "(insertR 'e 'd '(a b c d f g d h))", '(a b c d e f g d h)'],
-    [t, 'when the old atom does not exist', "(insertR 'a 'g '(a b c))", '(a b c)'],
+    [f, 'when the old atom does not exist', "(insertR 'a 'g '(a b c))", '(a b c)'],
   ]);
 
   runSuite('insertL', {
@@ -374,7 +374,7 @@ describe('run', () => {
   }, [
     [t, 'when the old atom exists once', "(insertL 'topping 'fudge '(ice cream with fudge for dessert))", '(ice cream with topping fudge for dessert)'],
     [t, 'when the old atom exists twice', "(insertL 'e 'd '(a b c d f g d h))", '(a b c e d f g d h)'],
-    [t, 'when the old atom does not exist', "(insertL 'a 'g '(a b c))", '(a b c)'],
+    [f, 'when the old atom does not exist', "(insertL 'a 'g '(a b c))", '(a b c)'],
   ]);
 
   runSuite('subst', {
@@ -382,7 +382,7 @@ describe('run', () => {
   }, [
     [t, 'when the old atom exists once', "(subst 'topping 'fudge '(ice cream with fudge for dessert))", '(ice cream with topping for dessert)'],
     [t, 'when the old atom exists twice', "(subst 'e 'd '(a b c d f g d h))", '(a b c e f g d h)'],
-    [t, 'when the old atom does not exist', "(subst 'a 'g '(a b c))", '(a b c)'],
+    [f, 'when the old atom does not exist', "(subst 'a 'g '(a b c))", '(a b c)'],
   ]);
 
   runSuite('multiInsertR', {
@@ -390,7 +390,7 @@ describe('run', () => {
   }, [
     [t, 'when the old atom exists once', "(multiInsertR 'topping 'fudge '(ice cream with fudge for dessert))", '(ice cream with fudge topping for dessert)'],
     [t, 'when the old atom exists twice', "(multiInsertR 'e 'd '(a b c d f g d h))", '(a b c d e f g d e h)'],
-    [t, 'when the old atom does not exist', "(multiInsertR 'a 'g '(a b c))", '(a b c)'],
+    [f, 'when the old atom does not exist', "(multiInsertR 'a 'g '(a b c))", '(a b c)'],
   ]);
 
   runSuite('multiInsertL', {
@@ -398,7 +398,7 @@ describe('run', () => {
   }, [
     [t, 'when the old atom exists once', "(multiInsertL 'topping 'fudge '(ice cream with fudge for dessert))", '(ice cream with topping fudge for dessert)'],
     [t, 'when the old atom exists twice', "(multiInsertL 'e 'd '(a b c d f g d h))", '(a b c e d f g e d h)'],
-    [t, 'when the old atom does not exist', "(multiInsertL 'a 'g '(a b c))", '(a b c)'],
+    [f, 'when the old atom does not exist', "(multiInsertL 'a 'g '(a b c))", '(a b c)'],
   ]);
 
   runSuite('multiSubst', {
@@ -406,6 +406,6 @@ describe('run', () => {
   }, [
     [t, 'when the old atom exists once', "(multiSubst 'topping 'fudge '(ice cream with fudge for dessert))", '(ice cream with topping for dessert)'],
     [t, 'when the old atom exists twice', "(multiSubst 'e 'd '(a b c d f g d h))", '(a b c e f g e h)'],
-    [t, 'when the old atom does not exist', "(multiSubst 'a 'g '(a b c))", '(a b c)'],
+    [f, 'when the old atom does not exist', "(multiSubst 'a 'g '(a b c))", '(a b c)'],
   ]);
 });
