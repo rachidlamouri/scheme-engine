@@ -14,11 +14,11 @@ ELSE: 'else';
 
 BOOLEAN: '#t' | '#f';
 
-STRING: ('A'..'z' | '*' | '$' | '?')+;
+INTEGER: '0' | '-'?'1'..'9'+ '0'..'9'*;
+
+STRING: ('A'..'z' | '0'..'9' | '*' | '$' | '?')+;
 
 IMPORT_PATH: STRING ('/' STRING)+;
-
-INTEGER: '0' | '-'?'1'..'9'+ '0'..'9'*;
 
 LEFT_SEPARATOR: '(';
 

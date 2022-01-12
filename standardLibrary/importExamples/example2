@@ -1,4 +1,4 @@
-(define exampleB
+(define example2
   (lambda (l)
     (cdr l)
   )

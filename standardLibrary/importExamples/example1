@@ -1,4 +1,4 @@
-(define exampleA
+(define example1
   (lambda (l)
     (car l)
   )

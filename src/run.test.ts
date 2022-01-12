@@ -312,11 +312,11 @@ describe('run', () => {
   runSuite('import', {
     includeReferenceOutput: true,
   }, [
-    [f, 'single import', "(import importExamples/exampleA)", '&exampleA'],
-    [f, 'single import and execute', "(import importExamples/exampleA) (exampleA '(a b c))", '&exampleA\na'],
-    [f, 'multiple import', "(import importExamples/exampleA importExamples/exampleB)", '&exampleA\n&exampleB'],
-    [f, 'multiple import and execute', "(import importExamples/exampleA importExamples/exampleB) (exampleA (exampleB '(a b c)))", '&exampleA\n&exampleB\nb'],
-    [f, 'invalid import', "(import importExamples/exampleABC)", new ExpectedError('Standard library "standardLibrary/importExamples/exampleABC" does not exist')],
+    [f, 'single import', "(import importExamples/example1)", '&example1'],
+    [f, 'single import and execute', "(import importExamples/example1) (example1 '(a b c))", '&example1\na'],
+    [f, 'multiple import', "(import importExamples/example1 importExamples/example2)", '&example1\n&example2'],
+    [f, 'multiple import and execute', "(import importExamples/example1 importExamples/example2) (example1 (example2 '(a b c)))", '&example1\n&example2\nb'],
+    [f, 'invalid import', "(import importExamples/example123)", new ExpectedError('Standard library "standardLibrary/importExamples/example123" does not exist')],
   ]);
 
   runSuite('cond', {}, [
