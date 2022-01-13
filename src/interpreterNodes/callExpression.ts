@@ -16,7 +16,7 @@ export enum BuiltInFunctionName {
   COND = 'cond',
 };
 
-type AtomValidationConfig = boolean | { allowsNonIntegers: true, allowsIntegers: false };
+type AtomValidationConfig = boolean | { allowsStrings: boolean, allowsIntegers: boolean, allowsBooleans: boolean };
 
 type ValidationConfig =
   | {
@@ -52,14 +52,24 @@ export abstract class CallExpression extends Evaluable {
       const parameter = evaluatedParameters[index];
 
       const disallowsAllAtoms = validationConfig.allowsAtoms === false;
+      const allowsStringAtoms = validationConfig.allowsAtoms === true || (typeof validationConfig.allowsAtoms !== 'boolean' && validationConfig.allowsAtoms.allowsStrings);
       const allowsIntegerAtoms = validationConfig.allowsAtoms === true || (typeof validationConfig.allowsAtoms !== 'boolean' && validationConfig.allowsAtoms.allowsIntegers);
+      const allowsBooleanAtoms = validationConfig.allowsAtoms === true || (typeof validationConfig.allowsAtoms !== 'boolean' && validationConfig.allowsAtoms.allowsBooleans);
 
       if (disallowsAllAtoms && parameter instanceof Atom) {
         throw Error(`Parameter ${index} of ${this.functionName} cannot be an atom`);
       }
 
+      if (!allowsStringAtoms && parameter instanceof StringAtom) {
+        throw Error(`Parameter ${index} of ${this.functionName} cannot be a string atom`);
+      }
+
       if (!allowsIntegerAtoms && parameter instanceof IntegerAtom) {
         throw Error(`Parameter ${index} of ${this.functionName} cannot be an integer atom`);
+      }
+
+      if (!allowsBooleanAtoms && parameter instanceof BooleanAtom) {
+        throw Error(`Parameter ${index} of ${this.functionName} cannot be a boolean atom`);
       }
 
       if (!validationConfig.allowsLists && parameter instanceof List) {
@@ -206,10 +216,7 @@ export class ConsExpression extends TwoParameterExpression<SymbolicExpression, L
 export class IsEqualExpression extends TwoParameterExpression<Atom<Primitive>, Atom<Primitive>> {
   constructor(unevaluatedParameters: Evaluable[]) {
     const validationConfig: ValidationConfig = {
-      allowsAtoms: {
-        allowsNonIntegers: true,
-        allowsIntegers: false,
-      },
+      allowsAtoms: true,
       allowsLists: false,
       allowsEmptyLists: false,
     };

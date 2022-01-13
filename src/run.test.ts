@@ -251,13 +251,13 @@ describe('run', () => {
   ]);
 
   runSuite('eq?', {}, [
-    [t, 'atoms', "(eq? 'Harry 'Harry)", '#t'],
-    [t, 'atoms', "(eq? 'margarine 'butter)", '#f'],
+    [t, 'atoms', "(eq? 'Harry 'Harry)", '#t', [new BooleanAtom(true)]],
+    [t, 'atoms', "(eq? 'margarine 'butter)", '#f', [new BooleanAtom(false)]],
     [t, 'lists', "(eq? '() '(strawberry))", new ExpectedError('Parameter 0 of eq? cannot be a list')],
     [f, 'lists', "(eq? '() '())", new ExpectedError('Parameter 0 of eq? cannot be a list')],
     [f, 'lists', "(eq? '(strawberry) '(strawberry))", new ExpectedError('Parameter 0 of eq? cannot be a list')],
-    [f, 'numbers', "(eq? 6 6)", new ExpectedError('Parameter 0 of eq? cannot be an integer atom')],
-    [f, 'number and string', "(eq? 'a 6)", new ExpectedError('Parameter 1 of eq? cannot be an integer atom')],
+    [f, 'numbers', "(eq? 6 6)", '#t'],
+    [f, 'number and string', "(eq? 'a 6)", '#f'],
     [f, 'one parameter', "(eq? 'a)", new ExpectedError('eq? requires 2 parameter(s), but received 1')],
     [t, 'eq? and car', "(eq? (car '(Mary had a little lamb chop)) 'Mary)", '#t'],
     [t, 'eq? and cdr', "(eq? (cdr '(soured milk)) 'milk)", new ExpectedError('Parameter 0 of eq? cannot be a list')],
