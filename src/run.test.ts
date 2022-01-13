@@ -75,7 +75,11 @@ const runTest = (
       expect(result.serialize(testConfig.includeReferenceOutput)).toEqual(expectedOutput);
 
       if (expectedEvaluables !== null) {
-        expect(result.evaluables).toEqual(expectedEvaluables);
+        const actualEvaluables = testConfig.includeReferenceOutput
+          ? result.evaluables
+          : result.evaluables.filter((e) => !(e instanceof ReferenceAtom))
+
+        expect(actualEvaluables).toEqual(expectedEvaluables);
       }
     };
   }
@@ -455,5 +459,21 @@ describe('run', () => {
     [f, 'subtraction', '(- 2 3)', "-1", [new IntegerAtom(-1)]],
     [f, 'invalid number of arguments', '(- 2)',  new ExpectedError('- requires 2 parameter(s), but received 1')],
     [f, 'invalid arguments', "(- #t 2)", new ExpectedError('Parameter 0 of - cannot be a boolean atom')],
+  ]);
+
+  runSuite('add1', {
+    prependCode: '(import math/add1)',
+  }, [
+    [t, 'positive integer', '(add1 67)', "68", [new IntegerAtom(68)]],
+    [t, 'zero', '(add1 0)', "1"],
+    [t, 'negative integer', '(add1 -5)', "-4"],
+  ]);
+
+  runSuite('sub1', {
+    prependCode: '(import math/sub1)',
+  }, [
+    [t, 'positive integer', '(sub1 5)', "4", [new IntegerAtom(4)]],
+    [t, 'zero', '(sub1 0)', "-1"],
+    [t, 'negative integer', '(sub1 -5)', "-6"],
   ]);
 });

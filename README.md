@@ -82,6 +82,8 @@ For examples see [run.test.ts](./src/run.test.ts). For standard library function
   - list/rember -> rember
   - list/subst -> subst
   - logic/or -> or
+  - math/add1 -> add1
+  - math/sub1 -> sub1
 
 ## Development
 
