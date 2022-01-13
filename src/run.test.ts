@@ -444,4 +444,16 @@ describe('run', () => {
     [t, 'when the old atom exists twice', "(multiSubst 'e 'd '(a b c d f g d h))", '(a b c e f g e h)'],
     [f, 'when the old atom does not exist', "(multiSubst 'a 'g '(a b c))", '(a b c)'],
   ]);
+
+  runSuite('addition', {}, [
+    [f, 'addition', '(+ 2 3)', "5", [new IntegerAtom(5)]],
+    [f, 'invalid number of arguments', '(+ 2)', new ExpectedError('+ requires 2 parameter(s), but received 1')],
+    [f, 'invalid arguments', "(+ 2 '2)", new ExpectedError('Parameter 1 of + cannot be a string atom')],
+  ]);
+
+  runSuite('subtraction', {}, [
+    [f, 'subtraction', '(- 2 3)', "-1", [new IntegerAtom(-1)]],
+    [f, 'invalid number of arguments', '(- 2)',  new ExpectedError('- requires 2 parameter(s), but received 1')],
+    [f, 'invalid arguments', "(- #t 2)", new ExpectedError('Parameter 0 of - cannot be a boolean atom')],
+  ]);
 });

@@ -31,6 +31,14 @@ export class IntegerAtom extends Atom<number> {
   constructor(value: number) {
     super(value);
   }
+
+  add(integerAtom: IntegerAtom) {
+    return new IntegerAtom(this.value + integerAtom.value);
+  }
+
+  subtract(integerAtom: IntegerAtom) {
+    return new IntegerAtom(this.value - integerAtom.value);
+  }
 }
 
 export class BooleanAtom extends Atom<boolean> {

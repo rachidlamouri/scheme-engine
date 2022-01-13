@@ -25,7 +25,7 @@ evaluableGroup:
 evaluable: callExpression | lambdaReferenceDefinition | referenceLiteral | explicitLiteral;
 
 callExpression:
-  LEFT_SEPARATOR referenceLiteral evaluableGroup RIGHT_SEPARATOR
+  LEFT_SEPARATOR (referenceLiteral | plusLiteral | minusLiteral) evaluableGroup RIGHT_SEPARATOR
   | LEFT_SEPARATOR referenceLiteral RIGHT_SEPARATOR
   | LEFT_SEPARATOR conditionExpression RIGHT_SEPARATOR
   ;
@@ -85,3 +85,7 @@ referenceLiteralGroup:
   ;
 
 referenceLiteral: STRING;
+
+plusLiteral: PLUS;
+
+minusLiteral: MINUS;

@@ -1,4 +1,4 @@
-import { Atom, BooleanAtom, IntegerAtom, ReferenceAtom } from './atom';
+import { Atom, BooleanAtom, IntegerAtom, ReferenceAtom, StringAtom } from './atom';
 import { Evaluable } from './evaluable';
 import { Closure, ExecutionContext } from './executionContext';
 import { List } from './list';
@@ -14,6 +14,8 @@ export enum BuiltInFunctionName {
   IS_ATOM = 'atom?',
   IS_EQUAL = 'eq?',
   COND = 'cond',
+  ADD = '+',
+  SUBTRACT = '-',
 };
 
 type AtomValidationConfig = boolean | { allowsStrings: boolean, allowsIntegers: boolean, allowsBooleans: boolean };
@@ -234,6 +236,62 @@ export class IsEqualExpression extends TwoParameterExpression<Atom<Primitive>, A
 
     const [parameter0, parameter1] = this.evaluateParameters(executionContext);
     return new BooleanAtom(parameter0.value === parameter1.value);
+  }
+}
+
+export class AdditionExpression extends TwoParameterExpression<IntegerAtom, IntegerAtom> {
+  constructor(unevaluatedParameters: Evaluable[]) {
+    const validationConfig: ValidationConfig = {
+      allowsAtoms: {
+        allowsStrings: false,
+        allowsIntegers: true,
+        allowsBooleans: false,
+      },
+      allowsLists: false,
+      allowsEmptyLists: false,
+    };
+
+    super(
+      BuiltInFunctionName.ADD,
+      unevaluatedParameters,
+      validationConfig,
+      validationConfig
+    );
+  }
+
+  evaluate(executionContext: ExecutionContext): Evaluable {
+    super.logEvaluation(executionContext);
+
+    const [parameter0, parameter1] = this.evaluateParameters(executionContext);
+    return parameter0.add(parameter1);
+  }
+}
+
+export class SubtractionExpression extends TwoParameterExpression<IntegerAtom, IntegerAtom> {
+  constructor(unevaluatedParameters: Evaluable[]) {
+    const validationConfig: ValidationConfig = {
+      allowsAtoms: {
+        allowsStrings: false,
+        allowsIntegers: true,
+        allowsBooleans: false,
+      },
+      allowsLists: false,
+      allowsEmptyLists: false,
+    };
+
+    super(
+      BuiltInFunctionName.SUBTRACT,
+      unevaluatedParameters,
+      validationConfig,
+      validationConfig
+    );
+  }
+
+  evaluate(executionContext: ExecutionContext): Evaluable {
+    super.logEvaluation(executionContext);
+
+    const [parameter0, parameter1] = this.evaluateParameters(executionContext);
+    return parameter0.subtract(parameter1);
   }
 }
 

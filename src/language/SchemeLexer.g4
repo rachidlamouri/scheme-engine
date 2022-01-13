@@ -12,9 +12,13 @@ COND: 'cond';
 
 ELSE: 'else';
 
+PLUS: '+';
+
+MINUS: '-';
+
 BOOLEAN: '#t' | '#f';
 
-INTEGER: '0' | '-'?'1'..'9'+ '0'..'9'*;
+INTEGER: '0' | MINUS?'1'..'9'+ '0'..'9'*;
 
 STRING: ('A'..'z' | '0'..'9' | '*' | '$' | '?')+;
 
