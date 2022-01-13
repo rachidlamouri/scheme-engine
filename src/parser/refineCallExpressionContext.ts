@@ -1,5 +1,5 @@
 import { CallExpressionContext } from '../language/compiled/SchemeParser';
-import { AdditionExpression, BuiltInFunctionName, CallExpression, CarExpression, CdrExpression, ConditionExpression, ConsExpression, IsAtomExpression, IsEqualExpression, IsNullExpression, ReferenceCallExpression, SubtractionExpression } from '../interpreterNodes/callExpression';
+import { AdditionExpression, BuiltInFunctionName, CallExpression, CarExpression, CdrExpression, ConditionExpression, ConsExpression, IsAtomExpression, IsEqualExpression, IsNullExpression, IsZeroExpression, ReferenceCallExpression, SubtractionExpression } from '../interpreterNodes/callExpression';
 import { refineReferenceLiteralContext } from './refineAtomContext';
 import { refineEvaluableContext, refineEvaluableGroupContext } from './refineEvaluableContext';
 import { UnhandledContextError } from './utils';
@@ -44,6 +44,8 @@ export const refineCallExpressionContext = (callExpressionContext: CallExpressio
         return new AdditionExpression(parameters);
       case BuiltInFunctionName.SUBTRACT:
         return new SubtractionExpression(parameters);
+      case BuiltInFunctionName.IS_ZERO:
+        return new IsZeroExpression(parameters);
     }
 
     if (functionReference !== null) {

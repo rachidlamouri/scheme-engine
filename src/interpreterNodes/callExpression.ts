@@ -16,6 +16,7 @@ export enum BuiltInFunctionName {
   COND = 'cond',
   ADD = '+',
   SUBTRACT = '-',
+  IS_ZERO = 'zero?',
 };
 
 type AtomValidationConfig = boolean | { allowsStrings: boolean, allowsIntegers: boolean, allowsBooleans: boolean };
@@ -171,6 +172,27 @@ export class IsAtomExpression extends OneParameterExpression<SymbolicExpression>
 
     const parameter = super.evaluateParameter(executionContext);
     return parameter.isAtom();
+  }
+}
+
+export class IsZeroExpression extends OneParameterExpression<IntegerAtom> {
+  constructor(unevaluatedParameters: Evaluable[]) {
+    super(BuiltInFunctionName.IS_ZERO, unevaluatedParameters, {
+      allowsAtoms: {
+        allowsStrings: false,
+        allowsIntegers: true,
+        allowsBooleans: false,
+      },
+      allowsLists: true,
+      allowsEmptyLists: true,
+    });
+  }
+
+  evaluate(executionContext: ExecutionContext): Evaluable {
+    super.logEvaluation(executionContext);
+
+    const parameter = super.evaluateParameter(executionContext);
+    return parameter.isZero();
   }
 }
 

@@ -36,6 +36,10 @@ export class IntegerAtom extends Atom<number> {
     return new IntegerAtom(this.value + integerAtom.value);
   }
 
+  isZero() {
+    return new BooleanAtom(this.value === 0);
+  }
+
   subtract(integerAtom: IntegerAtom) {
     return new IntegerAtom(this.value - integerAtom.value);
   }

@@ -476,4 +476,11 @@ describe('run', () => {
     [t, 'zero', '(sub1 0)', "-1"],
     [t, 'negative integer', '(sub1 -5)', "-6"],
   ]);
+
+  runSuite('zero?', {}, [
+    [t, 'zero', '(zero? 0)', "#t", [new BooleanAtom(true)]],
+    [t, 'non zero', '(zero? 2)', "#f"],
+    [f, 'invalid number of arguments', "(zero? 1 'a)", new ExpectedError('zero? requires 1 parameter(s), but received 2')],
+    [f, 'invalid argument', "(zero? 'a)", new ExpectedError('Parameter 0 of zero? cannot be a string atom')],
+  ]);
 });

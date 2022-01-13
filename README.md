@@ -69,6 +69,7 @@ For examples see [run.test.ts](./src/run.test.ts). For standard library function
 - cond
 - \+
 - \-
+- zero?
 - standard library imports
   - list/firsts -> firsts
   - list/insertL -> insertL
